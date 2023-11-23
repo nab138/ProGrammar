@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'programming.duolingo',
-  appName: 'programming-duolingo',
+  appId: 'me.nabdev.programmingduolingo',
+  appName: 'Programming Duolingo',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
