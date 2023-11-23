@@ -11,13 +11,11 @@
         {
           "name": "Integers",
           "id": "integers",
-          "filename": "integers.json",
           "type": "quiz"
         },
         {
           "name": "Integers Quiz",
           "id": "integers-quiz",
-          "filename": "integers-quiz.json",
           "type": "quiz"
         }
       ]

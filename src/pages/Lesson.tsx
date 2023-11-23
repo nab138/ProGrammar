@@ -36,7 +36,7 @@ const LessonPage: React.FC = () => {
       let unit = info.units[parseInt(curInfo[1])];
       let lessonInfo = unit.lessons[parseInt(curInfo[2])];
       let lessonModule = await import(
-        `../courses/${curInfo[0]}/${unit.id}/${lessonInfo.filename}`
+        `../courses/${curInfo[0]}/${unit.id}/${lessonInfo.id}.json`
       );
       let lesson: Lesson = lessonModule.default;
       setLesson(lesson);

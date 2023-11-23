@@ -115,7 +115,6 @@ export interface Unit {
 export interface LessonInfo {
   name: string;
   type: "quiz" | "code";
-  filename: string;
   id: string;
 }
 
