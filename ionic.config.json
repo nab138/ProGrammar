@@ -1,0 +1,7 @@
+{
+  "name": "programming-duolingo",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
