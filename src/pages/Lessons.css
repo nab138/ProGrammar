@@ -1,0 +1,14 @@
+h4 {
+    padding-left: 10px;
+}
+
+.divider {
+    margin: 10px;
+    width: 100%;
+    background-color: gray;
+    height: 1px;
+}
+
+.course-buttons {
+    text-align: right;
+}

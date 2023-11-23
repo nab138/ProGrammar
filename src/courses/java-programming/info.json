@@ -1,0 +1,23 @@
+{
+    "name": "☕ Java Programming",
+    "id": "java-programming",
+    "description": "Learn the fundamentals of Java programming language. This covers concepts such as variables, primitive vs reference types, control flow, arrays, classes, objects, methods, inheritance, polymorphism, and more.",
+    "units": [
+        {
+            "name": "Primitive Variables",
+            "description": "Learn about primitive variables in Java.",
+            "lessons": [
+                {
+                    "name": "Integers",
+                    "type": "code",
+                    "file": "Ints.tsx"
+                },
+                {
+                    "name": "Integers Quiz",
+                    "type": "quiz",
+                    "file": "Ints.json"
+                }
+            ]
+        }
+    ]
+}
