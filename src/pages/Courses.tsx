@@ -14,12 +14,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import "./Lessons.css";
+import "./Courses.css";
 import coursesList from "../courses/courses.json";
 import { useEffect, useState } from "react";
 import getStorage from "../utils/storage";
+import { useHistory } from "react-router-dom";
 
-const Lessons: React.FC = () => {
+const Courses: React.FC = () => {
+  let history = useHistory();
+
   let [courses, setCourses] = useState<Course[]>([]);
   useEffect(() => {
     const fetchCourses = async () => {
@@ -32,7 +35,6 @@ const Lessons: React.FC = () => {
           `lesson-progress-${course}`
         );
         coursesTemp.push(info);
-        console.log(info);
       }
       setCourses(coursesTemp);
     };
@@ -44,12 +46,14 @@ const Lessons: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Lessons</IonTitle>
+          <IonTitle>Courses</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <h4>Select a Course</h4>
         {courses.map((course, index) => {
+          let hasStarted =
+            course.currentLesson != null && course.currentUnit != null;
           return (
             <IonCard key={index}>
               <IonCardHeader>
@@ -57,7 +61,7 @@ const Lessons: React.FC = () => {
                 <IonCardSubtitle>
                   {course.units.length} Unit{course.units.length > 1 ? "s" : ""}{" "}
                   |{" "}
-                  {course.currentLesson != null && course.currentUnit != null
+                  {hasStarted
                     ? `Unit ${course.currentUnit + 1}, Lesson ${
                         course.currentLesson + 1
                       }`
@@ -69,11 +73,17 @@ const Lessons: React.FC = () => {
                 <IonButton
                   fill="clear"
                   onClick={async () => {
-                    await getStorage().set(`unit-progress-${course.id}`, 0);
-                    await getStorage().set(`lesson-progress-${course.id}`, 0);
+                    if (!hasStarted) {
+                      await getStorage().set(`unit-progress-${course.id}`, 0);
+                      await getStorage().set(`lesson-progress-${course.id}`, 0);
+                      course.currentUnit = 0;
+                      course.currentLesson = 0;
+                    }
+                    await getStorage().set("current-course", course.id);
+                    history.push(`/course/${course.id}`);
                   }}
                 >
-                  Start Course
+                  {hasStarted ? "Resume" : "Start"} Course
                 </IonButton>
               </div>
             </IonCard>
@@ -84,9 +94,9 @@ const Lessons: React.FC = () => {
   );
 };
 
-export default Lessons;
+export default Courses;
 
-interface Course {
+export interface Course {
   name: string;
   description: string;
   currentUnit: number;
@@ -95,14 +105,36 @@ interface Course {
   id: string;
 }
 
-interface Unit {
+export interface Unit {
   name: string;
   description: string;
-  sections: Lesson[];
+  id: string;
+  lessons: LessonInfo[];
 }
 
-interface Lesson {
+export interface LessonInfo {
   name: string;
   type: "quiz" | "code";
-  file: string;
+  filename: string;
+  id: string;
+}
+
+export interface Lesson {
+  questions: Question[];
+}
+
+export interface Question {
+  question: string;
+  type: "mc" | "fill";
+  choices: string[];
+  answer: string;
+  explanations?: string[];
+}
+
+export interface MultipleChoiceQuestion {
+  question: string;
+  type: "mc";
+  choices: string[];
+  answer: string;
+  explanations: string[];
 }

@@ -1,28 +1,34 @@
 {
-    "name": "FRC Programming (Java)",
-    "description": "Learn how to program a FRC robot with Java. This course will cover the basics of a TimedRobot, CommandRobot, reading from sensors, PID Controllers, and more.",
-    "units": [
+  "name": "FRC Programming (Java)",
+  "id": "frc-robotics-java",
+  "description": "Learn how to program a FRC robot with Java. This course will cover the basics of a TimedRobot, CommandRobot, reading from sensors, PID Controllers, and more.",
+  "units": [
+    {
+      "name": "Primitive Variables",
+      "description": "Learn about primitive variables in Java.",
+      "lessons": [
         {
-            "name": "Primitive Variables",
-            "description": "Learn about primitive variables in Java.",
-            "lessons": [
-                {
-                    "name": "Integers",
-                    "type": "code",
-                    "file": "Ints.tsx"
-                }
-            ]
+          "name": "Integers",
+          "type": "code",
+          "file": "Ints.tsx"
         },
         {
-            "name": "Primitive Variables",
-            "description": "Learn about primitive variables in Java.",
-            "lessons": [
-                {
-                    "name": "Integers",
-                    "type": "code",
-                    "file": "Ints.tsx"
-                }
-            ]
+          "name": "Integers 2",
+          "type": "code",
+          "file": "Ints.tsx"
         }
-    ]
+      ]
+    },
+    {
+      "name": "Primitive Variables 2",
+      "description": "Learn about primitive variables in Java.",
+      "lessons": [
+        {
+          "name": "Integers",
+          "type": "code",
+          "file": "Ints.tsx"
+        }
+      ]
+    }
+  ]
 }

@@ -30,9 +30,11 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import Lessons from "./pages/Lessons";
+import Courses from "./pages/Courses";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
+import Lesson from "./pages/Lesson";
+import Course from "./pages/Course";
 
 setupIonicReact();
 
@@ -41,8 +43,8 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/lessons">
-            <Lessons />
+          <Route exact path="/courses">
+            <Courses />
           </Route>
           <Route exact path="/stats">
             <Stats />
@@ -51,13 +53,13 @@ const App: React.FC = () => (
             <Settings />
           </Route>
           <Route exact path="/">
-            <Redirect to="/lessons" />
+            <Redirect to="/courses" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/lessons">
+          <IonTabButton tab="tab1" href="/courses">
             <IonIcon aria-hidden="true" icon={book} />
-            <IonLabel>Lessons</IonLabel>
+            <IonLabel>Courses</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/stats">
             <IonIcon aria-hidden="true" icon={list} />
@@ -69,6 +71,12 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
+      <Route path="/lesson/:id">
+        <Lesson />
+      </Route>
+      <Route path="/course/:id">
+        <Course />
+      </Route>
     </IonReactRouter>
   </IonApp>
 );

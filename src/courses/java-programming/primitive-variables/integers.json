@@ -1,0 +1,28 @@
+{
+  "questions": [
+    {
+      "type": "mc",
+      "question": "What is an integer called in java?",
+      "choices": ["int", "integer", "Int", "Integer"],
+      "answer": "int",
+      "explanations": [
+        "Correct!",
+        "Some types are shortened in java, such as int for integer.",
+        "Primitive types start with a lowercase letter.",
+        "Primitive types start with a lowercase letter and are usually shortened."
+      ]
+    },
+    {
+      "type": "mc",
+      "question": "Which of the following is an integer?",
+      "choices": ["Hello, World!", "4.7", "-3", "2.0"],
+      "answer": "-3",
+      "explanations": [
+        "Integers are positive or negative whole numbers.",
+        "Integers do not contain decimals, they are whole numbers.",
+        "Correct!",
+        "Integers do not contain decimals, they are whole numbers."
+      ]
+    }
+  ]
+}

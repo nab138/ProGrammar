@@ -1,0 +1,33 @@
+.choice {
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  margin-top: -1px;
+}
+.choice.radio-checked {
+  background-color: #f5f5f5;
+}
+
+.correct-answer {
+  background-color: #d4edda !important;
+}
+
+.incorrect-answer {
+  background-color: #f8d7da !important;
+}
+
+/* if dark mode */
+@media (prefers-color-scheme: dark) {
+  .choice.radio-checked {
+    background-color: #333;
+  }
+  .correct-answer {
+    background-color: #335533 !important;
+  }
+  .incorrect-answer {
+    background-color: #553333 !important;
+  }
+}
+.radio-disabled {
+  opacity: 1 !important;
+}
