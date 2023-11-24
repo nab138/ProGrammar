@@ -7,6 +7,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  createAnimation,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -42,16 +43,28 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/courses">
-            <Courses />
-          </Route>
-          <Route exact path="/stats">
-            <Stats />
-          </Route>
-          <Route path="/settings">
-            <Settings />
-          </Route>
+        <IonRouterOutlet
+          animation={(baseEl, opts) => {
+            const enteringAnimation = createAnimation()
+              .addElement(opts.enteringEl)
+              .fromTo("opacity", 0, 1)
+              .duration(250);
+
+            const leavingAnimation = createAnimation()
+              .addElement(opts.leavingEl)
+              .fromTo("opacity", 1, 0)
+              .duration(250);
+
+            const animation = createAnimation()
+              .addAnimation(enteringAnimation)
+              .addAnimation(leavingAnimation);
+
+            return animation;
+          }}
+        >
+          <Route exact path="/courses" component={Courses}></Route>
+          <Route exact path="/stats" component={Stats}></Route>
+          <Route path="/settings" component={Settings}></Route>
           <Route exact path="/">
             <Redirect to="/courses" />
           </Route>
@@ -71,12 +84,8 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
-      <Route path="/lesson/:id">
-        <Lesson />
-      </Route>
-      <Route path="/course/:id">
-        <Course />
-      </Route>
+      <Route path="/lesson/:id" component={Lesson}></Route>
+      <Route path="/course/:id" component={Course}></Route>
     </IonReactRouter>
   </IonApp>
 );
