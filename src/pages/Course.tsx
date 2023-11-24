@@ -3,7 +3,6 @@ import {
   IonAccordionGroup,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -63,7 +62,7 @@ const CoursePage: React.FC = () => {
                   {unit.lessons.map((lesson, index) => {
                     return (
                       <IonItem
-                        routerLink={`/lesson/${id}.${curUnit}.${index}`}
+                        routerLink={`/lesson/${id}$${curUnit}$${index}`}
                         routerDirection="forward"
                         disabled={index > (curLesson ?? 0)}
                         key={index}

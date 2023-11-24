@@ -2,29 +2,20 @@ import {
   IonButton,
   IonContent,
   IonHeader,
-  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./Lesson.css";
-import { useHistory, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import {
-  LessonInfo,
-  Unit,
-  Course,
-  Lesson,
-  MultipleChoiceQuestion,
-} from "./Courses";
-import { close } from "ionicons/icons";
+import { LessonInfo, Course, Lesson, MultipleChoiceQuestion } from "./Courses";
 import MultipleChoice from "../components/MultipleChoice";
 import CloseButton from "../components/CloseButton";
 
 const LessonPage: React.FC = () => {
-  let history = useHistory();
   let { id } = useParams<{ id: string }>();
-  let curInfo = id.split(".");
+  let curInfo = id.split("$");
 
   let [lessonInfo, setLessonInfo] = useState<LessonInfo>();
   let [lesson, setLesson] = useState<Lesson>();

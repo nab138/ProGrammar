@@ -1,8 +1,5 @@
-.submit-button {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.submit-button-container {
+  width: 100%;
 }
 
 @keyframes slideInFromBottom {

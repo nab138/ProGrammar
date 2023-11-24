@@ -5,10 +5,13 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
+  IonFab,
+  IonFooter,
 } from "@ionic/react";
 import "./SubmitQuestionButton.css";
 import { useState } from "react";
 interface SubmitQuestionButtonProps {
+  disabled: boolean;
   isCorrect: () => boolean;
   getExplanation: () => string;
   onCorrect: () => void;
@@ -21,14 +24,21 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   onIncorrect,
   onFirstClick,
   getExplanation,
+  disabled,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   let [text, setText] = useState<string>("Submit");
   let [firstClick, setFirstClick] = useState<boolean>(true);
   let [color, setColor] = useState<string>("primary");
   return (
-    <>
+    <IonFab
+      vertical="bottom"
+      horizontal="center"
+      slot="fixed"
+      className="submit-button-container"
+    >
       <IonButton
+        disabled={disabled}
         size="large"
         expand="full"
         color={color}
@@ -65,7 +75,7 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
           <IonCardContent>{getExplanation()}</IonCardContent>
         </IonCard>
       )}
-    </>
+    </IonFab>
   );
 };
 

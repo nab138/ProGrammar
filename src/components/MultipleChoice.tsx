@@ -55,6 +55,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
         })}
       </IonRadioGroup>
       <SubmitQuestionButton
+        disabled={selected == ""}
         isCorrect={() => {
           return selected === question.answer;
         }}
