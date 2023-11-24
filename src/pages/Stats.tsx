@@ -12,7 +12,7 @@ const Tab2: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Poop</IonTitle>
+          <IonTitle>Stats 2 Electric Boogaloo</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent></IonContent>
