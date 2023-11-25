@@ -161,16 +161,15 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
                           <>
                             <p className="ion-padding">
                               You finished that lesson with {totalIncorrect}{" "}
-                              wrong answers. If you want, you can try again.
+                              wrong answer{totalIncorrect > 1 ? "s" : ""}. If
+                              you want, you can try again.
                             </p>
                             <IonButton
                               expand="block"
                               color="warning"
                               onClick={() => {
                                 history.push(
-                                  `/lesson/${curInfo[0]}$${curInfo[1]}$${
-                                    parseInt(curInfo[2]) + 1
-                                  }`
+                                  `/lesson/${curInfo[0]}$${curInfo[1]}$${curInfo[2]}`
                                 );
                               }}
                             >
