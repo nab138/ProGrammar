@@ -14,10 +14,12 @@ import {
 import "./Courses.css";
 import coursesList from "../courses/courses.json";
 import { useEffect, useState } from "react";
-import getStorage from "../utils/storage";
-import { useHistory } from "react-router-dom";
+import getStorage, { initializeLesson } from "../utils/storage";
+import { useHistory, useLocation } from "react-router-dom";
+import { Course } from "../utils/structures";
 
 const Courses: React.FC = () => {
+  const { pathname } = useLocation();
   let history = useHistory();
 
   let [courses, setCourses] = useState<Course[]>([]);
@@ -37,7 +39,7 @@ const Courses: React.FC = () => {
     };
 
     fetchCourses();
-  }, []);
+  }, [pathname]);
 
   return (
     <IonPage>
@@ -46,7 +48,7 @@ const Courses: React.FC = () => {
           <IonTitle>Courses</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="courses-page">
         <h4>Select a Course</h4>
         {courses.map((course, index) => {
           let hasStarted =
@@ -70,17 +72,23 @@ const Courses: React.FC = () => {
                 <IonButton
                   fill="clear"
                   onClick={async () => {
-                    if (!hasStarted) {
-                      await getStorage().set(`unit-progress-${course.id}`, 0);
-                      await getStorage().set(`lesson-progress-${course.id}`, 0);
-                      course.currentUnit = 0;
-                      course.currentLesson = 0;
-                    }
-                    await getStorage().set("current-course", course.id);
                     history.push(`/course/${course.id}`);
                   }}
                 >
-                  {hasStarted ? "Resume" : "Start"} Course
+                  View Course
+                </IonButton>
+                <IonButton
+                  fill="clear"
+                  onClick={async () => {
+                    await initializeLesson(course.id);
+                    history.push(
+                      `/lesson/${course.id}$${
+                        hasStarted ? course.currentUnit : 0
+                      }$${hasStarted ? course.currentLesson : 0}`
+                    );
+                  }}
+                >
+                  {hasStarted ? "Resume" : "Start"}
                 </IonButton>
               </div>
             </IonCard>
@@ -92,45 +100,3 @@ const Courses: React.FC = () => {
 };
 
 export default Courses;
-
-export interface Course {
-  name: string;
-  description: string;
-  currentUnit: number;
-  currentLesson: number;
-  units: Unit[];
-  id: string;
-}
-
-export interface Unit {
-  name: string;
-  description: string;
-  id: string;
-  lessons: LessonInfo[];
-}
-
-export interface LessonInfo {
-  name: string;
-  type: "quiz" | "code";
-  id: string;
-}
-
-export interface Lesson {
-  questions: Question[];
-}
-
-export interface Question {
-  question: string;
-  type: "mc" | "fill";
-  choices: string[];
-  answer: string;
-  explanations?: string[];
-}
-
-export interface MultipleChoiceQuestion {
-  question: string;
-  type: "mc";
-  choices: string[];
-  answer: string;
-  explanations: string[];
-}

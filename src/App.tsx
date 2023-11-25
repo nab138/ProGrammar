@@ -36,6 +36,7 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Lesson from "./pages/Lesson";
 import Course from "./pages/Course";
+import LessonContainer from "./pages/LessonContainer";
 
 setupIonicReact();
 
@@ -84,7 +85,9 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
-      <Route path="/lesson/:id" component={Lesson}></Route>
+      <Route path="/lesson/:id">
+        <LessonContainer />
+      </Route>
       <Route path="/course/:id" component={Course}></Route>
     </IonReactRouter>
   </IonApp>

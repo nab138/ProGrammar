@@ -22,7 +22,7 @@ const CloseButton: React.FC<CloseButtonProps> = ({ isLesson }) => {
       <IonAlert
         header="Leaving so soon?"
         message="If you leave now, you'll lose progress within your lesson."
-        trigger="present-alert"
+        trigger={isLesson ? "present-alert" : ""}
         buttons={[
           {
             text: "Cancel",
@@ -33,7 +33,7 @@ const CloseButton: React.FC<CloseButtonProps> = ({ isLesson }) => {
             text: "OK",
             role: "confirm",
             handler: () => {
-              history.goBack();
+              history.push("/courses");
             },
           },
         ]}

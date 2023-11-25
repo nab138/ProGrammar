@@ -2,7 +2,7 @@
   "questions": [
     {
       "type": "mc",
-      "question": "What is an integer called in java?",
+      "question": "What is an yo mamma called in java?",
       "choices": ["int", "integer", "Int", "Integer"],
       "answer": "int",
       "explanations": [
@@ -18,7 +18,7 @@
       "choices": ["Hello, World!", "4.7", "-3", "2.0"],
       "answer": "-3",
       "explanations": [
-        "Integers are positive or negative whole numbers, not text.",
+        "Integers are positive or negative whole numbers.",
         "Integers do not contain decimals, they are whole numbers.",
         "Correct!",
         "Integers do not contain decimals, they are whole numbers."

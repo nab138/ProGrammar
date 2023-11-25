@@ -11,13 +11,14 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import "./Course.css";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { Course } from "./Courses";
-import getStorage from "../utils/storage";
+import { Course } from "../utils/structures";
+import getStorage, { initializeLesson } from "../utils/storage";
 import CloseButton from "../components/CloseButton";
 
 const CoursePage: React.FC = () => {
+  let history = useHistory();
   let { id } = useParams<{ id: string }>();
 
   let [curUnit, setCurUnit] = useState<number>();
@@ -29,6 +30,8 @@ const CoursePage: React.FC = () => {
       let info: Course = infoModule.default;
       let unit = await getStorage().get(`unit-progress-${id}`);
       let lesson = await getStorage().get(`lesson-progress-${id}`);
+      if (unit == null) unit = 0;
+      if (lesson == null) lesson = 0;
       setCurUnit(unit);
       setCurLesson(lesson);
       setInfo(info);
@@ -47,6 +50,7 @@ const CoursePage: React.FC = () => {
       <IonContent>
         <IonAccordionGroup multiple>
           {info?.units.map((unit, index) => {
+            let isCompletedUnit = index < (curUnit ?? 0);
             return (
               <IonAccordion
                 value={index.toString()}
@@ -62,9 +66,11 @@ const CoursePage: React.FC = () => {
                   {unit.lessons.map((lesson, index) => {
                     return (
                       <IonItem
-                        routerLink={`/lesson/${id}$${curUnit}$${index}`}
-                        routerDirection="forward"
-                        disabled={index > (curLesson ?? 0)}
+                        onClick={async () => {
+                          await initializeLesson(id);
+                          history.push(`/lesson/${id}$${curUnit}$${index}`);
+                        }}
+                        disabled={!isCompletedUnit && index > (curLesson ?? 0)}
                         key={index}
                       >
                         <IonLabel>{lesson.name}</IonLabel>

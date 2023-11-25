@@ -1,5 +1,5 @@
 import { IonButton, IonRadio, IonRadioGroup, IonTitle } from "@ionic/react";
-import { MultipleChoiceQuestion } from "../pages/Courses";
+import { MultipleChoiceQuestion } from "../utils/structures";
 import "./MultipleChoice.css";
 import { useRef, useState } from "react";
 import SubmitQuestionButton from "./SubmitQuestionButton";

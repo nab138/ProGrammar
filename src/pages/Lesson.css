@@ -1,0 +1,13 @@
+.lesson-complete-screen {
+  text-align: center;
+  height: 100%;
+}
+.lesson-complete-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 60%;
+}
+.lesson-complete-screen ion-button {
+  margin: 10px;
+}

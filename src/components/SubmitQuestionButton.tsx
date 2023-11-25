@@ -40,8 +40,8 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
       <IonButton
         disabled={disabled}
         size="large"
-        expand="full"
         color={color}
+        expand="block"
         className="submit-button"
         onClick={() => {
           if (firstClick) {
