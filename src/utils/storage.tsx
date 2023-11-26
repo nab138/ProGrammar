@@ -1,5 +1,5 @@
 import { Storage } from "@ionic/storage";
-import { Course } from "./structures";
+import { Course, Lesson, Unit } from "./structures";
 
 const store = new Storage();
 let hasInit = false;

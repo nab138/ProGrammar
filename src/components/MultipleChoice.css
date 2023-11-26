@@ -1,7 +1,7 @@
 .choice {
   width: 100%;
   border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--ion-color-medium);
   margin-top: -1px;
 }
 .choice.radio-checked {

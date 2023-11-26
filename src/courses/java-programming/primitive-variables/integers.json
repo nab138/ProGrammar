@@ -2,6 +2,19 @@
   "questions": [
     {
       "type": "mc",
+      "question": "integers-q1",
+      "rich": true,
+      "choices": ["3.14", "\"Hello!\"", "7", "4.0"],
+      "answer": "7",
+      "explanations": [
+        "Integers do not contain decimals, they are whole numbers.",
+        "Integers are positive or negative whole numbers, not text.",
+        "Correct!",
+        "Integers do not contain decimals, they are whole numbers."
+      ]
+    },
+    {
+      "type": "mc",
       "question": "What is an integer called in java?",
       "choices": ["int", "integer", "Int", "Integer"],
       "answer": "int",

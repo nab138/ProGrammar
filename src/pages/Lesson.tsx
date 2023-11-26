@@ -1,14 +1,11 @@
 import {
-  IonButton,
   IonContent,
   IonHeader,
   IonPage,
-  IonProgressBar,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./Lesson.css";
-import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import {
   LessonInfo,
@@ -17,33 +14,45 @@ import {
   MultipleChoiceQuestion,
   Question,
   randomizeLesson,
+  loadRichText,
 } from "../utils/structures";
 import MultipleChoice from "../components/MultipleChoice";
 import CloseButton from "../components/CloseButton";
 import LessonHeader from "../components/LessonHeader";
-import getStorage, { incrementLessonIfOlder } from "../utils/storage";
+import { incrementLessonIfOlder } from "../utils/storage";
+import SuccessScreen from "../components/SuccessScreen";
 
 interface LessonPageParams {
   id: string;
 }
 const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
-  let history = useHistory();
+  // id is in the format course$unit$lesson
   let curInfo = id.split("$");
-
+  let curCourse = curInfo[0];
+  let curUnit = parseInt(curInfo[1]);
+  let curLesson = parseInt(curInfo[2]);
   let [lessonInfo, setLessonInfo] = useState<LessonInfo>();
   let [info, setInfo] = useState<Course>();
   let [lesson, setLesson] = useState<Lesson>();
   let [incorrectQuestions, setIncorrectQuestions] = useState<number[]>([]);
+  let [currentQuestion, setCurrentQuestion] = useState<number>(0);
+  let [displayState, setDisplayState] = useState<string>("question");
+  let [totalIncorrect, setTotalIncorrect] = useState<number>(0);
+  let [currentIncorrect, setCurrentIncorrect] = useState<number>(0);
+  let [awaitingSave, setAwaitingSave] = useState<boolean>(true);
+
   useEffect(() => {
     const fetchInfo = async () => {
-      let infoModule = await import(`../courses/${curInfo[0]}/info.json`);
+      let infoModule = await import(`../courses/${curCourse}/info.json`);
       let info: Course = infoModule.default;
-      let unit = info.units[parseInt(curInfo[1])];
-      let lessonInfo = unit.lessons[parseInt(curInfo[2])];
+      let unit = info.units[curUnit];
+      let lessonInfo = unit.lessons[curLesson];
       let lessonModule = await import(
-        `../courses/${curInfo[0]}/${unit.id}/${lessonInfo.id}.json`
+        `../courses/${curCourse}/${unit.id}/${lessonInfo.id}.json`
       );
-      let lesson: Lesson = randomizeLesson(lessonModule.default);
+      let radnomizedLesson = randomizeLesson(lessonModule.default);
+      let lesson = await loadRichText(info, unit, radnomizedLesson);
+
       setLesson(lesson);
       setInfo(info);
       setLessonInfo(lessonInfo);
@@ -51,11 +60,11 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     fetchInfo();
   }, [id]);
 
-  let [currentQuestion, setCurrentQuestion] = useState<number>(0);
-  let [displayState, setDisplayState] = useState<string>("question");
-  let [totalIncorrect, setTotalIncorrect] = useState<number>(0);
-  let [currentIncorrect, setCurrentIncorrect] = useState<number>(0);
-  let [awaitingSave, setAwaitingSave] = useState<boolean>(true);
+  // If the last question was answered incorrectly, it would not be added to the incorrectQuestions array when toNextQuestion()
+  // is called, so instead we call it when the totalIncorrect changes
+  useEffect(() => {
+    toNextQuestion();
+  }, [totalIncorrect, incorrectQuestions]);
 
   const toNextQuestion = () => {
     if (!lessonInfo || !lesson) return <></>;
@@ -63,6 +72,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     if (displayState == "review") {
       if (incorrectQuestions.length == 1) {
         setDisplayState("complete");
+        saveProgress();
         return;
       }
       setIncorrectQuestions(incorrectQuestions.slice(1));
@@ -77,6 +87,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       ) {
         // If there are no incorrect questions, we are done with the lesson
         if (incorrectQuestions.length === 0) {
+          saveProgress();
           setDisplayState("complete");
         } else {
           // Otherwise, we need to go into review mode
@@ -91,30 +102,24 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
 
   const saveProgress = async () => {
     if (!info) return;
-    await incrementLessonIfOlder(
-      curInfo[0],
-      parseInt(curInfo[1]),
-      parseInt(curInfo[2]),
-      info
-    );
+    await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
     setAwaitingSave(false);
   };
 
   if (!lessonInfo || !lesson) return <></>;
-  const getQuestion = (question: Question) => {
+  const getQuestion = (question: Question, isReview = false) => {
     switch (question?.type) {
       case "mc":
         return (
           <MultipleChoice
-            key={currentQuestion}
+            key={currentQuestion + (isReview ? "r" : "")}
             question={question as MultipleChoiceQuestion}
             onCorrect={function (): void {
               toNextQuestion();
             }}
             onIncorrect={function (): void {
-              setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
               setTotalIncorrect(totalIncorrect + 1);
-              toNextQuestion();
+              setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
           />
         );
@@ -125,8 +130,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>
-            {parseInt(curInfo[1]) + 1}.{parseInt(curInfo[2]) + 1} -{" "}
-            {lessonInfo?.name}
+            {curUnit + 1}.{curLesson + 1} - {lessonInfo?.name}
           </IonTitle>
           <CloseButton isLesson={awaitingSave} />
         </IonToolbar>
@@ -148,60 +152,13 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             case "review":
               let reviewQuestion = lesson?.questions[currentQuestion];
               if (!reviewQuestion) return <></>;
-              return getQuestion(reviewQuestion);
+              return getQuestion(reviewQuestion, true);
             case "complete":
-              saveProgress();
               return (
-                <div className="lesson-complete-screen">
-                  <h2 className="ion-padding">Lesson Complete!</h2>
-                  <div className="lesson-complete-buttons">
-                    {(() => {
-                      if (totalIncorrect > 0) {
-                        return (
-                          <>
-                            <p className="ion-padding">
-                              You finished that lesson with {totalIncorrect}{" "}
-                              wrong answer{totalIncorrect > 1 ? "s" : ""}. If
-                              you want, you can try again.
-                            </p>
-                            <IonButton
-                              expand="block"
-                              color="warning"
-                              onClick={() => {
-                                history.push(
-                                  `/lesson/${curInfo[0]}$${curInfo[1]}$${curInfo[2]}`
-                                );
-                              }}
-                            >
-                              Try Again
-                            </IonButton>
-                          </>
-                        );
-                      }
-                    })()}
-                    <IonButton
-                      expand="block"
-                      onClick={() => {
-                        history.push(
-                          `/lesson/${curInfo[0]}$${curInfo[1]}$${
-                            parseInt(curInfo[2]) + 1
-                          }`
-                        );
-                      }}
-                      color="success"
-                    >
-                      Next Lesson
-                    </IonButton>
-                    <IonButton
-                      expand="block"
-                      onClick={() => {
-                        history.push(`/courses`);
-                      }}
-                    >
-                      Back to Home
-                    </IonButton>
-                  </div>
-                </div>
+                <SuccessScreen
+                  totalIncorrect={totalIncorrect}
+                  curInfo={curInfo}
+                />
               );
           }
         })()}

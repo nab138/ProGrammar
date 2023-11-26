@@ -3,6 +3,7 @@ import { MultipleChoiceQuestion } from "../utils/structures";
 import "./MultipleChoice.css";
 import { useRef, useState } from "react";
 import SubmitQuestionButton from "./SubmitQuestionButton";
+import RichDisplay from "./RichDisplay";
 
 interface MultipleChoiceProps {
   question: MultipleChoiceQuestion;
@@ -19,7 +20,10 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   let correctAnswer = useRef<HTMLIonRadioElement>(null);
   return (
     <>
-      <h3 className="ion-padding">{question.question}</h3>
+      <RichDisplay
+        content={question.rich ? question.content ?? "" : question.question}
+        richDisplay={question.rich ?? false}
+      />
       <IonRadioGroup
         className="choices"
         onIonChange={(event) => {

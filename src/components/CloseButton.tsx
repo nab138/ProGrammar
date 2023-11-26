@@ -37,9 +37,6 @@ const CloseButton: React.FC<CloseButtonProps> = ({ isLesson }) => {
             },
           },
         ]}
-        onDidDismiss={({ detail }) =>
-          console.log(`Dismissed with role: ${detail.role}`)
-        }
       ></IonAlert>
     </>
   );

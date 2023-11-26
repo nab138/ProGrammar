@@ -26,18 +26,22 @@ export interface Lesson {
 
 export interface Question {
   question: string;
+  content?: string;
   type: "mc" | "fill";
   choices: string[];
   answer: string;
   explanations?: string[];
+  rich?: boolean;
 }
 
 export interface MultipleChoiceQuestion {
   question: string;
+  content?: string;
   type: "mc";
   choices: string[];
   answer: string;
   explanations: string[];
+  rich?: boolean;
 }
 export function randomizeLesson(lesson: Lesson): Lesson {
   // Randomize the order of the questions, and the order of answers within the question and adjust the order of the explanations accordingly.
@@ -60,5 +64,23 @@ export function randomizeLesson(lesson: Lesson): Lesson {
       mcQuestion.explanations = newExplanations;
     }
   });
+  return { questions: newQuestions };
+}
+
+export async function loadRichText(
+  course: Course,
+  unit: Unit,
+  lesson: Lesson
+): Promise<Lesson> {
+  let newQuestions: Question[] = [];
+  for (let question of lesson.questions) {
+    if (question.rich) {
+      let questionModule = await import(
+        `../courses/${course.id}/${unit.id}/markdown/${question.question}.md`
+      );
+      question.content = questionModule.default;
+    }
+    newQuestions.push(question);
+  }
   return { questions: newQuestions };
 }
