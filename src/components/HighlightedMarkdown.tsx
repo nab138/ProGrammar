@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Markdown from "markdown-to-jsx";
 import hljs from "highlight.js";
+import "./HighlightedMarkdown.css";
 
 interface HighlightedMarkdownProps {
   children: string;
@@ -13,9 +14,9 @@ export function HighlightedMarkdown({
 }: HighlightedMarkdownProps) {
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      import("highlight.js/styles/atom-one-dark.min.css");
+      import("highlight.js/styles/atom-one-dark.css");
     } else {
-      import("highlight.js/styles/docco.min.css");
+      import("highlight.js/styles/atom-one-light.css");
     }
   }, []);
 

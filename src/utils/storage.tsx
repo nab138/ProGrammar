@@ -17,7 +17,7 @@ export async function incrementLessonIfOlder(
   curUnit: number,
   curLesson: number,
   courseInfo: Course
-) {
+): Promise<string> {
   let storedUnit = parseInt(await getStorage().get(`unit-progress-${course}`));
   let storedLesson = parseInt(
     await getStorage().get(`lesson-progress-${course}`)
@@ -26,22 +26,28 @@ export async function incrementLessonIfOlder(
   let lesson = curLesson + 1;
 
   let numLessonsInUnit = courseInfo.units[curUnit].lessons.length - 1;
+
+  let result = "continue";
   if (
     storedUnit > curUnit ||
     (storedUnit == curUnit && storedLesson > curLesson)
   )
-    return;
+    return "old";
   if (curLesson == numLessonsInUnit) {
     if (courseInfo.units.length - 1 > curUnit) {
       unit = curUnit + 1;
       lesson = 0;
+      result = "end-unit";
     } else {
+      lesson = curLesson;
+      result = "end-course";
     }
   } else {
     lesson = curLesson + 1;
   }
   await getStorage().set(`unit-progress-${course}`, unit);
   await getStorage().set(`lesson-progress-${course}`, lesson);
+  return result;
 }
 
 export async function initializeLesson(course: string) {

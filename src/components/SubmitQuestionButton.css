@@ -18,7 +18,7 @@
   animation: slideInFromBottom 0.3s forwards ease-out;
   /* Anchor to bottom of page, but above the submit button */
   position: fixed;
-  bottom: 60px;
+  bottom: 80px;
   left: 0;
   right: 0;
 }

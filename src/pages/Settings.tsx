@@ -8,8 +8,18 @@ import {
 } from "@ionic/react";
 import "./Settings.css";
 import getStorage from "../utils/storage";
+import { useEffect, useState } from "react";
 
 const Tab3: React.FC = () => {
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    const fetchInfo = async () => {
+      let versionModule = await import(`../version.json`);
+      setVersion(versionModule.default.version);
+    };
+    fetchInfo();
+  }, []);
   return (
     <IonPage>
       <IonHeader>
@@ -28,6 +38,7 @@ const Tab3: React.FC = () => {
         >
           DANGER: RESET ALL SAVED DATA
         </IonButton>
+        <p className="ion-padding">Version {version}</p>
       </IonContent>
     </IonPage>
   );

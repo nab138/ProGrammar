@@ -1,0 +1,4 @@
+.lesson-content-container {
+  overflow: scroll;
+  height: calc(100% - 150px);
+}

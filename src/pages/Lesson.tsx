@@ -16,11 +16,12 @@ import {
   randomizeLesson,
   loadRichText,
 } from "../utils/structures";
-import MultipleChoice from "../components/MultipleChoice";
+import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
 import LessonHeader from "../components/LessonHeader";
 import { incrementLessonIfOlder } from "../utils/storage";
-import SuccessScreen from "../components/SuccessScreen";
+import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
+import TextScreen from "../components/lessonPageTypes/TextScreen";
 
 interface LessonPageParams {
   id: string;
@@ -40,6 +41,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   let [totalIncorrect, setTotalIncorrect] = useState<number>(0);
   let [currentIncorrect, setCurrentIncorrect] = useState<number>(0);
   let [awaitingSave, setAwaitingSave] = useState<boolean>(true);
+  let [completeType, setCompleteType] = useState<string>("continue");
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -50,7 +52,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       let lessonModule = await import(
         `../courses/${curCourse}/${unit.id}/${lessonInfo.id}.json`
       );
-      let radnomizedLesson = randomizeLesson(lessonModule.default);
+      let radnomizedLesson = randomizeLesson(lessonModule.default, lessonInfo);
       let lesson = await loadRichText(info, unit, radnomizedLesson);
 
       setLesson(lesson);
@@ -71,8 +73,8 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     // If we are in review mode, we need to check if we are done reviewing, and if not, go to the next incorrect question
     if (displayState == "review") {
       if (incorrectQuestions.length == 1) {
-        setDisplayState("complete");
         saveProgress();
+        setDisplayState("complete");
         return;
       }
       setIncorrectQuestions(incorrectQuestions.slice(1));
@@ -102,8 +104,9 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
 
   const saveProgress = async () => {
     if (!info) return;
-    await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
+    let res = await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
     setAwaitingSave(false);
+    setCompleteType(res);
   };
 
   if (!lessonInfo || !lesson) return <></>;
@@ -114,13 +117,19 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           <MultipleChoice
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as MultipleChoiceQuestion}
-            onCorrect={function (): void {
-              toNextQuestion();
-            }}
+            onCorrect={toNextQuestion}
             onIncorrect={function (): void {
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
+          />
+        );
+      case "text":
+        return (
+          <TextScreen
+            key={currentQuestion}
+            question={question}
+            onCorrect={toNextQuestion}
           />
         );
     }
@@ -135,33 +144,37 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           <CloseButton isLesson={awaitingSave} />
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="lesson-page">
         <LessonHeader
           displayState={displayState}
           currentQuestion={currentQuestion}
           totalIncorrect={totalIncorrect}
           currentIncorrect={currentIncorrect}
           lesson={lesson}
+          lessonInfo={lessonInfo}
         />
-        {(() => {
-          switch (displayState) {
-            case "question":
-              let question = lesson?.questions[currentQuestion];
-              if (!question) return <></>;
-              return getQuestion(question);
-            case "review":
-              let reviewQuestion = lesson?.questions[currentQuestion];
-              if (!reviewQuestion) return <></>;
-              return getQuestion(reviewQuestion, true);
-            case "complete":
-              return (
-                <SuccessScreen
-                  totalIncorrect={totalIncorrect}
-                  curInfo={curInfo}
-                />
-              );
-          }
-        })()}
+        <div className="lesson-content-container">
+          {(() => {
+            switch (displayState) {
+              case "question":
+                let question = lesson?.questions[currentQuestion];
+                if (!question) return <></>;
+                return getQuestion(question);
+              case "review":
+                let reviewQuestion = lesson?.questions[currentQuestion];
+                if (!reviewQuestion) return <></>;
+                return getQuestion(reviewQuestion, true);
+              case "complete":
+                return (
+                  <SuccessScreen
+                    totalIncorrect={totalIncorrect}
+                    curInfo={curInfo}
+                    completeType={completeType}
+                  />
+                );
+            }
+          })()}
+        </div>
       </IonContent>
     </IonPage>
   );

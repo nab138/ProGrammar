@@ -1,0 +1,14 @@
+{
+  "questions": [
+    {
+      "type": "text",
+      "question": "variables-t1",
+      "rich": true
+    },
+    {
+      "type": "text",
+      "question": "variables-t2",
+      "rich": true
+    }
+  ]
+}

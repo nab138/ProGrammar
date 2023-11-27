@@ -1,7 +1,7 @@
 {
   "name": "programming-duolingo",
   "private": true,
-  "version": "0.0.16",
+  "version": "0.0.44",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -10,7 +10,8 @@
     "test.e2e": "cypress run",
     "test.unit": "vitest",
     "lint": "eslint",
-    "dev-deploy": "npm version patch --no-git-tag-version && npm run build && npx @capgo/cli@latest bundle upload"
+    "version-stuff": "npm version patch --no-git-tag-version && echo '{\"version\":\"'$(node -p \"require('./package.json').version\")'\"}' > src/version.json",
+    "dev-deploy": "npm run version-stuff && npm run build && npx @capgo/cli@latest bundle upload"
   },
   "dependencies": {
     "@capacitor/app": "5.0.6",

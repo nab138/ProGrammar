@@ -2,7 +2,20 @@
   "questions": [
     {
       "type": "mc",
-      "question": "What is an yo mamma called in java?",
+      "question": "integers-q1",
+      "rich": true,
+      "choices": ["3.14", "\"Hello!\"", "7", "4.0"],
+      "answer": "7",
+      "explanations": [
+        "Integers do not contain decimals, they are whole numbers.",
+        "Integers are positive or negative whole numbers, not text.",
+        "Correct!",
+        "Integers do not contain decimals, they are whole numbers."
+      ]
+    },
+    {
+      "type": "mc",
+      "question": "What is an integer called in java?",
       "choices": ["int", "integer", "Int", "Integer"],
       "answer": "int",
       "explanations": [
@@ -18,7 +31,7 @@
       "choices": ["Hello, World!", "4.7", "-3", "2.0"],
       "answer": "-3",
       "explanations": [
-        "Integers are positive or negative whole numbers.",
+        "Integers are positive or negative whole numbers, not text.",
         "Integers do not contain decimals, they are whole numbers.",
         "Correct!",
         "Integers do not contain decimals, they are whole numbers."

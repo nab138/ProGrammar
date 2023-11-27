@@ -16,7 +16,7 @@ export interface Unit {
 
 export interface LessonInfo {
   name: string;
-  type: "quiz" | "code";
+  type: "quiz" | "learn";
   id: string;
 }
 
@@ -27,7 +27,7 @@ export interface Lesson {
 export interface Question {
   question: string;
   content?: string;
-  type: "mc" | "fill";
+  type: "mc" | "fill" | "text";
   choices: string[];
   answer: string;
   explanations?: string[];
@@ -43,7 +43,11 @@ export interface MultipleChoiceQuestion {
   explanations: string[];
   rich?: boolean;
 }
-export function randomizeLesson(lesson: Lesson): Lesson {
+export function randomizeLesson(
+  lesson: Lesson,
+  lessonInfo: LessonInfo
+): Lesson {
+  if (lessonInfo.type == "learn") return lesson;
   // Randomize the order of the questions, and the order of answers within the question and adjust the order of the explanations accordingly.
   let newQuestions: Question[] = lesson.questions.sort(
     () => Math.random() - 0.5
@@ -55,9 +59,11 @@ export function randomizeLesson(lesson: Lesson): Lesson {
         { length: mcQuestion.choices.length },
         (_, i) => i
       );
-      indices.sort(() => Math.random() - 0.5);
-      let newChoices: string[] = indices.map((i) => mcQuestion.choices[i]);
-      let newExplanations: string[] = indices.map(
+      let shuffledIndices = shuffleArray(indices);
+      let newChoices: string[] = shuffledIndices.map(
+        (i) => mcQuestion.choices[i]
+      );
+      let newExplanations: string[] = shuffledIndices.map(
         (i) => mcQuestion.explanations[i]
       );
       mcQuestion.choices = newChoices;
@@ -67,6 +73,13 @@ export function randomizeLesson(lesson: Lesson): Lesson {
   return { questions: newQuestions };
 }
 
+function shuffleArray(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 export async function loadRichText(
   course: Course,
   unit: Unit,

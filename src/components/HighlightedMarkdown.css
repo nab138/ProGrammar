@@ -1,0 +1,8 @@
+blockquote {
+  /* For some reason, Ion removes all special styles from blockquote, so they appear as paragraph. Add them back. */
+  margin: 0 0 1em;
+  padding: 2px 1em;
+  border-left: 0.25em solid var(--ion-color-medium);
+  background-color: var(--ion-color-light);
+  border-radius: 2px;
+}

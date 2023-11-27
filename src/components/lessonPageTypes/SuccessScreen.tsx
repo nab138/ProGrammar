@@ -5,15 +5,24 @@ import { useHistory } from "react-router";
 interface SuccessScreenProps {
   totalIncorrect: number;
   curInfo: string[];
+  completeType: string;
 }
 const SuccessScreen: React.FC<SuccessScreenProps> = ({
   totalIncorrect,
   curInfo,
+  completeType,
 }) => {
+  let completedText = "Lesson";
+  let shouldHaveNext = true;
+  if (completeType === "end-unit") completedText = "Unit";
+  if (completeType === "end-course") {
+    completedText = "Course";
+    shouldHaveNext = false;
+  }
   let history = useHistory();
   return (
     <div className="lesson-complete-screen">
-      <h2 className="ion-padding">Lesson Complete!</h2>
+      <h2 className="ion-padding">{completedText} Complete!</h2>
       <div className="lesson-complete-buttons">
         {(() => {
           if (totalIncorrect > 0) {
@@ -38,17 +47,27 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
             );
           }
         })()}
-        <IonButton
-          expand="block"
-          onClick={() => {
-            history.push(
-              `/lesson/${curInfo[0]}$${curInfo[1]}$${parseInt(curInfo[2]) + 1}`
-            );
-          }}
-          color="success"
-        >
-          Next Lesson
-        </IonButton>
+        {shouldHaveNext ? (
+          <IonButton
+            expand="block"
+            onClick={() => {
+              history.push(
+                `/lesson/${curInfo[0]}$${
+                  parseInt(curInfo[1]) + (completedText == "Unit" ? 1 : 0)
+                }$${
+                  completedText == "Unit"
+                    ? 0
+                    : parseInt(curInfo[2]) + (completedText == "Lesson" ? 1 : 0)
+                }`
+              );
+            }}
+            color="success"
+          >
+            Next {completedText}
+          </IonButton>
+        ) : (
+          <> </>
+        )}
         <IonButton
           expand="block"
           onClick={() => {

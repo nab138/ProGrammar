@@ -17,6 +17,7 @@ interface SubmitQuestionButtonProps {
   onCorrect: () => void;
   onIncorrect: () => void;
   onFirstClick: () => void;
+  text?: string;
 }
 const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   isCorrect,
@@ -25,9 +26,10 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   onFirstClick,
   getExplanation,
   disabled,
+  text,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
-  let [text, setText] = useState<string>("Submit");
+  let [curText, setCurText] = useState<string>(text ?? "Submit");
   let [firstClick, setFirstClick] = useState<boolean>(true);
   let [color, setColor] = useState<string>("primary");
   return (
@@ -52,7 +54,7 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
             }
             setFirstClick(false);
             onFirstClick();
-            setText("Next");
+            setCurText("Next");
             setShowExplanation(true);
           } else {
             if (isCorrect()) {
@@ -63,7 +65,7 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
           }
         }}
       >
-        {text}
+        {curText}
       </IonButton>
       {showExplanation && (
         <IonCard className="animate-in">

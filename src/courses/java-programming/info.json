@@ -9,14 +9,31 @@
       "description": "Learn about primitive variables in Java.",
       "lessons": [
         {
+          "name": "Intro to Variables",
+          "id": "variables",
+          "type": "learn"
+        },
+        {
           "name": "Integers",
           "id": "integers",
-          "type": "quiz"
+          "type": "learn"
         },
         {
           "name": "Integers Quiz",
           "id": "integers-quiz",
           "type": "quiz"
+        }
+      ]
+    },
+    {
+      "name": "Poopy Variables",
+      "id": "poopy-variables",
+      "description": "Learn about poopy variables in Java.",
+      "lessons": [
+        {
+          "name": "Intro to Poopy Variables",
+          "id": "poopy-variables",
+          "type": "learn"
         }
       ]
     }

@@ -1,6 +1,6 @@
 import { IonAlert, IonIcon, IonProgressBar } from "@ionic/react";
 import "./LessonHeader.css";
-import { Lesson } from "../utils/structures";
+import { Lesson, LessonInfo } from "../utils/structures";
 
 interface LessonHeaderProps {
   displayState: string;
@@ -8,11 +8,13 @@ interface LessonHeaderProps {
   totalIncorrect: number;
   currentIncorrect: number;
   lesson: Lesson;
+  lessonInfo: LessonInfo;
 }
 const LessonHeader: React.FC<LessonHeaderProps> = ({
   displayState,
   currentQuestion,
   lesson,
+  lessonInfo,
   totalIncorrect,
   currentIncorrect,
 }) => {
@@ -26,8 +28,9 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
   return (
     <div className="ion-padding lesson-header">
       <h4>
-        {inReviewMode ? "Review " : ""} Question {currentQuestionCount}/
-        {questionCount}
+        {inReviewMode ? "Review " : ""}{" "}
+        {lessonInfo.type == "learn" ? "Part" : "Question"}{" "}
+        {currentQuestionCount}/{questionCount}
       </h4>
       <IonProgressBar
         color={inReviewMode ? "warning" : ""}

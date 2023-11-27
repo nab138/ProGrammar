@@ -16,7 +16,7 @@ const CloseButton: React.FC<CloseButtonProps> = ({ isLesson }) => {
         className="close-button"
         id={isLesson ? "present-alert" : ""}
         onClick={() => {
-          if (!isLesson) history.goBack();
+          if (!isLesson) history.push("/courses");
         }}
       />
       <IonAlert

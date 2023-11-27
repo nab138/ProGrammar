@@ -1,9 +1,9 @@
 import { IonButton, IonRadio, IonRadioGroup, IonTitle } from "@ionic/react";
-import { MultipleChoiceQuestion } from "../utils/structures";
+import { MultipleChoiceQuestion } from "../../utils/structures";
 import "./MultipleChoice.css";
 import { useRef, useState } from "react";
-import SubmitQuestionButton from "./SubmitQuestionButton";
-import RichDisplay from "./RichDisplay";
+import SubmitQuestionButton from "../SubmitQuestionButton";
+import RichDisplay from "../RichDisplay";
 
 interface MultipleChoiceProps {
   question: MultipleChoiceQuestion;
