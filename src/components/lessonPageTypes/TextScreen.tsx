@@ -10,10 +10,12 @@ interface TextScreenProps {
 const TextScreen: React.FC<TextScreenProps> = ({ question, onCorrect }) => {
   return (
     <>
-      <RichDisplay
-        content={question.rich ? question.content ?? "" : question.question}
-        richDisplay={question.rich ?? false}
-      />
+      <div className="lesson-content-container">
+        <RichDisplay
+          content={question.rich ? question.content ?? "" : question.question}
+          richDisplay={question.rich ?? false}
+        />
+      </div>
       <SubmitQuestionButton
         text="Continue"
         disabled={false}

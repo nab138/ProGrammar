@@ -1,6 +1,11 @@
 .submit-button-container {
   width: 100%;
   padding: 10px;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  position: fixed;
+  z-index: 999;
 }
 
 @keyframes slideInFromBottom {

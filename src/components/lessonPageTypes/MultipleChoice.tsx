@@ -20,6 +20,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   let correctAnswer = useRef<HTMLIonRadioElement>(null);
   return (
     <>
+    <div className="lesson-content-container">
       <RichDisplay
         content={question.rich ? question.content ?? "" : question.question}
         richDisplay={question.rich ?? false}
@@ -58,6 +59,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           );
         })}
       </IonRadioGroup>
+      </div>
       <SubmitQuestionButton
         disabled={selected == ""}
         isCorrect={() => {

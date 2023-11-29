@@ -153,7 +153,6 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           lesson={lesson}
           lessonInfo={lessonInfo}
         />
-        <div className="lesson-content-container">
           {(() => {
             switch (displayState) {
               case "question":
@@ -174,7 +173,6 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
                 );
             }
           })()}
-        </div>
       </IonContent>
     </IonPage>
   );

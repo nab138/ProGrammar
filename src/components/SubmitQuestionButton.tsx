@@ -33,10 +33,7 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   let [firstClick, setFirstClick] = useState<boolean>(true);
   let [color, setColor] = useState<string>("primary");
   return (
-    <IonFab
-      vertical="bottom"
-      horizontal="center"
-      slot="fixed"
+    <div
       className="submit-button-container"
     >
       <IonButton
@@ -77,7 +74,7 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
           <IonCardContent>{getExplanation()}</IonCardContent>
         </IonCard>
       )}
-    </IonFab>
+    </div>
   );
 };
 
