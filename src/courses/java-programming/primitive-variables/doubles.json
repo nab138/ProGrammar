@@ -1,0 +1,22 @@
+{
+    "questions": [
+      {
+        "type": "text",
+        "question": "doubles-t1",
+        "rich": true
+      },
+      {
+        "type": "mc",
+        "question": "What is the most common type for storing decimals called in java?",
+        "choices": ["double", "float", "number", "decimal"],
+        "answer": "double",
+        "explanations": [
+          "Correct!",
+          "Floats do store decimals, but is not the recommend way in most cases",
+          "\"number\" is not a type in Java",
+          "\"decimal\" is not a type in Java"
+        ]
+      }
+    ]
+  }
+  
