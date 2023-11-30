@@ -10,7 +10,7 @@ import "./Settings.css";
 import getStorage from "../utils/storage";
 import { useEffect, useState } from "react";
 
-const Tab3: React.FC = () => {
+const Settings: React.FC = () => {
   const [version, setVersion] = useState("");
 
   useEffect(() => {
@@ -44,4 +44,4 @@ const Tab3: React.FC = () => {
   );
 };
 
-export default Tab3;
+export default Settings;

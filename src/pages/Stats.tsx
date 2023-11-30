@@ -7,7 +7,7 @@ import {
 } from "@ionic/react";
 import "./Stats.css";
 
-const Tab2: React.FC = () => {
+const Stats: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
@@ -15,9 +15,11 @@ const Tab2: React.FC = () => {
           <IonTitle>Stats</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent></IonContent>
+      <IonContent>
+
+      </IonContent>
     </IonPage>
   );
 };
 
-export default Tab2;
+export default Stats;
