@@ -26,60 +26,66 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
     <>
       <div className="lesson-content-container">
         <RichDisplay content={question.question} richDisplay={false} />
-        <div className="build-answer">
-          {answer.map((choice, i) => {
-            return (
-              <IonButton
-                disabled={disabled}
-                className="build-choice"
-                fill="outline"
-                key={choice + i}
-                mode="ios"
-                onClick={() => {
-                  setAnswer(answer.filter((_, j) => i !== j));
-                }}
-              >
-                {choice}
-              </IonButton>
-            );
-          })}
-          <div className="underline" />
-          <HighlightedMarkdown>
-            {"```java\n" + answer.join("") + "\n```"}
-          </HighlightedMarkdown>
-        </div>
-        <div className="choices">
-          {question.choices.map((choice, i) => {
-            return (
-              <IonButton
-                disabled={disabled}
-                className={
-                  "build-choice" + (answer.includes(choice) ? " hidden" : "")
-                }
-                mode="ios"
-                shape="round"
-                fill="outline"
-                key={choice + i}
-                onClick={() => {
-                  setAnswer([...answer, choice]);
-                }}
-              >
-                {choice}
-              </IonButton>
-            );
-          })}
-        </div>
+        <div className="build-question-test">
+          <div className="build-answer">
+            <div className="build-answer-buttons">
+              {answer.map((choice, i) => {
+                return (
+                  <IonButton
+                    disabled={disabled}
+                    className="build-choice"
+                    fill="outline"
+                    key={choice + i}
+                    mode="ios"
+                    onClick={() => {
+                      setAnswer(answer.filter((_, j) => i !== j));
+                    }}
+                  >
+                    {choice}
+                  </IonButton>
+                );
+              })}
+            </div>
+            <div className="underline" />
+            <HighlightedMarkdown>
+              {"```java\n" + answer.join("") + "\n```"}
+            </HighlightedMarkdown>
+          </div>
+          <div className="choices">
+            {question.choices.map((choice, i) => {
+              return (
+                <IonButton
+                  disabled={disabled}
+                  className={
+                    "build-choice" + (answer.includes(choice) ? " hidden" : "")
+                  }
+                  mode="ios"
+                  shape="round"
+                  fill="outline"
+                  key={choice + i}
+                  onClick={() => {
+                    setAnswer([...answer, choice]);
+                  }}
+                >
+                  {choice}
+                </IonButton>
+              );
+            })}
+          </div>
 
-        <IonButton
-          className="add-space"
-          autoCapitalize="off"
-          expand="block"
-          onClick={() => {
-            setAnswer([...answer, " "]);
-          }}
-        >
-          Space
-        </IonButton>
+          <div className="add-space-container">
+            <IonButton
+              className="add-space"
+              autoCapitalize="off"
+              expand="block"
+              onClick={() => {
+                setAnswer([...answer, " "]);
+              }}
+            >
+              Space
+            </IonButton>
+          </div>
+        </div>
       </div>
       <SubmitQuestionButton
         disabled={false}

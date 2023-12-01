@@ -121,6 +121,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             question={question as MultipleChoiceQuestion}
             onCorrect={toNextQuestion}
             onIncorrect={function (): void {
+              if(isReview) return;
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
@@ -141,6 +142,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             question={question as BuildQuestion}
             onCorrect={toNextQuestion}
             onIncorrect={function (): void {
+              if(isReview) return;
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
