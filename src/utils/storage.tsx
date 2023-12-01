@@ -28,11 +28,13 @@ export async function incrementLessonIfOlder(
   let numLessonsInUnit = courseInfo.units[curUnit].lessons.length - 1;
 
   let result = "continue";
+  let shouldSave = true;
   if (
     storedUnit > curUnit ||
     (storedUnit == curUnit && storedLesson > curLesson)
-  )
-    return "old";
+  ) {
+    shouldSave = false;
+  }
   if (curLesson == numLessonsInUnit) {
     if (courseInfo.units.length - 1 > curUnit) {
       unit = curUnit + 1;
@@ -45,8 +47,11 @@ export async function incrementLessonIfOlder(
   } else {
     lesson = curLesson + 1;
   }
-  await getStorage().set(`unit-progress-${course}`, unit);
-  await getStorage().set(`lesson-progress-${course}`, lesson);
+  if (shouldSave) {
+    await getStorage().set(`unit-progress-${course}`, unit);
+    await getStorage().set(`lesson-progress-${course}`, lesson);
+  }
+
   return result;
 }
 

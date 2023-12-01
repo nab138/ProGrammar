@@ -22,17 +22,22 @@
           "name": "Integers Quiz",
           "id": "integers-quiz",
           "type": "quiz"
+        },
+        {
+          "name": "Floating Point Numbers",
+          "id": "decimals",
+          "type": "learn"
         }
       ]
     },
     {
-      "name": "Floating Point Numbers",
-      "id": "decimals",
-      "description": "Learn about storing decimal variables in Java.",
+      "name": "Expressions & Operators",
+      "id": "expressions",
+      "description": "Learn about expressions and basic operators in Java.",
       "lessons": [
         {
-          "name": "Doubles",
-          "id": "doubles",
+          "name": "What is an expression?",
+          "id": "expressions",
           "type": "learn"
         }
       ]

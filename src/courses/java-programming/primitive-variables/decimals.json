@@ -2,7 +2,7 @@
     "questions": [
       {
         "type": "text",
-        "question": "doubles-t1",
+        "question": "decimals-t1",
         "rich": true
       },
       {

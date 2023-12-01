@@ -49,17 +49,17 @@ const CoursePage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonAccordionGroup multiple>
-          {info?.units.map((unit, index) => {
-            let isCompletedUnit = index < (curUnit ?? 0);
+          {info?.units.map((unit, unitIndex) => {
+            let isCompletedUnit = unitIndex < (curUnit ?? 0);
             return (
               <IonAccordion
-                value={index.toString()}
-                disabled={index > (curUnit ?? 0)}
-                key={index}
+                value={unitIndex.toString()}
+                disabled={unitIndex > (curUnit ?? 0)}
+                key={unitIndex}
               >
-                <IonItem slot="header" color="light" key={index}>
+                <IonItem slot="header" color="light" key={unitIndex}>
                   <IonLabel>
-                    Unit {index + 1} - {unit.name}
+                    Unit {unitIndex + 1} - {unit.name}
                   </IonLabel>
                 </IonItem>
                 <IonList className="ion-no-padding" slot="content">
@@ -68,7 +68,7 @@ const CoursePage: React.FC = () => {
                       <IonItem
                         onClick={async () => {
                           await initializeLesson(id);
-                          history.push(`/lesson/${id}$${curUnit}$${index}`);
+                          history.push(`/lesson/${id}$${unitIndex}$${index}`);
                         }}
                         disabled={!isCompletedUnit && index > (curLesson ?? 0)}
                         key={index}
