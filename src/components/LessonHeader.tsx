@@ -30,7 +30,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
       <h4>
         {inReviewMode ? "Review " : ""}{" "}
         {lessonInfo.type == "learn" ? "Part" : "Question"}{" "}
-        {currentQuestionCount}/{questionCount}
+        {currentQuestionCount + 1}/{questionCount}
       </h4>
       <IonProgressBar
         color={inReviewMode ? "warning" : ""}

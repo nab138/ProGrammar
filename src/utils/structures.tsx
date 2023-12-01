@@ -27,13 +27,20 @@ export interface Lesson {
 export interface Question {
   question: string;
   content?: string;
-  type: "mc" | "fill" | "text";
+  type: "mc" | "build" | "text";
   choices: string[];
   answer: string;
   explanations?: string[];
+  hard?: boolean;
   rich?: boolean;
 }
-
+export interface BuildQuestion {
+  question: string;
+  type: "build";
+  choices: string[];
+  answer: string;
+  hard?: boolean;
+}
 export interface MultipleChoiceQuestion {
   question: string;
   content?: string;
@@ -41,6 +48,7 @@ export interface MultipleChoiceQuestion {
   choices: string[];
   answer: string;
   explanations: string[];
+  hard?: boolean;
   rich?: boolean;
 }
 export function randomizeLesson(
@@ -49,9 +57,7 @@ export function randomizeLesson(
 ): Lesson {
   if (lessonInfo.type == "learn") return lesson;
   // Randomize the order of the questions, and the order of answers within the question and adjust the order of the explanations accordingly.
-  let newQuestions: Question[] = lesson.questions.sort(
-    () => Math.random() - 0.5
-  );
+  let newQuestions: Question[] = [...shuffleArray(lesson.questions)];
   newQuestions.forEach((question) => {
     if (question.type == "mc") {
       let mcQuestion = question as MultipleChoiceQuestion;

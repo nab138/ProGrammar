@@ -9,6 +9,42 @@
       "type": "text",
       "question": "variables-t2",
       "rich": true
+    },
+    {
+      "type": "text",
+      "question": "variables-t3",
+      "rich": true
+    },
+    {
+      "type": "text",
+      "question": "variables-t4",
+      "rich": true
+    },
+    {
+      "type": "text",
+      "question": "variables-t5",
+      "rich": true
+    },
+    {
+      "type": "text",
+      "question": "variables-t6",
+      "rich": true
+    },
+    {
+      "type": "build",
+      "hard": true,
+      "question": "Declare a variable named \"challengeVar\" of type \"String\", initialized with the value \"Hello, Java!\".",
+      "choices": [
+        ";",
+        "challenge",
+        "Challenge",
+        "String",
+        "Var",
+        "var",
+        "\"Hello, Java!\"",
+        "="
+      ],
+      "answer": "String challengeVar = \"Hello, Java!\";"
     }
   ]
 }

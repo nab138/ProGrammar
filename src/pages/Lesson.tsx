@@ -15,6 +15,7 @@ import {
   Question,
   randomizeLesson,
   loadRichText,
+  BuildQuestion,
 } from "../utils/structures";
 import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
@@ -22,6 +23,7 @@ import LessonHeader from "../components/LessonHeader";
 import { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
+import BuildResponse from "../components/lessonPageTypes/BuildResponse";
 
 interface LessonPageParams {
   id: string;
@@ -132,6 +134,18 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             onCorrect={toNextQuestion}
           />
         );
+      case "build":
+        return (
+          <BuildResponse
+            key={currentQuestion + (isReview ? "r" : "")}
+            question={question as BuildQuestion}
+            onCorrect={toNextQuestion}
+            onIncorrect={function (): void {
+              setTotalIncorrect(totalIncorrect + 1);
+              setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
+            }}
+          />
+        );
     }
   };
   return (
@@ -153,26 +167,26 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           lesson={lesson}
           lessonInfo={lessonInfo}
         />
-          {(() => {
-            switch (displayState) {
-              case "question":
-                let question = lesson?.questions[currentQuestion];
-                if (!question) return <></>;
-                return getQuestion(question);
-              case "review":
-                let reviewQuestion = lesson?.questions[currentQuestion];
-                if (!reviewQuestion) return <></>;
-                return getQuestion(reviewQuestion, true);
-              case "complete":
-                return (
-                  <SuccessScreen
-                    totalIncorrect={totalIncorrect}
-                    curInfo={curInfo}
-                    completeType={completeType}
-                  />
-                );
-            }
-          })()}
+        {(() => {
+          switch (displayState) {
+            case "question":
+              let question = lesson?.questions[currentQuestion];
+              if (!question) return <></>;
+              return getQuestion(question);
+            case "review":
+              let reviewQuestion = lesson?.questions[currentQuestion];
+              if (!reviewQuestion) return <></>;
+              return getQuestion(reviewQuestion, true);
+            case "complete":
+              return (
+                <SuccessScreen
+                  totalIncorrect={totalIncorrect}
+                  curInfo={curInfo}
+                  completeType={completeType}
+                />
+              );
+          }
+        })()}
       </IonContent>
     </IonPage>
   );
