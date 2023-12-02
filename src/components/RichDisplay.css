@@ -2,3 +2,16 @@
   padding-top: 2px;
   padding-bottom: 2px;
 }
+
+/* Add nice table styling to give borders using ionic colors*/
+.rich-display table {
+  border-collapse: collapse;
+  border: 1px solid var(--ion-color-dark);
+  min-width: 70%;
+}
+
+.rich-display table td,
+.rich-display table th {
+  border: 1px solid var(--ion-color-dark);
+  padding: 5px;
+}

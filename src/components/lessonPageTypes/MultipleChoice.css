@@ -4,6 +4,11 @@
   border-top: 1px solid var(--ion-color-medium);
   margin-top: -1px;
 }
+.choice .label-text-wrapper {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
 .choice.radio-checked {
   background-color: var(--ion-color-light);
 }

@@ -20,45 +20,45 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   let correctAnswer = useRef<HTMLIonRadioElement>(null);
   return (
     <>
-    <div className="lesson-content-container">
-      <RichDisplay
-        content={question.rich ? question.content ?? "" : question.question}
-        richDisplay={question.rich ?? false}
-      />
-      <IonRadioGroup
-        className="choices"
-        onIonChange={(event) => {
-          setSelected(event.detail.value);
-        }}
-      >
-        {question.choices.map((choice, i) => {
-          return (
-            <div key={i}>
-              <IonRadio
-                className={
-                  "choice ion-padding " +
-                  (disabled && selected == choice && choice != question.answer
-                    ? "incorrect-answer"
-                    : "")
-                }
-                value={choice}
-                key={i}
-                labelPlacement="end"
-                justify="start"
-                disabled={disabled}
-                ref={
-                  i === question.choices.indexOf(question.answer)
-                    ? correctAnswer
-                    : null
-                }
-              >
-                {choice}
-              </IonRadio>
-              <br />
-            </div>
-          );
-        })}
-      </IonRadioGroup>
+      <div className="lesson-content-container">
+        <RichDisplay
+          content={question.rich ? question.content ?? "" : question.question}
+          richDisplay={question.rich ?? false}
+        />
+        <IonRadioGroup
+          className="choices"
+          onIonChange={(event) => {
+            setSelected(event.detail.value);
+          }}
+        >
+          {question.choices.map((choice, i) => {
+            return (
+              <div key={i}>
+                <IonRadio
+                  className={
+                    "choice ion-padding " +
+                    (disabled && selected == choice && choice != question.answer
+                      ? "incorrect-answer"
+                      : "")
+                  }
+                  value={choice}
+                  key={i}
+                  labelPlacement="end"
+                  justify="start"
+                  disabled={disabled}
+                  ref={
+                    i === question.choices.indexOf(question.answer)
+                      ? correctAnswer
+                      : null
+                  }
+                >
+                  <span className="ion-text-wrap">{choice}</span>
+                </IonRadio>
+                <br />
+              </div>
+            );
+          })}
+        </IonRadioGroup>
       </div>
       <SubmitQuestionButton
         disabled={selected == ""}

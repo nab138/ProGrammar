@@ -6,6 +6,23 @@
       "rich": true
     },
     {
+      "type": "mc",
+      "question": "How would you describe the purpose of a variable in Java?",
+      "choices": [
+        "Variables are used to perform mathematical operations only.",
+        "Variables are used to store information and can hold different types of values.",
+        "Variables are only used for controlling the flow of a program.",
+        "Variables are used to define the structure of a class."
+      ],
+      "answer": "Variables are used to store information and can hold different types of values.",
+      "explanations": [
+        "Variables can store many different types of values, including numbers, text, and booleans. They are not limited to performing mathematical operations.",
+        "Correct! Variables in Java are used to store information and can hold different types of values.",
+        "Variables can be used in some cases to control the flow of a program, but that is not their only use.",
+        "Defining the structure of a class is done through class declarations, not variables."
+      ]
+    },
+    {
       "type": "text",
       "question": "variables-t2",
       "rich": true
@@ -41,16 +58,7 @@
         "String",
         "Var",
         "var",
-        "\"Hello, Java!\"",
-        "=",
-        ";a",
-        "chaallenge",
-        "Chaallenge",
-        "Striang",
-        "Vara",
-        "vaar",
-        "\"Heallo, Java!\"",
-        "a="
+        "\"Hello, Java!\""
       ],
       "answer": "String challengeVar = \"Hello, Java!\";"
     }

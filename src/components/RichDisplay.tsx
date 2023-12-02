@@ -1,6 +1,7 @@
 import React from "react";
 import "highlight.js/styles/docco.css"; // choose your style
 import { HighlightedMarkdown } from "./HighlightedMarkdown";
+import "./RichDisplay.css";
 
 interface RichDisplayProps {
   content: string;
