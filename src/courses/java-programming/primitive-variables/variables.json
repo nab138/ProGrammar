@@ -58,7 +58,8 @@
         "String",
         "Var",
         "var",
-        "\"Hello, Java!\""
+        "\"Hello, Java!\"",
+        "="
       ],
       "answer": "String challengeVar = \"Hello, Java!\";"
     }
