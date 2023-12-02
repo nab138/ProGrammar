@@ -3,7 +3,7 @@ import "./BuildResponse.css";
 import SubmitQuestionButton from "../SubmitQuestionButton";
 import RichDisplay from "../RichDisplay";
 import { IonButton } from "@ionic/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { HighlightedMarkdown } from "../HighlightedMarkdown";
 
 interface BuildResponseProps {
@@ -20,6 +20,8 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
   onCorrect,
   onIncorrect,
 }) => {
+  let answerButtons = useRef<HTMLDivElement>(null);
+
   let [answer, setAnswer] = useState<string[]>([]);
   let [disabled, setDisabled] = useState<boolean>(false);
   return (
@@ -33,7 +35,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         />
         <div className="build-question-test">
           <div className="build-answer">
-            <div className="build-answer-buttons">
+            <div className="build-answer-buttons" ref={answerButtons}>
               {answer.map((choice, i) => {
                 return (
                   <IonButton
@@ -70,6 +72,11 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
                   key={choice + i}
                   onClick={() => {
                     setAnswer([...answer, choice]);
+                    // Scroll horizontally to the end of the answer buttons
+                    if (answerButtons.current) {
+                      answerButtons.current.scrollLeft =
+                        answerButtons.current.scrollWidth;
+                    }
                   }}
                 >
                   {choice}
