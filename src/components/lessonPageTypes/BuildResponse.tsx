@@ -25,11 +25,6 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
   let [answer, setAnswer] = useState<string[]>([]);
   let [disabled, setDisabled] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (answerButtons.current) {
-      answerButtons.current.scrollLeft = answerButtons.current.scrollWidth;
-    }
-  }, [answer]);
   return (
     <>
       <div className="lesson-content-container">
@@ -78,6 +73,11 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
                   key={choice + i}
                   onClick={() => {
                     setAnswer([...answer, choice]);
+                    // Force the scroll to the right, accounting for the new button
+                    if (answerButtons.current) {
+                      answerButtons.current.scrollLeft =
+                        answerButtons.current.scrollWidth;
+                    }
                   }}
                 >
                   {choice}
