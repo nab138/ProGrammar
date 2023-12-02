@@ -5,16 +5,28 @@ import { HighlightedMarkdown } from "./HighlightedMarkdown";
 interface RichDisplayProps {
   content: string;
   richDisplay: boolean;
+  className?: string;
+  smallHeader?: boolean;
 }
 
-const RichDisplay: React.FC<RichDisplayProps> = ({ content, richDisplay }) => {
-  if (!richDisplay)
-    return <h1 className="rich-display ion-padding">{content}</h1>;
+const RichDisplay: React.FC<RichDisplayProps> = ({
+  content,
+  richDisplay,
+  className,
+  smallHeader,
+}) => {
+  let classList =
+    "rich-display ion-padding" + (className ? " " + className : "");
+  if (!richDisplay) {
+    if (!smallHeader) {
+      return <h1 className={classList}>{content}</h1>;
+    } else {
+      return <h2 className={classList}>{content}</h2>;
+    }
+  }
 
   return (
-    <HighlightedMarkdown className="rich-display ion-padding">
-      {content}
-    </HighlightedMarkdown>
+    <HighlightedMarkdown className={classList}>{content}</HighlightedMarkdown>
   );
 };
 

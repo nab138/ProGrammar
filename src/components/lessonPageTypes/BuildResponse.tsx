@@ -25,7 +25,12 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
   return (
     <>
       <div className="lesson-content-container">
-        <RichDisplay content={question.question} richDisplay={false} />
+        <RichDisplay
+          className="build-question-rich-display"
+          smallHeader={true}
+          content={question.question}
+          richDisplay={false}
+        />
         <div className="build-question-test">
           <div className="build-answer">
             <div className="build-answer-buttons">
@@ -47,7 +52,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
               })}
             </div>
             <div className="underline" />
-            <HighlightedMarkdown>
+            <HighlightedMarkdown key={answer.join("")}>
               {"```java\n" + answer.join("") + "\n```"}
             </HighlightedMarkdown>
           </div>
