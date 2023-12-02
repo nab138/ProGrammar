@@ -52,7 +52,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
               })}
             </div>
             <div className="underline" />
-            <HighlightedMarkdown key={answer.join("")}>
+            <HighlightedMarkdown className="build-q-code" key={answer.join("")}>
               {"```java\n" + answer.join("") + "\n```"}
             </HighlightedMarkdown>
           </div>

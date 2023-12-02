@@ -56,3 +56,9 @@
   margin-top: 15px;
   margin-bottom: 10px;
 }
+
+.build-q-code {
+  width: 100%;
+  overflow: scroll;
+  white-space: nowrap;
+}
