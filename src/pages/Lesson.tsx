@@ -169,7 +169,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           <IonTitle>
             {curUnit + 1}.{curLesson + 1} - {lessonInfo?.name}
           </IonTitle>
-          <CloseButton isLesson={awaitingSave} />
+          <CloseButton key={awaitingSave.toString()} isLesson={awaitingSave} />
         </IonToolbar>
       </IonHeader>
       <IonContent className="lesson-page">
