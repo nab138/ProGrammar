@@ -37,15 +37,20 @@ import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
+import { useEffect, useRef } from "react";
 
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
   const location = useLocation();
-
+  const outlet = useRef<HTMLIonRouterOutletElement>(null);
+  useEffect(() => {
+    if (outlet.current == null) return;
+    outlet.current.swipeHandler = undefined;
+  }, []);
   return (
     <IonTabs>
-      <IonRouterOutlet>
+      <IonRouterOutlet ref={outlet}>
         <Route exact path="/courses" component={Courses}></Route>
         <Route exact path="/stats" component={Stats}></Route>
         <Route path="/settings" component={Settings}></Route>
