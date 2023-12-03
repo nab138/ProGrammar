@@ -55,9 +55,13 @@ export function randomizeLesson(
   lesson: Lesson,
   lessonInfo: LessonInfo
 ): Lesson {
-  if (lessonInfo.type == "learn") return lesson;
+  let newQuestions: Question[];
+  if (lessonInfo.type == "learn") {
+    newQuestions = [...lesson.questions];
+  } else {
+    newQuestions = [...shuffleArray(lesson.questions)];
+  }
   // Randomize the order of the questions, and the order of answers within the question and adjust the order of the explanations accordingly.
-  let newQuestions: Question[] = [...shuffleArray(lesson.questions)];
   newQuestions.forEach((question) => {
     if (question.type == "mc") {
       let mcQuestion = question as MultipleChoiceQuestion;
@@ -74,6 +78,9 @@ export function randomizeLesson(
       );
       mcQuestion.choices = newChoices;
       mcQuestion.explanations = newExplanations;
+    } else if (question.type == "build") {
+      let buildQuestion = question as BuildQuestion;
+      buildQuestion.choices = shuffleArray(buildQuestion.choices);
     }
   });
   return { questions: newQuestions };

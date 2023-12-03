@@ -19,7 +19,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
     completedText = "Course";
     shouldHaveNext = false;
   }
-  let history = useHistory();
+
   return (
     <div className="lesson-complete-screen">
       <h2 className="ion-padding">{completedText} Complete!</h2>
@@ -50,17 +50,13 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         {shouldHaveNext ? (
           <IonButton
             expand="block"
-            onClick={() => {
-              history.push(
-                `/lesson/${curInfo[0]}$${
-                  parseInt(curInfo[1]) + (completedText == "Unit" ? 1 : 0)
-                }$${
-                  completedText == "Unit"
-                    ? 0
-                    : parseInt(curInfo[2]) + (completedText == "Lesson" ? 1 : 0)
-                }`
-              );
-            }}
+            routerLink={`/lesson/${curInfo[0]}$${
+              parseInt(curInfo[1]) + (completedText == "Unit" ? 1 : 0)
+            }$${
+              completedText == "Unit"
+                ? 0
+                : parseInt(curInfo[2]) + (completedText == "Lesson" ? 1 : 0)
+            }`}
             color="success"
           >
             Next {completedText}
@@ -68,12 +64,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         ) : (
           <> </>
         )}
-        <IonButton
-          expand="block"
-          onClick={() => {
-            history.push(`/courses`);
-          }}
-        >
+        <IonButton expand="block" routerLink="/courses">
           Back to Home
         </IonButton>
       </div>

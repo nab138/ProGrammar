@@ -1,8 +1,9 @@
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, useLocation } from "react-router-dom";
 import {
   IonApp,
   IonIcon,
   IonLabel,
+  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -34,63 +35,64 @@ import "./theme/variables.css";
 import Courses from "./pages/Courses";
 import Stats from "./pages/Stats";
 import Settings from "./pages/Settings";
-import Lesson from "./pages/Lesson";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet
-          animation={(baseEl, opts) => {
-            const enteringAnimation = createAnimation()
-              .addElement(opts.enteringEl)
-              .fromTo("opacity", 0, 1)
-              .duration(250);
+const TabRoutes: React.FC = () => {
+  const location = useLocation();
 
-            const leavingAnimation = createAnimation()
-              .addElement(opts.leavingEl)
-              .fromTo("opacity", 1, 0)
-              .duration(250);
+  return (
+    <IonTabs>
+      <IonRouterOutlet>
+        <Route exact path="/courses" component={Courses}></Route>
+        <Route exact path="/stats" component={Stats}></Route>
+        <Route path="/settings" component={Settings}></Route>
+        <Route path="/lesson/:id">
+          <LessonContainer />
+        </Route>
+        <Route path="/course/:id" component={Course}></Route>
+        <Route exact path="/">
+          <Redirect to="/courses" />
+        </Route>
+      </IonRouterOutlet>
+      <IonTabBar
+        slot="bottom"
+        style={
+          location.pathname.startsWith("/course/") ||
+          location.pathname.startsWith("/lesson/")
+            ? {
+                display: "none",
+              }
+            : {}
+        }
+      >
+        <IonTabButton tab="tab1" href="/courses">
+          <IonIcon aria-hidden="true" icon={book} />
+          <IonLabel>Courses</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab2" href="/stats">
+          <IonIcon aria-hidden="true" icon={list} />
+          <IonLabel>Stats</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab3" href="/settings">
+          <IonIcon aria-hidden="true" icon={cog} />
+          <IonLabel>Settings</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+};
 
-            const animation = createAnimation()
-              .addAnimation(enteringAnimation)
-              .addAnimation(leavingAnimation);
-
-            return animation;
-          }}
-        >
-          <Route exact path="/courses" component={Courses}></Route>
-          <Route exact path="/stats" component={Stats}></Route>
-          <Route path="/settings" component={Settings}></Route>
-          <Route exact path="/">
-            <Redirect to="/courses" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/courses">
-            <IonIcon aria-hidden="true" icon={book} />
-            <IonLabel>Courses</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/stats">
-            <IonIcon aria-hidden="true" icon={list} />
-            <IonLabel>Stats</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/settings">
-            <IonIcon aria-hidden="true" icon={cog} />
-            <IonLabel>Settings</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-      <Route path="/lesson/:id">
-        <LessonContainer />
-      </Route>
-      <Route path="/course/:id" component={Course}></Route>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <TabRoutes />
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;

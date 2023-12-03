@@ -1,4 +1,4 @@
-import { IonAlert, IonIcon } from "@ionic/react";
+import { IonAlert, IonIcon, useIonRouter } from "@ionic/react";
 import "./CloseButton.css";
 import { close } from "ionicons/icons";
 import { useHistory } from "react-router";

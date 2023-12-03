@@ -67,6 +67,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   // If the last question was answered incorrectly, it would not be added to the incorrectQuestions array when toNextQuestion()
   // is called, so instead we call it when the totalIncorrect changes
   useEffect(() => {
+    if (displayState == "review") return;
     toNextQuestion();
   }, [totalIncorrect, incorrectQuestions]);
 
@@ -121,7 +122,10 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             question={question as MultipleChoiceQuestion}
             onCorrect={toNextQuestion}
             onIncorrect={function (): void {
-              if(isReview) return;
+              if (isReview) {
+                toNextQuestion();
+                return;
+              }
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
@@ -142,7 +146,10 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             question={question as BuildQuestion}
             onCorrect={toNextQuestion}
             onIncorrect={function (): void {
-              if(isReview) return;
+              if (isReview) {
+                toNextQuestion();
+                return;
+              }
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
@@ -168,6 +175,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           currentIncorrect={currentIncorrect}
           lesson={lesson}
           lessonInfo={lessonInfo}
+          hard={lesson.questions[currentQuestion].hard ?? false}
         />
         {(() => {
           switch (displayState) {

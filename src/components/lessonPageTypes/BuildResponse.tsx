@@ -101,7 +101,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         </div>
       </div>
       <SubmitQuestionButton
-        disabled={false}
+        disabled={answer.length == 0}
         isCorrect={() => {
           return answer.join("") == question.answer;
         }}

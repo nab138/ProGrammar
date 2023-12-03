@@ -1,7 +1,5 @@
-# What should go in the blank?
+# What could go in the blank?
 
 ```java
-public static void main(String[] args){
-    int myInt = _;
-}
+int myInt = _;
 ```

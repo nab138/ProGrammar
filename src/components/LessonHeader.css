@@ -2,11 +2,19 @@
   display: inline-block;
   width: 100%;
   padding-top: 0;
+  transition: all 0.3s ease;
+}
+
+.lesson-header.easy {
   background-color: var(--ion-color-light);
 }
 
+.lesson-header.hard {
+  background-color: var(--ion-color-hard);
+}
+
 @media (prefers-color-scheme: dark) {
-  .lesson-header {
+  .lesson-header .easy {
     background-color: var(--ion-color-light-shade);
   }
 }
@@ -14,4 +22,24 @@
 .lesson-header ion-progress-bar {
   padding: 5px;
   border-radius: 5px;
+}
+
+.header-text {
+  /* Keep all on same line, centered vertically */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hard-q-text {
+  display: flex;
+  align-items: center;
+}
+
+.hard-q-text ion-icon {
+  margin-top: 3px;
+}
+
+.hard-text {
+  color: var(--ion-color-danger-shade);
 }

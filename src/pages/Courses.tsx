@@ -10,6 +10,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import "./Courses.css";
 import coursesList from "../courses/courses.json";
@@ -69,12 +70,7 @@ const Courses: React.FC = () => {
               </IonCardHeader>
               <IonCardContent>{course.description}</IonCardContent>
               <div className="course-buttons">
-                <IonButton
-                  fill="clear"
-                  onClick={async () => {
-                    history.push(`/course/${course.id}`);
-                  }}
-                >
+                <IonButton fill="clear" routerLink={`/course/${course.id}`}>
                   View Course
                 </IonButton>
                 <IonButton

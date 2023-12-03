@@ -9,6 +9,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import "./Course.css";
 import { useHistory, useParams } from "react-router";
@@ -37,7 +38,7 @@ const CoursePage: React.FC = () => {
       setInfo(info);
     };
     fetchInfo();
-  }, []);
+  });
 
   return (
     <IonPage>
