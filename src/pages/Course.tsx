@@ -18,6 +18,9 @@ import { Course } from "../utils/structures";
 import getStorage, { initializeLesson } from "../utils/storage";
 import CloseButton from "../components/CloseButton";
 
+interface Completions {
+  [key: string]: number;
+}
 const CoursePage: React.FC = () => {
   let history = useHistory();
   let { id } = useParams<{ id: string }>();
@@ -25,14 +28,15 @@ const CoursePage: React.FC = () => {
   let [curUnit, setCurUnit] = useState<number>();
   let [curLesson, setCurLesson] = useState<number>();
   let [info, setInfo] = useState<Course>();
+  let [completions, setCompletions] = useState<Completions>({});
   useEffect(() => {
     const fetchInfo = async () => {
       let infoModule = await import(`../courses/${id}/info.json`);
       let info: Course = infoModule.default;
-      let unit = await getStorage().get(`unit-progress-${id}`);
-      let lesson = await getStorage().get(`lesson-progress-${id}`);
-      if (unit == null) unit = 0;
-      if (lesson == null) lesson = 0;
+      let unit = (await getStorage().get(`unit-progress-${id}`)) ?? 0;
+      let lesson = (await getStorage().get(`lesson-progress-${id}`)) ?? 0;
+      let completions = (await getStorage().get(`completions-${id}`)) ?? {};
+      setCompletions(completions);
       setCurUnit(unit);
       setCurLesson(lesson);
       setInfo(info);
@@ -69,7 +73,11 @@ const CoursePage: React.FC = () => {
                       <IonItem
                         onClick={async () => {
                           await initializeLesson(id);
-                          history.push(`/lesson/${id}$${unitIndex}$${index}`);
+                          history.push(
+                            `/lesson/${id}$${unitIndex}$${index}$${
+                              completions[curUnit + "-" + index]
+                            }`
+                          );
                         }}
                         disabled={!isCompletedUnit && index > (curLesson ?? 0)}
                         key={index}

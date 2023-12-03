@@ -20,7 +20,7 @@ import {
 import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
 import LessonHeader from "../components/LessonHeader";
-import { incrementLessonIfOlder } from "../utils/storage";
+import getStorage, { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
 import BuildResponse from "../components/lessonPageTypes/BuildResponse";
@@ -108,6 +108,11 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   const saveProgress = async () => {
     if (!info) return;
     let res = await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
+    let completions =
+      (await getStorage().get(`completions-${curCourse}`)) ?? {};
+    completions[`${curUnit}-${curLesson}`] = Date.now();
+    console.log(completions);
+    await getStorage().set(`completions-${curCourse}`, completions);
     setAwaitingSave(false);
     setCompleteType(res);
   };
