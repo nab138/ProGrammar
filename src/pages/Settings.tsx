@@ -27,7 +27,7 @@ const Settings: React.FC = () => {
           <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent color="light">
+      <IonContent>
         <IonButton
           expand="block"
           color="danger"

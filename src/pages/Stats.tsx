@@ -28,16 +28,16 @@ const Stats: React.FC = () => {
           <IonTitle>Stats</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent color="light">
+      <IonContent>
         <div className="achievement-container">
           <div className="achievement-header ion-padding">
             <h2>Achievements</h2>
             <p>Here you can find all of your earned achievements!</p>
           </div>
-          <IonList inset>
+          <IonList className="achievement-list" inset>
             {achievements.map((achievement, index) => {
               return (
-                <IonItem key={achievement.name}>
+                <IonItem color="light" key={achievement.name}>
                   <IonLabel>
                     <h3>
                       {achievement.name} - {achievement.description}
