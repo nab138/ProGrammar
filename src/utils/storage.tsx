@@ -1,5 +1,6 @@
 import { Storage } from "@ionic/storage";
 import { Course, Lesson, Unit } from "./structures";
+import triggerAchievement from "./achievements";
 
 const store = new Storage();
 let hasInit = false;
@@ -61,6 +62,7 @@ export async function initializeLesson(course: string) {
   if (storedUnit == null || storedLesson == null) {
     await getStorage().set(`unit-progress-${course}`, 0);
     await getStorage().set(`lesson-progress-${course}`, 0);
+    triggerAchievement("course-start");
   }
   await getStorage().set("current-course", course);
 }

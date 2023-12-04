@@ -25,6 +25,7 @@
     {
       "type": "mc",
       "question": "decimals-q1",
+      "rich": true,
       "choices": ["-1.7", "1", "-2", "\"Hello, World!\""],
       "answer": "-1.7",
       "explanations": [

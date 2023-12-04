@@ -49,7 +49,7 @@ const Courses: React.FC = () => {
           <IonTitle>Courses</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="courses-page">
+      <IonContent color="light" className="courses-page">
         <h4>Select a Course</h4>
         {courses.map((course, index) => {
           let hasStarted =
