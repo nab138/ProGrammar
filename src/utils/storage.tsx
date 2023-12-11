@@ -62,7 +62,7 @@ export async function initializeLesson(course: string) {
   if (storedUnit == null || storedLesson == null) {
     await getStorage().set(`unit-progress-${course}`, 0);
     await getStorage().set(`lesson-progress-${course}`, 0);
-    triggerAchievement("course-start");
+    triggerAchievement("course-start", course);
   }
   await getStorage().set("current-course", course);
 }
