@@ -7,6 +7,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import "./Stats.css";
 import { Achievement, getAchievements } from "../utils/achievements";
@@ -14,13 +15,14 @@ import { useEffect, useState } from "react";
 
 const Stats: React.FC = () => {
   let [achievements, setAchievements] = useState<Achievement[]>([]);
-  useEffect(() => {
+
+  useIonViewWillEnter(() => {
     const fetchAchievements = async () => {
       let achievements = await getAchievements();
       setAchievements(achievements);
     };
     fetchAchievements();
-  }, []);
+  });
   return (
     <IonPage>
       <IonHeader>

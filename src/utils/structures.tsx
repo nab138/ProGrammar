@@ -30,6 +30,7 @@ export interface Question {
   type: "mc" | "build" | "text";
   choices: string[];
   answer: string;
+  id: string;
   explanations?: string[];
   hard?: boolean;
   rich?: boolean;
@@ -39,6 +40,7 @@ export interface BuildQuestion {
   type: "build";
   choices: string[];
   answer: string;
+  id: string;
   hard?: boolean;
 }
 export interface MultipleChoiceQuestion {
@@ -48,6 +50,7 @@ export interface MultipleChoiceQuestion {
   choices: string[];
   answer: string;
   explanations: string[];
+  id: string;
   hard?: boolean;
   rich?: boolean;
 }
@@ -109,4 +112,20 @@ export async function loadRichText(
     newQuestions.push(question);
   }
   return { questions: newQuestions };
+}
+
+export async function addQuestionIds(lesson: Lesson, lessonInfo: LessonInfo) {
+  let newQuestions: Question[] = [];
+  for (let i = 0; i < lesson.questions.length; i++) {
+    let question = lesson.questions[i];
+    question.id = lessonInfo.id + "-q" + i;
+    newQuestions.push(question);
+  }
+  return { questions: newQuestions };
+}
+
+export async function prepareLesson(lesson: Lesson, course: Course, unit: Unit, lessonInfo: LessonInfo) {
+  let lessonWithIds = await addQuestionIds(lesson, lessonInfo);
+  let radnomizedLesson = randomizeLesson(lessonWithIds, lessonInfo);
+  return await loadRichText(course, unit, radnomizedLesson);
 }

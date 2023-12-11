@@ -41,6 +41,7 @@ import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
 import { SplashScreen } from "@capacitor/splash-screen";
 import * as LiveUpdates from "@capacitor/live-updates";
+import { Toaster } from "sonner";
 
 setupIonicReact();
 
@@ -110,6 +111,7 @@ const App: React.FC = () => {
       <IonReactRouter>
         <TabRoutes />
       </IonReactRouter>
+      <Toaster expand />
     </IonApp>
   );
 };

@@ -95,6 +95,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
               className="add-space"
               autoCapitalize="off"
               expand="block"
+              color="secondary"
               onClick={() => {
                 setAnswer([...answer, " "]);
               }}

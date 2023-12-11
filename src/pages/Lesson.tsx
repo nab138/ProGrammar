@@ -16,6 +16,7 @@ import {
   randomizeLesson,
   loadRichText,
   BuildQuestion,
+  prepareLesson,
 } from "../utils/structures";
 import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
@@ -24,6 +25,7 @@ import getStorage, { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
 import BuildResponse from "../components/lessonPageTypes/BuildResponse";
+import triggerAchievement from "../utils/achievements";
 
 interface LessonPageParams {
   id: string;
@@ -54,8 +56,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       let lessonModule = await import(
         `../courses/${curCourse}/${unit.id}/${lessonInfo.id}.json`
       );
-      let radnomizedLesson = randomizeLesson(lessonModule.default, lessonInfo);
-      let lesson = await loadRichText(info, unit, radnomizedLesson);
+      let lesson = await prepareLesson(lessonModule.default, info, unit, lessonInfo);
 
       setLesson(lesson);
       setInfo(info);
@@ -77,6 +78,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     if (displayState == "review") {
       if (incorrectQuestions.length == 1) {
         saveProgress();
+        triggerAchievement("lesson-complete", lessonInfo.id);
         setDisplayState("complete");
         return;
       }
@@ -93,6 +95,8 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
         // If there are no incorrect questions, we are done with the lesson
         if (incorrectQuestions.length === 0) {
           saveProgress();
+          triggerAchievement("lesson-complete", lessonInfo.id);
+          triggerAchievement("no-mistakes-lesson", lessonInfo.id);
           setDisplayState("complete");
         } else {
           // Otherwise, we need to go into review mode
@@ -149,7 +153,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           <BuildResponse
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as BuildQuestion}
-            onCorrect={toNextQuestion}
+            onCorrect={() => {
+              if(question.hard ?? false){
+                triggerAchievement("hard-question", question.id);
+              }
+              toNextQuestion();
+            }}
             onIncorrect={function (): void {
               if (isReview) {
                 toNextQuestion();

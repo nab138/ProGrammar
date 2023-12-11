@@ -1,5 +1,6 @@
 import { toastController } from "@ionic/core";
 import getStorage from "./storage";
+import { toast } from "sonner";
 
 export type AchievementCategory =
   | "lesson-complete"
@@ -21,9 +22,9 @@ interface AchievementTable {
 }
 
 const achievements: AchievementTable = {
-  "lesson-complete.1": {
+  "lesson-complete.2": {
     name: "New Learner",
-    description: "Complete your first lesson",
+    description: "Complete 2 lessons",
   },
   "lesson-complete.5": {
     name: "Getting Started",
@@ -82,27 +83,25 @@ const achievements: AchievementTable = {
 /**
  * Increment the counters of certain achievement categories, if applicable.
  * @param category The achievement category to trigger
+ * @param id A unique id representing a specific action which triggered the achievement, used to ensure the same action cannot increment the same achievement multiple times
  */
 export default async function triggerAchievement(
-  category: AchievementCategory
+  category: AchievementCategory,
+  id: string
 ) {
-  console.log("hi");
+  if (!(await shouldAllowTrigger(category + id))) return;
   let count = await increment(category);
-  console.log(count);
   let achievement = achievements[category + "." + count];
-  console.log(achievement);
   if (achievement) {
     let existingAchievements = (await getStorage().get("achievements")) ?? [];
     achievement.gotDate = new Date().toLocaleDateString();
     existingAchievements.push(achievement);
     await getStorage().set("achievements", existingAchievements);
     // Display a toast
-    const toast = await toastController.create({
-      header: `Achievement Unlocked!`,
-      message: achievement.name + " - " + achievement.description,
-      duration: 2000,
+    toast("Achievement Unlocked!", {
+      description: achievement.name + " - " + achievement.description,
+      duration: 4000,
     });
-    toast.present();
   }
 }
 
@@ -121,4 +120,12 @@ async function increment(achievement: AchievementCategory) {
   count++;
   await storage.set("achievement-category-" + achievement, count);
   return count;
+}
+
+async function shouldAllowTrigger(id: string) {
+  let storage = getStorage();
+  let triggered = await storage.get("achievement-triggered-" + id);
+  if (triggered) return false;
+  await storage.set("achievement-triggered-" + id, true);
+  return true;
 }
