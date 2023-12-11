@@ -39,7 +39,6 @@ import Settings from "./pages/Settings";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
-import { SplashScreen } from "@capacitor/splash-screen";
 import * as LiveUpdates from "@capacitor/live-updates";
 import { Toaster } from "sonner";
 
@@ -49,15 +48,6 @@ const TabRoutes: React.FC = () => {
   const location = useLocation();
   const outlet = useRef<HTMLIonRouterOutletElement>(null);
   useEffect(() => {
-    async function initializeApp() {
-      const result = await LiveUpdates.sync();
-      if (result.activeApplicationPathChanged) {
-        await LiveUpdates.reload();
-      } else {
-        await SplashScreen.hide();
-      }
-    }
-    initializeApp();
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
   }, []);

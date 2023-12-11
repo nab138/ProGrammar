@@ -25,7 +25,7 @@ import getStorage, { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
 import BuildResponse from "../components/lessonPageTypes/BuildResponse";
-import triggerAchievement from "../utils/achievements";
+import triggerAchievement, { shouldAllowTrigger } from "../utils/achievements";
 
 interface LessonPageParams {
   id: string;
@@ -94,10 +94,16 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       ) {
         // If there are no incorrect questions, we are done with the lesson
         if (incorrectQuestions.length === 0) {
-          saveProgress();
-          triggerAchievement("lesson-complete", lessonInfo.id);
-          triggerAchievement("no-mistakes-lesson", lessonInfo.id);
-          setDisplayState("complete");
+          (async () => {
+            await saveProgress();
+            let shouldTriggerAchievements = await shouldAllowTrigger("lesson-complete-" + lessonInfo.id);
+            if(shouldTriggerAchievements){
+              await triggerAchievement("lesson-complete", lessonInfo.id, true);
+              await triggerAchievement("no-mistakes-lesson", lessonInfo.id, true);
+            }
+            setDisplayState("complete");
+          })();
+          
         } else {
           // Otherwise, we need to go into review mode
           setDisplayState("review");

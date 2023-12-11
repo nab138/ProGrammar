@@ -87,9 +87,11 @@ const achievements: AchievementTable = {
  */
 export default async function triggerAchievement(
   category: AchievementCategory,
-  id: string
+  id: string,
+  override = false
 ) {
-  if (!(await shouldAllowTrigger(category + id))) return;
+  let shouldAllow = await shouldAllowTrigger(category + id);
+  if (override || !shouldAllow) return;
   let count = await increment(category);
   let achievement = achievements[category + "." + count];
   if (achievement) {
@@ -122,7 +124,7 @@ async function increment(achievement: AchievementCategory) {
   return count;
 }
 
-async function shouldAllowTrigger(id: string) {
+export async function shouldAllowTrigger(id: string) {
   let storage = getStorage();
   let triggered = await storage.get("achievement-triggered-" + id);
   if (triggered) return false;
