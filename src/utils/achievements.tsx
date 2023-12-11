@@ -102,7 +102,7 @@ export default async function triggerAchievement(
     // Display a toast
     toast("Achievement Unlocked!", {
       description: achievement.name + " - " + achievement.description,
-      duration: 4000,
+      duration: 3000,
     });
   }
 }
