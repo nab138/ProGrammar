@@ -1,8 +1,8 @@
 import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "me.nabdev.prolingo",
-  appName: "Prolingo",
+  appId: "me.nabdev.programmar",
+  appName: "ProGrammar",
   webDir: "dist",
   server: {
     androidScheme: "https",

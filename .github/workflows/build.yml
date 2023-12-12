@@ -1,11 +1,11 @@
-name: Build Prolingo
+name: Build ProGrammar
 on:
   #  Workflow dispatch
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and upload Prolingo
+    name: Build and upload ProGrammar
     concurrency:
       group: ${{ github.ref }}
       cancel-in-progress: true
@@ -29,14 +29,14 @@ jobs:
       - name: Setup build environment
         run: make setup
 
-      - name: Build Prolingo
+      - name: Build ProGrammar
         run: make build | xcpretty && exit ${PIPESTATUS[0]}
 
       - name: Convert to IPA
         run: make ipa
 
-      - name: Upload Prolingo.ipa Artifact
+      - name: Upload ProGrammar.ipa Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: Prolingo.ipa
-          path: Prolingo.ipa
+          name: ProGrammar.ipa
+          path: ProGrammar.ipa

@@ -145,6 +145,6 @@ build:
 
 ipa:
 	mkdir Payload
-	mkdir Payload/Prolingo.app
+	mkdir Payload/ProGrammar.app
 	cp -R archive.xcarchive/Products/Applications/App.app/ Payload/App.app/
-	zip -r Prolingo.ipa Payload
+	zip -r ProGrammar.ipa Payload
