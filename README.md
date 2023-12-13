@@ -11,7 +11,7 @@ There is a [web preview](https://dashboard.ionicframework.com/app/28f7b0bb/previ
 To install the app on iOS, you have two options based on your hardware:
 ### Sidelaod with SideStore (Windows, Mac, or Linux)
 1. Follow the instructions at https://sidestore.io/#get-started to install sidestore on your phone. You can use the discord link on the website for help if you need.
-2. Once you have verified sidestore is working (try refreshing sidestore from within itself), download the latest ipa to your iphone from the "Artifacts" section of the latest [actions run](https://github.com/nab138/GearGlimpse/actions/workflows/build.yml)
+2. Once you have verified sidestore is working (try refreshing sidestore from within itself), download the latest ipa to your iphone from the "Artifacts" section of the latest [actions run](https://github.com/nab138/ProGrammar/actions/workflows/build.yml)
 3. Go to sidestore, and click the plus in the top left corner of my apps, then browse to where you downloaded the ipa and select it.
 4. If all goes well, open GearGlimpse!
 ### Sideload with xcode (Mac only)
