@@ -34,10 +34,7 @@ const Stats: React.FC = () => {
         <div className="achievement-container">
           <div className="achievement-header ion-padding">
             <h2>Achievements</h2>
-            <p>
-              Here you can find all of your earned achievements! I WANT TO GO
-              HOME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            </p>
+            <p>Here you can find all of your earned achievements! </p>
           </div>
           <IonList className="achievement-list" inset>
             {achievements.map((achievement, index) => {
