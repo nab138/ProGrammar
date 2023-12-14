@@ -36,29 +36,25 @@ const Settings: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonList inset>
-          <IonItem>
+          <IonItem color="light">
             <IonLabel>Native version: {version}</IonLabel>
           </IonItem>
-          <IonItem>
+          <IonItem color="light">
             {/* Get version from appflows live update patch */}
-            <IonLabel>JS Bundle version: {appInfo?.version}</IonLabel>
+            <IonLabel>JS Bundle version: {appInfo?.build}</IonLabel>
           </IonItem>
         </IonList>
-        <IonList inset>
+        <IonList color="light" inset>
           <IonItem
             color="danger"
             onClick={async () => {
               await getStorage().clear();
             }}
           >
-            <IonLabel className="ion-padding">
-              Danger: Clear all saved data
-            </IonLabel>
+            <IonLabel>Danger: Clear all saved data</IonLabel>
           </IonItem>
-          <IonItem>
-            <IonLabel className="ion-padding">
-              Force User Onboarding Flow
-            </IonLabel>
+          <IonItem color="light">
+            <IonLabel>Force User Onboarding Flow</IonLabel>
           </IonItem>
         </IonList>
       </IonContent>
