@@ -14,6 +14,7 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { book, cog, list } from "ionicons/icons";
+import { App } from '@capacitor/app';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -51,8 +52,6 @@ const TabRoutes: React.FC = () => {
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
   }, []);
-
-  useEffect(() => {}, []);
   return (
     <IonTabs>
       <IonRouterOutlet ref={outlet}>
@@ -95,7 +94,26 @@ const TabRoutes: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+const AppC: React.FC = () => {
+  useEffect(() => {
+    const initializeApp = async () => {
+      // Register event to fire each time user resumes the app
+      App.addListener("resume", async () => {
+        if (localStorage.shouldReloadApp) {
+          await LiveUpdates.reload();
+        } else {
+          const result = await LiveUpdates.sync();
+          localStorage.shouldReloadApp = result.activeApplicationPathChanged;
+        }
+      });
+
+      // First sync on app load
+      const result = await LiveUpdates.sync();
+      localStorage.shouldReloadApp = result.activeApplicationPathChanged;
+    };
+
+    initializeApp();
+  }, []);
   return (
     <IonApp>
       <IonReactRouter>
@@ -106,4 +124,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default AppC;
