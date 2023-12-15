@@ -1,7 +1,7 @@
 {
   "name": "programmar",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -10,7 +10,7 @@
     "test.e2e": "cypress run",
     "test.unit": "vitest",
     "lint": "eslint",
-    "version-stuff": "npm version patch --no-git-tag-version && echo '{\"version\":\"'$(node -p \"require('./package.json').version\")'\"}' > src/version.json"
+    "vs": "npm version patch --no-git-tag-version && echo '{\"version\":\"'$(node -p \"require('./package.json').version\")'\"}' > src/version.json"
   },
   "dependencies": {
     "@capacitor/app": "5.0.6",

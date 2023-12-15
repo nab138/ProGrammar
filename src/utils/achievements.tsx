@@ -91,7 +91,7 @@ export default async function triggerAchievement(
   override = false
 ) {
   let shouldAllow = await shouldAllowTrigger(category + id);
-  if (override || !shouldAllow) return;
+  if (!override && !shouldAllow) return;
   let count = await increment(category);
   let achievement = achievements[category + "." + count];
   if (achievement) {

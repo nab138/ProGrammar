@@ -37,11 +37,11 @@ const Settings: React.FC = () => {
       <IonContent>
         <IonList inset>
           <IonItem color="light">
-            <IonLabel>Native version: {version}</IonLabel>
+            <IonLabel>Native version: {appInfo?.version}</IonLabel>
           </IonItem>
           <IonItem color="light">
             {/* Get version from appflows live update patch */}
-            <IonLabel>JS Bundle version: {appInfo?.build}</IonLabel>
+            <IonLabel>JS Bundle version: {version}</IonLabel>
           </IonItem>
         </IonList>
         <IonList color="light" inset>

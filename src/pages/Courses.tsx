@@ -50,7 +50,7 @@ const Courses: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="courses-page">
-        <h4>Select a Course</h4>
+        <h4>Select a Course!</h4>
         {courses.map((course, index) => {
           let hasStarted =
             course.currentLesson != null && course.currentUnit != null;
