@@ -13,6 +13,30 @@ export default function getStorage(): Storage {
   return store;
 }
 
+// TODO: Test
+let lock: Promise<void> | null = null;
+
+export function getStorageLock(): Promise<Storage> {
+  const unlock = lock;
+  let resolveLock: () => void;
+
+  lock = new Promise<void>(resolve => {
+    resolveLock = resolve;
+  });
+
+  return new Promise<Storage>(resolve => {
+    if (unlock) {
+      unlock.then(() => {
+        resolve(getStorage());
+        resolveLock();
+      });
+    } else {
+      resolve(getStorage());
+      resolveLock();
+    }
+  });
+}
+
 export async function incrementLessonIfOlder(
   course: string,
   curUnit: number,

@@ -40,6 +40,9 @@ const Settings: React.FC = () => {
             <IonLabel>Native version: {appInfo?.version}</IonLabel>
           </IonItem>
           <IonItem color="light">
+            <IonLabel>Native Build: {appInfo?.build}</IonLabel>
+          </IonItem>
+          <IonItem color="light">
             {/* Get version from appflows live update patch */}
             <IonLabel>JS Bundle version: {version}</IonLabel>
           </IonItem>

@@ -90,7 +90,7 @@ export default async function triggerAchievement(
   id: string,
   override = false
 ) {
-  let shouldAllow = await shouldAllowTrigger(category + id);
+  let shouldAllow = await shouldAllowTrigger(category + "-" + id);
   if (!override && !shouldAllow) return;
   let count = await increment(category);
   let achievement = achievements[category + "." + count];
@@ -100,9 +100,9 @@ export default async function triggerAchievement(
     existingAchievements.push(achievement);
     await getStorage().set("achievements", existingAchievements);
     // Display a toast
-    toast("Achievement Unlocked!", {
-      description: achievement.name + " - " + achievement.description,
-      duration: 3000,
+    toast(achievement.name + " - Achievement Unlocked!", {
+      description: achievement.description,
+      duration: 2500,
     });
   }
 }
