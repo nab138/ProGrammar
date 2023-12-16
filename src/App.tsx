@@ -3,18 +3,14 @@ import {
   IonApp,
   IonIcon,
   IonLabel,
-  IonPage,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
   IonTabs,
-  createAnimation,
   setupIonicReact,
-  useIonToast,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { book, cog, list } from "ionicons/icons";
-import { App } from '@capacitor/app';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -40,7 +36,6 @@ import Settings from "./pages/Settings";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
-import * as LiveUpdates from "@capacitor/live-updates";
 import { Toaster } from "sonner";
 
 setupIonicReact();
@@ -95,25 +90,6 @@ const TabRoutes: React.FC = () => {
 };
 
 const AppC: React.FC = () => {
-  useEffect(() => {
-    const initializeApp = async () => {
-      // Register event to fire each time user resumes the app
-      App.addListener("resume", async () => {
-        if (localStorage.shouldReloadApp) {
-          await LiveUpdates.reload();
-        } else {
-          const result = await LiveUpdates.sync();
-          localStorage.shouldReloadApp = result.activeApplicationPathChanged;
-        }
-      });
-
-      // First sync on app load
-      const result = await LiveUpdates.sync();
-      localStorage.shouldReloadApp = result.activeApplicationPathChanged;
-    };
-
-    initializeApp();
-  }, []);
   return (
     <IonApp>
       <IonReactRouter>
