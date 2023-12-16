@@ -1,7 +1,7 @@
 {
   "name": "programmar",
   "private": true,
-  "version": "0.1.6",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -10,7 +10,8 @@
     "test.e2e": "cypress run",
     "test.unit": "vitest",
     "lint": "eslint",
-    "vs": "npm version patch --no-git-tag-version && echo '{\"version\":\"'$(node -p \"require('./package.json').version\")'\"}' > src/version.json"
+    "wv": "node -e \"let version = require('./src/version.json'); let parts = version.version.split('.'); parts[2] = parseInt(parts[2]) + 1; version.version = parts.join('.'); require('fs').writeFileSync('./src/version.json', JSON.stringify(version, null, 2));\"",
+    "nv": "npm version patch --no-git-tag-version && node -e \"let fs = require('fs'); let buildNumber = parseInt(fs.readFileSync('./build-number.txt', 'utf8')) + 1; fs.writeFileSync('./build-number.txt', buildNumber.toString());\" && npx capacitor-set-version set:ios -v $(node -p \"require('./package.json').version\") -b $(node -p \"require('fs').readFileSync('./build-number.txt', 'utf8')\") ."
   },
   "dependencies": {
     "@capacitor/app": "5.0.6",
