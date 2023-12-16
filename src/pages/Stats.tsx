@@ -41,7 +41,7 @@ const Stats: React.FC = () => {
               return (
                 <IonItem color="light" key={achievement.name}>
                   <IonLabel>
-                    <h3>
+                    <h3 className="ion-text-wrap">
                       {achievement.name} - {achievement.description}
                     </h3>
                     {achievement.gotDate && (

@@ -131,3 +131,32 @@ export async function shouldAllowTrigger(id: string) {
   await storage.set("achievement-triggered-" + id, true);
   return true;
 }
+
+export async function triggerStreakAchievement(category: AchievementCategory, id: string, shouldBreak: boolean){
+  let storage = getStorage();
+  let streakCount: number = (await storage.get("achievement-streak-" + category + "-" + id)) ?? 0;
+
+  if (shouldBreak) {
+    // If the streak should be broken, reset the streak count
+    await storage.set("achievement-streak-" + category + "-" + id, 0);
+  } else {
+    // If the streak should not be broken, increment the streak count
+    streakCount++;
+    await storage.set("achievement-streak-" + category + "-" + id, streakCount);
+
+    // Check if there's an achievement for the current streak count
+    let achievement = achievements[category + "-streak." + streakCount];
+    if (achievement) {
+      let existingAchievements = (await storage.get("achievements")) ?? [];
+      achievement.gotDate = new Date().toLocaleDateString();
+      existingAchievements.push(achievement);
+      await storage.set("achievements", existingAchievements);
+
+      // Display a toast
+      toast(achievement.name + " - Achievement Unlocked!", {
+        description: achievement.description,
+        duration: 2500,
+      });
+    }
+  }
+}
