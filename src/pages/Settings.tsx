@@ -51,13 +51,10 @@ const Settings: React.FC = () => {
           <IonItem
             color="danger"
             onClick={async () => {
-              await getStorage().clear();
+              await (await getStorage()).clear();
             }}
           >
             <IonLabel>Danger: Clear all saved data</IonLabel>
-          </IonItem>
-          <IonItem color="light">
-            <IonLabel>Force User Onboarding Flow</IonLabel>
           </IonItem>
         </IonList>
       </IonContent>

@@ -25,7 +25,10 @@ import getStorage, { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
 import BuildResponse from "../components/lessonPageTypes/BuildResponse";
-import triggerAchievement, { shouldAllowTrigger, triggerStreakAchievement } from "../utils/achievements";
+import triggerAchievement, {
+  shouldAllowTrigger,
+  triggerStreakAchievement,
+} from "../utils/achievements";
 
 interface LessonPageParams {
   id: string;
@@ -56,7 +59,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       let lessonModule = await import(
         `../courses/${curCourse}/${unit.id}/${lessonInfo.id}.json`
       );
-      let lesson = await prepareLesson(lessonModule.default, info, unit, lessonInfo);
+      let lesson = await prepareLesson(
+        lessonModule.default,
+        info,
+        unit,
+        lessonInfo
+      );
 
       setLesson(lesson);
       setInfo(info);
@@ -78,10 +86,17 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     if (displayState == "review") {
       if (incorrectQuestions.length == 1) {
         saveProgress();
-        let shouldTriggerAchievements = await shouldAllowTrigger("lesson-complete-" + lessonInfo.id);
-        if(shouldTriggerAchievements){
-        triggerAchievement("lesson-complete", lessonInfo.id);
-        triggerStreakAchievement("no-mistakes-lesson-streak", lessonInfo.id, true);
+        let shouldTriggerAchievements = await shouldAllowTrigger(
+          "lesson-complete-" + lessonInfo.id
+        );
+        if (shouldTriggerAchievements) {
+          triggerAchievement("lesson-complete", lessonInfo.id);
+          triggerStreakAchievement(
+            "no-mistakes-lesson-streak",
+            lessonInfo.id,
+            true,
+            true
+          );
         }
         setDisplayState("complete");
         return;
@@ -100,15 +115,25 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
         if (incorrectQuestions.length === 0) {
           (async () => {
             await saveProgress();
-            let shouldTriggerAchievements = await shouldAllowTrigger("lesson-complete-" + lessonInfo.id);
-            if(shouldTriggerAchievements){
+            let shouldTriggerAchievements = await shouldAllowTrigger(
+              "lesson-complete-" + lessonInfo.id
+            );
+            if (shouldTriggerAchievements) {
               await triggerAchievement("lesson-complete", lessonInfo.id, true);
-              await triggerAchievement("no-mistakes-lesson", lessonInfo.id, true);
-              await triggerStreakAchievement("no-mistakes-lesson-streak", lessonInfo.id, false);
+              await triggerAchievement(
+                "no-mistakes-lesson",
+                lessonInfo.id,
+                true
+              );
+              await triggerStreakAchievement(
+                "no-mistakes-lesson-streak",
+                lessonInfo.id,
+                false,
+                true
+              );
             }
             setDisplayState("complete");
           })();
-          
         } else {
           // Otherwise, we need to go into review mode
           setDisplayState("review");
@@ -124,10 +149,9 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     if (!info) return;
     let res = await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
     let completions =
-      (await getStorage().get(`completions-${curCourse}`)) ?? {};
+      (await (await getStorage()).get(`completions-${curCourse}`)) ?? {};
     completions[`${curUnit}-${curLesson}`] = Date.now();
-    console.log(completions);
-    await getStorage().set(`completions-${curCourse}`, completions);
+    await (await getStorage()).set(`completions-${curCourse}`, completions);
     setAwaitingSave(false);
     setCompleteType(res);
   };
@@ -165,7 +189,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as BuildQuestion}
             onCorrect={() => {
-              if(question.hard ?? false){
+              if (question.hard ?? false) {
                 triggerAchievement("hard-question", question.id);
               }
               toNextQuestion();

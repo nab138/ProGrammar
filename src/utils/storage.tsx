@@ -5,12 +5,17 @@ import triggerAchievement from "./achievements";
 const store = new Storage();
 let hasInit = false;
 
-export default function getStorage(): Storage {
-  if (!hasInit) {
-    store.create();
-    hasInit = true;
-  }
-  return store;
+export default async function getStorage(): Promise<Storage> {
+  return new Promise<Storage>((resolve) => {
+    if (hasInit) {
+      resolve(store);
+    } else {
+      store.create().then(() => {
+        hasInit = true;
+        resolve(store);
+      });
+    }
+  });
 }
 
 // TODO: Test
@@ -20,11 +25,11 @@ export function getStorageLock(): Promise<Storage> {
   const unlock = lock;
   let resolveLock: () => void;
 
-  lock = new Promise<void>(resolve => {
+  lock = new Promise<void>((resolve) => {
     resolveLock = resolve;
   });
 
-  return new Promise<Storage>(resolve => {
+  return new Promise<Storage>((resolve) => {
     if (unlock) {
       unlock.then(() => {
         resolve(getStorage());
@@ -43,9 +48,11 @@ export async function incrementLessonIfOlder(
   curLesson: number,
   courseInfo: Course
 ): Promise<string> {
-  let storedUnit = parseInt(await getStorage().get(`unit-progress-${course}`));
+  let storedUnit = parseInt(
+    await (await getStorage()).get(`unit-progress-${course}`)
+  );
   let storedLesson = parseInt(
-    await getStorage().get(`lesson-progress-${course}`)
+    await (await getStorage()).get(`lesson-progress-${course}`)
   );
   let unit = curUnit;
   let lesson = curLesson + 1;
@@ -73,20 +80,22 @@ export async function incrementLessonIfOlder(
     lesson = curLesson + 1;
   }
   if (shouldSave) {
-    await getStorage().set(`unit-progress-${course}`, unit);
-    await getStorage().set(`lesson-progress-${course}`, lesson);
+    await (await getStorage()).set(`unit-progress-${course}`, unit);
+    await (await getStorage()).set(`lesson-progress-${course}`, lesson);
   }
 
   return result;
 }
 
 export async function initializeLesson(course: string) {
-  let storedUnit = await getStorage().get(`unit-progress-${course}`);
-  let storedLesson = await getStorage().get(`lesson-progress-${course}`);
+  let storedUnit = await (await getStorage()).get(`unit-progress-${course}`);
+  let storedLesson = await (
+    await getStorage()
+  ).get(`lesson-progress-${course}`);
   if (storedUnit == null || storedLesson == null) {
-    await getStorage().set(`unit-progress-${course}`, 0);
-    await getStorage().set(`lesson-progress-${course}`, 0);
+    await (await getStorage()).set(`unit-progress-${course}`, 0);
+    await (await getStorage()).set(`lesson-progress-${course}`, 0);
     triggerAchievement("course-start", course);
   }
-  await getStorage().set("current-course", course);
+  await (await getStorage()).set("current-course", course);
 }
