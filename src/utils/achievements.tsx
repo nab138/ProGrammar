@@ -1,6 +1,14 @@
-import { toastController } from "@ionic/core";
 import getStorage from "./storage";
 import { toast } from "sonner";
+
+import { App } from "@capacitor/app";
+
+App.addListener("appStateChange", (state) => {
+  // state.isActive contains the active state
+  if (state.isActive) {
+    triggerDailyStreak();
+  }
+});
 
 export type AchievementCategory =
   | "lesson-complete"
@@ -9,7 +17,8 @@ export type AchievementCategory =
   | "course-complete"
   | "hard-question"
   | "no-mistakes-lesson"
-  | "no-mistakes-lesson-streak";
+  | "no-mistakes-lesson-streak"
+  | "daily-streak";
 
 export interface Achievement {
   name: string;
@@ -22,6 +31,18 @@ interface AchievementTable {
 }
 
 const achievements: AchievementTable = {
+  "daily-streak.2": {
+    name: "Returning Visitor",
+    description: "Open the app 2 days in a row",
+  },
+  "daily-streak.5": {
+    name: "Dedicated Learner",
+    description: "Open the app 5 days in a row",
+  },
+  "daily-streak.10": {
+    name: "Consistent Scholar",
+    description: "Open the app 10 days in a row",
+  },
   "lesson-complete.2": {
     name: "New Learner",
     description: "Complete 2 lessons",
@@ -169,5 +190,35 @@ export async function triggerStreakAchievement(
         duration: 2500,
       });
     }
+  }
+}
+
+export async function triggerDailyStreak() {
+  let storage = await getStorage();
+  let lastDateStr = await storage.get("last-daily-streak");
+  let today = new Date();
+  let todayStr = today.toLocaleDateString();
+
+  if (lastDateStr === todayStr) return; // If the app was already opened today
+  await storage.set("last-daily-streak", todayStr); // Update the last streak date
+
+  if (lastDateStr) {
+    let lastDate = new Date(lastDateStr);
+    let diff = new Date(todayStr).getTime() - lastDate.getTime();
+    let diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      // Trigger the streak achievement with break set to false
+      triggerStreakAchievement("daily-streak", "", false);
+    } else {
+      // If it's been more than 1 day, reset the streak counter
+      await storage.set("streak-count", 0);
+      // Break the streak
+      triggerStreakAchievement("daily-streak", "", true);
+    }
+  } else {
+    console.log("First time opening app");
+    // Trigger the streak achievement with break set to false
+    triggerStreakAchievement("daily-streak", "", false);
   }
 }

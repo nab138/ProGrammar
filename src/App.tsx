@@ -37,6 +37,7 @@ import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
 import { Toaster } from "sonner";
+import { triggerDailyStreak } from "./utils/achievements";
 
 setupIonicReact();
 
@@ -46,6 +47,7 @@ const TabRoutes: React.FC = () => {
   useEffect(() => {
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
+    triggerDailyStreak();
   }, []);
   return (
     <IonTabs>
