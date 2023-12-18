@@ -209,16 +209,15 @@ export async function triggerDailyStreak() {
 
     if (diffDays === 1) {
       // Trigger the streak achievement with break set to false
-      triggerStreakAchievement("daily-streak", "", false);
+      triggerStreakAchievement("daily-streak", "", false, true);
     } else {
       // If it's been more than 1 day, reset the streak counter
       await storage.set("streak-count", 0);
       // Break the streak
-      triggerStreakAchievement("daily-streak", "", true);
+      triggerStreakAchievement("daily-streak", "", true, true);
     }
   } else {
-    console.log("First time opening app");
     // Trigger the streak achievement with break set to false
-    triggerStreakAchievement("daily-streak", "", false);
+    triggerStreakAchievement("daily-streak", "", false, true);
   }
 }
