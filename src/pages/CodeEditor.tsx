@@ -4,15 +4,13 @@ import { java } from "@codemirror/lang-java";
 import root from "react-shadow";
 import {
   IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   IonContent,
+  IonHeader,
   IonIcon,
   IonLabel,
   IonPage,
   IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import { play } from "ionicons/icons";
 import execute from "../utils/jdoodle";
@@ -29,6 +27,11 @@ const CodeEditor: React.FC = () => {
   const [lastOutput, setLastOutput] = useState("");
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Sandbox</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         <div className="sandbox-container">
           <root.div className="code-editor-root">
@@ -38,10 +41,16 @@ const CodeEditor: React.FC = () => {
               value={value}
               extensions={[java()]}
               onChange={onChange}
+              theme={
+                window.matchMedia("(prefers-color-scheme: dark)").matches
+                  ? "dark"
+                  : "light"
+              }
             />
           </root.div>
           <IonButton
             onClick={async () => {
+              setLastOutput("Running... (this can take a few seconds)");
               setLastOutput((await execute(value, "java")).output);
             }}
           >
