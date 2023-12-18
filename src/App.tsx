@@ -10,7 +10,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { book, cog, list } from "ionicons/icons";
+import { book, cog, hammer, list } from "ionicons/icons";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -38,6 +38,7 @@ import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
 import { Toaster } from "sonner";
 import { triggerDailyStreak } from "./utils/achievements";
+import CodeEditor from "./pages/CodeEditor";
 
 setupIonicReact();
 
@@ -58,6 +59,7 @@ const TabRoutes: React.FC = () => {
         <Route path="/lesson/:id">
           <LessonContainer />
         </Route>
+        <Route exact path="/editor" component={CodeEditor}></Route>
         <Route path="/course/:id" component={Course}></Route>
         <Route exact path="/">
           <Redirect to="/courses" />
@@ -78,11 +80,15 @@ const TabRoutes: React.FC = () => {
           <IonIcon aria-hidden="true" icon={book} />
           <IonLabel>Courses</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="tab2" href="/stats">
+        <IonTabButton tab="tab2" href="/editor">
+          <IonIcon aria-hidden="true" icon={hammer} />
+          <IonLabel>Sandbox</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab3" href="/stats">
           <IonIcon aria-hidden="true" icon={list} />
           <IonLabel>Stats</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="tab3" href="/settings">
+        <IonTabButton tab="tab4" href="/settings">
           <IonIcon aria-hidden="true" icon={cog} />
           <IonLabel>Settings</IonLabel>
         </IonTabButton>

@@ -21,11 +21,15 @@
     "@capacitor/keyboard": "5.0.6",
     "@capacitor/live-updates": "^0.1.1-beta.4",
     "@capacitor/status-bar": "5.0.6",
+    "@codemirror/lang-java": "^6.0.1",
+    "@codemirror/lang-javascript": "^6.2.1",
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
     "@ionic/storage": "^4.0.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
+    "@uiw/codemirror-theme-okaidia": "^4.21.21",
+    "@uiw/react-codemirror": "^4.21.21",
     "highlight.js": "^11.9.0",
     "ionicons": "^7.0.0",
     "markdown-to-jsx": "^7.3.2",
@@ -34,6 +38,7 @@
     "react-markdown": "^9.0.1",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
+    "react-shadow": "^20.4.0",
     "sonner": "^1.2.4"
   },
   "devDependencies": {

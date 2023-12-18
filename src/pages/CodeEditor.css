@@ -1,0 +1,17 @@
+.sandbox-container {
+  display: flex;
+  flex-direction: column;
+  height: 99%;
+}
+
+.code-editor-root {
+  flex-grow: 1;
+}
+
+.sandbox-output-header {
+  padding-bottom: 0;
+}
+
+.sandbox-output-content {
+  padding-top: 0;
+}
