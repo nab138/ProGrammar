@@ -30,6 +30,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@uiw/codemirror-theme-okaidia": "^4.21.21",
     "@uiw/react-codemirror": "^4.21.21",
+    "axios": "^1.6.2",
     "highlight.js": "^11.9.0",
     "ionicons": "^7.0.0",
     "markdown-to-jsx": "^7.3.2",
