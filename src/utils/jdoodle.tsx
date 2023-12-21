@@ -22,6 +22,9 @@ export default async function execute(
     script: script,
     language: language,
     versionIndex: languageVersions[language] ?? "0",
+    headers: {
+      // Add auth headers here
+    }
   };
 
   let res = await axios.post(
