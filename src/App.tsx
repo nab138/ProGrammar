@@ -39,7 +39,8 @@ import { useEffect, useRef } from "react";
 import { Toaster } from "sonner";
 import { triggerDailyStreak } from "./utils/achievements";
 import CodeEditor from "./pages/CodeEditor";
-
+import "./utils/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {

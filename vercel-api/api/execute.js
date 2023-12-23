@@ -12,16 +12,18 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, X-API-Key');
 
   // Handle OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
   // Check the auth token to make sure it matches
-  const token = req.headers['authorization'];
-  if (token !== authToken) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (!req.headers || req.headers['X-API-Key'] !== authToken) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    };
   }
   const { script, language, versionIndex } = req.body;
 

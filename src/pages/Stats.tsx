@@ -53,28 +53,6 @@ const Stats: React.FC = () => {
             })}
           </IonList>
         </div>
-        <div className="themes-container">
-          <div className="stats-header ion-padding">
-            <h2>Themes</h2>
-            <p>Here you can change your theme!</p>
-          </div>
-          <IonList className="achievement-list" inset>
-            {achievements.map((achievement, index) => {
-              return (
-                <IonItem color="light" key={achievement.name}>
-                  <IonLabel>
-                    <h3 className="ion-text-wrap">
-                      {achievement.name} - {achievement.description}
-                    </h3>
-                    {achievement.gotDate && (
-                      <p>Recieved on {achievement.gotDate}</p>
-                    )}
-                  </IonLabel>
-                </IonItem>
-              );
-            })}
-          </IonList>
-        </div>
       </IonContent>
     </IonPage>
   );
