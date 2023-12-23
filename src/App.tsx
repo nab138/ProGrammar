@@ -55,14 +55,12 @@ const TabRoutes: React.FC = () => {
   useEffect(() => {
     const updateOnlineStatus = () => {
       toast.dismiss();
-      toast.success("You're back online!", { duration: 3000 });
+      toast.success("You're back online!");
     };
     const updateOfflineStatus = () =>
       toast.warning("You've gone offline", {
-        dismissible: false,
         description:
           "Progress will not be saved, and the app may not work as expected.",
-        duration: Infinity,
       });
 
     window.addEventListener("online", updateOnlineStatus);
@@ -84,7 +82,9 @@ const TabRoutes: React.FC = () => {
     <IonTabs>
       <IonRouterOutlet ref={outlet}>
         <Route exact path="/courses" component={Courses}></Route>
-        <Route exact path="/stats" component={Stats}></Route>
+        <Route exact path="/stats">
+          <Stats key="stats" />
+        </Route>
         <Route exact path="/loading" component={LoadingPage}></Route>
         <Route path="/settings" component={Settings}></Route>
         <Route path="/lesson/:id">

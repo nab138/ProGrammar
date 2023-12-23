@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { Course } from "../utils/structures";
 import storage, { initializeLesson } from "../utils/storage";
 import CloseButton from "../components/CloseButton";
+import { OfflineWarning } from "../components/OfflineWarning";
 
 interface Completions {
   [key: string]: number;
@@ -48,6 +49,7 @@ const CoursePage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>{info?.name}</IonTitle>
+          <OfflineWarning />
           <CloseButton />
         </IonToolbar>
       </IonHeader>

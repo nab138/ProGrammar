@@ -1,6 +1,8 @@
 import {
   IonContent,
   IonHeader,
+  IonIcon,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -27,6 +29,8 @@ import triggerAchievement, {
   shouldAllowTrigger,
   triggerStreakAchievement,
 } from "../utils/achievements";
+import { cloudOffline } from "ionicons/icons";
+import { OfflineWarning } from "../components/OfflineWarning";
 
 interface LessonPageParams {
   id: string;
@@ -186,7 +190,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as BuildQuestion}
             onCorrect={() => {
-              if (question.hard ?? false) {
+              if ((question.hard ?? false) && !isReview) {
                 triggerAchievement("hard-question", question.id);
               }
               toNextQuestion();
@@ -210,6 +214,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           <IonTitle>
             {curUnit + 1}.{curLesson + 1} - {lessonInfo?.name}
           </IonTitle>
+          <OfflineWarning />
           <CloseButton key={awaitingSave.toString()} isLesson={awaitingSave} />
         </IonToolbar>
       </IonHeader>

@@ -15,18 +15,27 @@ import { Achievement, getAchievements } from "../utils/achievements";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
+import { OfflineWarning } from "../components/OfflineWarning";
 
 const Stats: React.FC = () => {
   let [achievements, setAchievements] = useState<Achievement[]>([]);
   let [user, loading, error] = useAuthState(auth);
   let [retrievingAchievements, setRetrievingAchievements] = useState(false);
+  let [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useIonViewWillEnter(() => {
     const fetchAchievements = async () => {
-      setRetrievingAchievements(true);
+      let timeoutId;
+      if (!hasLoadedOnce) {
+        timeoutId = setTimeout(() => setRetrievingAchievements(true), 25);
+      }
       let achievements = await getAchievements();
       setAchievements(achievements);
-      setRetrievingAchievements(false);
+      if (!hasLoadedOnce) {
+        clearTimeout(timeoutId);
+        setRetrievingAchievements(false);
+        setHasLoadedOnce(true);
+      }
     };
     fetchAchievements();
   });
@@ -37,6 +46,7 @@ const Stats: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Stats</IonTitle>
+          <OfflineWarning />
         </IonToolbar>
       </IonHeader>
       <IonContent>

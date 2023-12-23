@@ -1,0 +1,16 @@
+.offline-warning-label {
+  font-size: "small";
+  /* Keep both this and the ionicon that is a child of it aligned vertically */
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  padding-left: 5px;
+}
+
+.offline-warning-label ion-icon {
+  padding-right: 5px;
+}
+
+.offline-warning-label-hidden {
+  display: none;
+}

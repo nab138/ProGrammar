@@ -20,6 +20,7 @@ import { Course } from "../utils/structures";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
 import LoadingCourseCard from "../components/LoadingCourseCard";
+import { OfflineWarning } from "../components/OfflineWarning";
 
 const Courses: React.FC = () => {
   const { pathname } = useLocation();
@@ -28,10 +29,14 @@ const Courses: React.FC = () => {
   let [courses, setCourses] = useState<Course[]>([]);
   let [user, loading, error] = useAuthState(auth);
   let [retrievingCourses, setRetrievingCourses] = useState(false);
+  let [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      setRetrievingCourses(true);
+      let timeoutId;
+      if (!hasLoadedOnce) {
+        timeoutId = setTimeout(() => setRetrievingCourses(true), 15);
+      }
       let coursesTemp = [];
       for (let course of coursesList) {
         let infoModule = await import(`../courses/${course}/info.json`);
@@ -40,8 +45,12 @@ const Courses: React.FC = () => {
         info.currentLesson = await storage.get(`lesson-progress-${course}`);
         coursesTemp.push(info);
       }
+      if (!hasLoadedOnce) {
+        clearTimeout(timeoutId);
+        setRetrievingCourses(false);
+        setHasLoadedOnce(true);
+      }
       setCourses(coursesTemp);
-      setRetrievingCourses(false);
     };
 
     fetchCourses();
@@ -54,6 +63,7 @@ const Courses: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Courses</IonTitle>
+          <OfflineWarning />
         </IonToolbar>
       </IonHeader>
       <IonContent className="courses-page">

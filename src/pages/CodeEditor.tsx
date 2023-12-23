@@ -16,6 +16,7 @@ import { play } from "ionicons/icons";
 import execute from "../utils/jdoodle";
 import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
+import { OfflineWarning } from "../components/OfflineWarning";
 const CodeEditor: React.FC = () => {
   const [value, setValue] = useState(
     'public class MyClass {\n    public static void main(String args[]) {\n      int x=10;\n      int y=25;\n      int z=x+y;\n\n      System.out.println("Sum of x+y = " + z);\n    }\n}'
@@ -30,6 +31,7 @@ const CodeEditor: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Sandbox</IonTitle>
+          <OfflineWarning />
         </IonToolbar>
       </IonHeader>
       <IonContent>

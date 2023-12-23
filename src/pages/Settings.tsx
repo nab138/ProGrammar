@@ -1,4 +1,5 @@
 import {
+  IonAlert,
   IonButton,
   IonContent,
   IonHeader,
@@ -19,6 +20,7 @@ import { App, AppInfo } from "@capacitor/app";
 import { auth, changePassword, logout } from "../utils/firebase";
 import { logOutOutline } from "ionicons/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { OfflineWarning } from "../components/OfflineWarning";
 
 const Settings: React.FC = () => {
   const [version, setVersion] = useState("");
@@ -50,6 +52,7 @@ const Settings: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Settings</IonTitle>
+          <OfflineWarning />
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -86,15 +89,24 @@ const Settings: React.FC = () => {
             <IonIcon slot="start" icon={logOutOutline} />
             <IonLabel>Sign Out</IonLabel>
           </IonItem>
-          <IonItem
-            color="danger"
-            onClick={async () => {
-              await storage.clear();
-            }}
-          >
+          <IonItem id="present-clear-alert" color="danger">
             <IonLabel>Danger: Clear all saved data</IonLabel>
           </IonItem>
         </IonList>
+        <IonAlert
+          trigger="present-clear-alert"
+          header="Clear Saved Data"
+          message="This will reset all saved progress, achievements, and more. This cannot be undone. Are you sure?"
+          buttons={[
+            "Cancel",
+            {
+              text: "Confirm",
+              handler: async () => {
+                await storage.clear();
+              },
+            },
+          ]}
+        ></IonAlert>
         <IonModal isOpen={showModal}>
           <IonHeader>
             <IonToolbar>
