@@ -17,9 +17,8 @@ import storage from "../utils/storage";
 import { useEffect, useState } from "react";
 import { App, AppInfo } from "@capacitor/app";
 import { auth, changePassword, logout } from "../utils/firebase";
-import { logOut, logOutOutline } from "ionicons/icons";
+import { logOutOutline } from "ionicons/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Auth, onAuthStateChanged } from "firebase/auth";
 
 const Settings: React.FC = () => {
   const [version, setVersion] = useState("");

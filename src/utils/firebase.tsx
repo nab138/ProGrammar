@@ -7,6 +7,8 @@ import {
   initializeAuth,
   updatePassword,
   updateProfile,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import {
   collection,
@@ -27,7 +29,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = initializeAuth(app);
+export const auth = initializeAuth(app, {
+  persistence: browserLocalPersistence,
+});
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache(),
 });

@@ -15,7 +15,7 @@ import "./Course.css";
 import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Course } from "../utils/structures";
-import getStorage, { initializeLesson } from "../utils/storage";
+import storage, { initializeLesson } from "../utils/storage";
 import CloseButton from "../components/CloseButton";
 
 interface Completions {

@@ -21,7 +21,7 @@ import {
 import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
 import LessonHeader from "../components/LessonHeader";
-import getStorage, { incrementLessonIfOlder } from "../utils/storage";
+import storage, { incrementLessonIfOlder } from "../utils/storage";
 import SuccessScreen from "../components/lessonPageTypes/SuccessScreen";
 import TextScreen from "../components/lessonPageTypes/TextScreen";
 import BuildResponse from "../components/lessonPageTypes/BuildResponse";
