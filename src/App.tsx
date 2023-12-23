@@ -105,7 +105,7 @@ const TabRoutes: React.FC = () => {
 const AppC: React.FC = () => {
   const history = useHistory();
   const [user, loading, error] = useAuthState(auth);
-  const [showLoginModal, setShowLoginModal] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   useEffect(() => {
     if (loading) return;
     if (!user) {
