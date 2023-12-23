@@ -27,6 +27,11 @@
           "name": "Floating Point Numbers",
           "id": "decimals",
           "type": "learn"
+        },
+        {
+          "name": "Numbers Review",
+          "id": "numbers-quiz",
+          "type": "quiz"
         }
       ]
     },
@@ -36,7 +41,7 @@
       "description": "Learn about expressions and basic operators in Java.",
       "lessons": [
         {
-          "name": "What is an expression?",
+          "name": "Intro to Expressions & Operators",
           "id": "expressions",
           "type": "learn"
         }
