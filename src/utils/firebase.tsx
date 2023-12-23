@@ -69,7 +69,7 @@ export async function registerWithEmailAndPassword(
 export async function sendPasswordReset(email: string) {
   try {
     await sendPasswordResetEmail(auth, email);
-    toast("Password reset email sent!", {
+    toast.success("Password reset email sent!", {
       description:
         "Please check your inbox for further instructions (including spam folder).",
       duration: 5000,
@@ -89,7 +89,7 @@ export async function logout() {
 
 export async function changePassword(password: string) {
   if (!auth.currentUser) {
-    toast("Not logged in", {
+    toast.error("Not logged in", {
       description:
         "You must be logged in to change your password. How did you get to this screen anyways?",
       duration: 4000,
@@ -110,35 +110,35 @@ function logErrors(err: any) {
   if (err instanceof Error) {
     if (err.name === "FirebaseError") {
       if (err.message.includes("auth/invalid-email")) {
-        toast("Invalid email address", {
+        toast.error("Invalid email address", {
           description: "Please check the email address you entered.",
           duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/missing-password")) {
-        toast("Missing password", {
+        toast.error("Missing password", {
           description: "Please check the password you entered.",
           duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/invalid-credential")) {
-        toast("Incorrect Login", {
+        toast.error("Incorrect Login", {
           description: "Your email or password is incorrect.",
           duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/weak-password")) {
-        toast("Password too weak", {
+        toast.error("Password too weak", {
           description: "Your password must be at least 6 characters long.",
           duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/email-already-in-use")) {
-        toast("Email already in use", {
+        toast.error("Email already in use", {
           description:
             "The email you entered is already in use by another account.",
           duration: 4000,
@@ -146,7 +146,7 @@ function logErrors(err: any) {
         return;
       }
       if (err.message.includes("auth/network-request-failed")) {
-        toast("Unable to connect", {
+        toast.error("Unable to connect", {
           description:
             "Please check that your are connected to the internet to login or register.",
           duration: 4000,
@@ -154,7 +154,7 @@ function logErrors(err: any) {
         return;
       }
     }
-    toast("An unkown error has occured.", {
+    toast.error("An unkown error has occured.", {
       description: err.message,
       duration: 5000,
     });

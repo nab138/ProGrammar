@@ -64,7 +64,11 @@ class Storage {
     const user = auth.currentUser;
     if (user) {
       const docRef = await this.getDocRef(user.uid);
-      await setDoc(docRef, { [key]: value }, { merge: true });
+      try {
+        await setDoc(docRef, { [key]: value }, { merge: true });
+      } catch (e) {
+        console.log(e);
+      }
     } else {
       console.log("No user is signed in");
     }
@@ -142,7 +146,7 @@ export async function incrementLessonIfOlder(
 
 export async function initializeLesson(course: string) {
   let storedUnit = await storage.get(`unit-progress-${course}`);
-  let storedLesson = storage.get(`lesson-progress-${course}`);
+  let storedLesson = await storage.get(`lesson-progress-${course}`);
   if (storedUnit == null || storedLesson == null) {
     await storage.set(`unit-progress-${course}`, 0);
     await storage.set(`lesson-progress-${course}`, 0);

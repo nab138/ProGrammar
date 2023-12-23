@@ -36,7 +36,7 @@ import Settings from "./pages/Settings";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
 import { useEffect, useRef } from "react";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { triggerDailyStreak } from "./utils/achievements";
 import CodeEditor from "./pages/CodeEditor";
 import "./utils/firebase";
@@ -53,10 +53,33 @@ const TabRoutes: React.FC = () => {
   const outlet = useRef<HTMLIonRouterOutletElement>(null);
 
   useEffect(() => {
+    const updateOnlineStatus = () => {
+      toast.dismiss();
+      toast.success("You're back online!", { duration: 3000 });
+    };
+    const updateOfflineStatus = () =>
+      toast.warning("You've gone offline", {
+        dismissible: false,
+        description:
+          "Progress will not be saved, and the app may not work as expected.",
+        duration: Infinity,
+      });
+
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOfflineStatus);
+
+    return () => {
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOfflineStatus);
+    };
+  }, []);
+
+  useEffect(() => {
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
     triggerDailyStreak();
   }, []);
+
   return (
     <IonTabs>
       <IonRouterOutlet ref={outlet}>
@@ -109,6 +132,7 @@ const LoginStuff: React.FC = () => {
   let historya = useHistory();
   const [user, loading, error] = useAuthState(auth);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
   useEffect(() => {
     if (loading) return;
     if (!user) {
@@ -139,7 +163,7 @@ const AppC: React.FC = () => {
       <IonReactRouter>
         <LoginStuff />
       </IonReactRouter>
-      <Toaster expand />
+      <Toaster richColors expand />
     </IonApp>
   );
 };
