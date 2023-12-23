@@ -1,4 +1,4 @@
-import getStorage from "./storage";
+import storage from "./storage";
 import { toast } from "sonner";
 
 import { App } from "@capacitor/app";
@@ -117,10 +117,10 @@ export default async function triggerAchievement(
   let achievement = achievements[category + "." + count];
   if (achievement) {
     let existingAchievements: Achievement[] =
-      (await (await getStorage()).get("achievements")) ?? [];
+      (await storage.get("achievements")) ?? [];
     achievement.gotDate = new Date().toLocaleDateString();
     existingAchievements.push(achievement);
-    await (await getStorage()).set("achievements", existingAchievements);
+    await storage.set("achievements", existingAchievements);
     // Display a toast
     toast(achievement.name + " - Achievement Unlocked!", {
       description: achievement.description,
@@ -130,15 +130,14 @@ export default async function triggerAchievement(
 }
 
 export async function resetCategory(achievement: AchievementCategory) {
-  await (await getStorage()).set("achievement-category-" + achievement, 0);
+  await storage.set("achievement-category-" + achievement, 0);
 }
 
 export async function getAchievements() {
-  return (await (await getStorage()).get("achievements")) ?? [];
+  return (await storage.get("achievements")) ?? [];
 }
 
 async function increment(achievement: AchievementCategory) {
-  let storage = await getStorage();
   let count: number =
     (await storage.get("achievement-category-" + achievement)) ?? 0;
   count++;
@@ -147,7 +146,6 @@ async function increment(achievement: AchievementCategory) {
 }
 
 export async function shouldAllowTrigger(id: string) {
-  let storage = await getStorage();
   let triggered = await storage.get("achievement-triggered-" + id);
   if (triggered) return false;
   await storage.set("achievement-triggered-" + id, true);
@@ -162,7 +160,6 @@ export async function triggerStreakAchievement(
 ) {
   let shouldAllow = await shouldAllowTrigger(category + "-" + id);
   if (!override && !shouldAllow) return;
-  let storage = await getStorage();
   let streakCount: number =
     (await storage.get("achievement-streak-" + category)) ?? 0;
 
@@ -194,7 +191,6 @@ export async function triggerStreakAchievement(
 }
 
 export async function triggerDailyStreak() {
-  let storage = await getStorage();
   let lastDateStr = await storage.get("last-daily-streak");
   let today = new Date();
   let todayStr = today.toLocaleDateString();

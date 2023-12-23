@@ -15,7 +15,7 @@ import {
 import "./Courses.css";
 import coursesList from "../courses/courses.json";
 import { useEffect, useState } from "react";
-import getStorage, { initializeLesson } from "../utils/storage";
+import storage, { initializeLesson } from "../utils/storage";
 import { useHistory, useLocation } from "react-router-dom";
 import { Course } from "../utils/structures";
 
@@ -30,12 +30,8 @@ const Courses: React.FC = () => {
       for (let course of coursesList) {
         let infoModule = await import(`../courses/${course}/info.json`);
         let info: Course = infoModule.default;
-        info.currentUnit = await (
-          await getStorage()
-        ).get(`unit-progress-${course}`);
-        info.currentLesson = await (
-          await getStorage()
-        ).get(`lesson-progress-${course}`);
+        info.currentUnit = await storage.get(`unit-progress-${course}`);
+        info.currentLesson = await storage.get(`lesson-progress-${course}`);
         coursesTemp.push(info);
       }
       setCourses(coursesTemp);

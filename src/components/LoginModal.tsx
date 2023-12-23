@@ -16,6 +16,7 @@ import {
   registerWithEmailAndPassword,
   sendPasswordReset,
 } from "../utils/firebase";
+import { toast } from "sonner";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -35,6 +36,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   };
 
   const handleSignup = () => {
+    if (username.length < 3) {
+      toast("Invalid Username", {
+        description: "Username must be at least 3 characters long.",
+        duration: 4000,
+      });
+      return;
+    }
     registerWithEmailAndPassword(username, email, password);
   };
 
@@ -62,7 +70,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 <IonLabel position="floating">Username</IonLabel>
                 <IonInput
                   value={username}
-                  onIonChange={(e) => setUsername(e.detail.value!)}
+                  onInput={(e) =>
+                    setUsername((e.target as HTMLInputElement).value)
+                  }
                   type="text"
                 />
               </IonItem>
@@ -71,7 +81,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
               <IonLabel position="floating">Email</IonLabel>
               <IonInput
                 value={email}
-                onIonChange={(e) => setEmail(e.detail.value!)}
+                onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
                 type="email"
               />
             </IonItem>
@@ -80,9 +90,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 <IonLabel position="floating">Password</IonLabel>
                 <IonInput
                   value={password}
-                  onIonChange={(e) => {
-                    setPassword(e.detail.value!);
-                  }}
+                  onInput={(e) =>
+                    setPassword((e.target as HTMLInputElement).value)
+                  }
                   type="password"
                 ></IonInput>
               </IonItem>

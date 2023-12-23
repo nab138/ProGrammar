@@ -148,10 +148,9 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   const saveProgress = async () => {
     if (!info) return;
     let res = await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
-    let completions =
-      (await (await getStorage()).get(`completions-${curCourse}`)) ?? {};
+    let completions = (await storage.get(`completions-${curCourse}`)) ?? {};
     completions[`${curUnit}-${curLesson}`] = Date.now();
-    await (await getStorage()).set(`completions-${curCourse}`, completions);
+    await storage.set(`completions-${curCourse}`, completions);
     setAwaitingSave(false);
     setCompleteType(res);
   };

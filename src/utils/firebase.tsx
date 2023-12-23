@@ -1,13 +1,19 @@
 import { initializeApp } from "firebase/app";
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
   initializeAuth,
+  updatePassword,
+  updateProfile,
 } from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  persistentLocalCache,
+  initializeFirestore,
+} from "firebase/firestore";
 import { toast } from "sonner";
 
 const firebaseConfig = {
@@ -22,7 +28,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = initializeAuth(app);
-const db = getFirestore(app);
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache(),
+});
 
 export async function logInWithEmailAndPassword(
   email: string,
@@ -43,6 +51,7 @@ export async function registerWithEmailAndPassword(
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
+    await updateProfile(user, { displayName: name });
     await addDoc(collection(db, "users"), {
       uid: user.uid,
       name,
@@ -75,6 +84,24 @@ export async function logout() {
   }
 }
 
+export async function changePassword(password: string) {
+  if (!auth.currentUser) {
+    toast("Not logged in", {
+      description:
+        "You must be logged in to change your password. How did you get to this screen anyways?",
+      duration: 4000,
+    });
+    return;
+  }
+  try {
+    await updatePassword(auth.currentUser, password);
+    return true;
+  } catch (err) {
+    logErrors(err);
+    return false;
+  }
+}
+
 function logErrors(err: any) {
   console.error(err);
   if (err instanceof Error) {
@@ -100,7 +127,7 @@ function logErrors(err: any) {
         });
         return;
       }
-      if (err.message.includes("auth/weak-passiword")) {
+      if (err.message.includes("auth/weak-password")) {
         toast("Password too weak", {
           description: "Your password must be at least 6 characters long.",
           duration: 4000,

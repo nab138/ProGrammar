@@ -33,11 +33,9 @@ const CoursePage: React.FC = () => {
     const fetchInfo = async () => {
       let infoModule = await import(`../courses/${id}/info.json`);
       let info: Course = infoModule.default;
-      let unit = (await (await getStorage()).get(`unit-progress-${id}`)) ?? 0;
-      let lesson =
-        (await (await getStorage()).get(`lesson-progress-${id}`)) ?? 0;
-      let completions =
-        (await (await getStorage()).get(`completions-${id}`)) ?? {};
+      let unit = (await storage.get(`unit-progress-${id}`)) ?? 0;
+      let lesson = (await storage.get(`lesson-progress-${id}`)) ?? 0;
+      let completions = (await storage.get(`completions-${id}`)) ?? {};
       setCompletions(completions);
       setCurUnit(unit);
       setCurLesson(lesson);

@@ -1,4 +1,4 @@
-import { Redirect, Route, useHistory, useLocation } from "react-router-dom";
+import { Redirect, Route, useLocation } from "react-router-dom";
 import {
   IonApp,
   IonIcon,
@@ -44,6 +44,7 @@ import { auth } from "./utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import LoginModal from "./components/LoginModal";
 import { useState } from "react";
+import { useHistory } from "react-router";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -102,8 +103,8 @@ const TabRoutes: React.FC = () => {
   );
 };
 
-const AppC: React.FC = () => {
-  const history = useHistory();
+const LoginStuff: React.FC = () => {
+  let historya = useHistory();
   const [user, loading, error] = useAuthState(auth);
   const [showLoginModal, setShowLoginModal] = useState(false);
   useEffect(() => {
@@ -114,18 +115,29 @@ const AppC: React.FC = () => {
       setShowLoginModal(false);
     }
   }, [user, loading]);
+
   return (
-    <IonApp>
-      <IonReactRouter>
-        <TabRoutes />
-      </IonReactRouter>
-      <Toaster expand />
+    <>
+      <TabRoutes key={user?.uid} />
       <LoginModal
         isOpen={showLoginModal}
         onClosed={() => {
-          history.push("/courses");
+          if (user) {
+            historya.push("/courses");
+          }
         }}
       />
+    </>
+  );
+};
+
+const AppC: React.FC = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <LoginStuff />
+      </IonReactRouter>
+      <Toaster expand />
     </IonApp>
   );
 };
