@@ -1,4 +1,4 @@
-import { Redirect, Route, useLocation } from "react-router-dom";
+import { Redirect, Route, useHistory, useLocation } from "react-router-dom";
 import {
   IonApp,
   IonIcon,
@@ -103,8 +103,9 @@ const TabRoutes: React.FC = () => {
 };
 
 const AppC: React.FC = () => {
+  const history = useHistory();
   const [user, loading, error] = useAuthState(auth);
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(true);
   useEffect(() => {
     if (loading) return;
     if (!user) {
@@ -119,7 +120,12 @@ const AppC: React.FC = () => {
         <TabRoutes />
       </IonReactRouter>
       <Toaster expand />
-      <LoginModal isOpen={showLoginModal} />
+      <LoginModal
+        isOpen={showLoginModal}
+        onClosed={() => {
+          history.push("/courses");
+        }}
+      />
     </IonApp>
   );
 };

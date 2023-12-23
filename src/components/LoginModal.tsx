@@ -19,9 +19,10 @@ import {
 
 interface LoginModalProps {
   isOpen: boolean;
+  onClosed?: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -42,7 +43,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen }) => {
   };
 
   return (
-    <IonModal isOpen={isOpen}>
+    <IonModal isOpen={isOpen} onDidDismiss={onClosed}>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login to ProGrammar</IonTitle>
