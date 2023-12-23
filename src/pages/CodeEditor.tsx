@@ -50,7 +50,7 @@ const CodeEditor: React.FC = () => {
           </root.div>
           <IonButton
             onClick={async () => {
-              setLastOutput("Running... (this can take a few seconds)");
+              setLastOutput("Running...");
               setLastOutput((await execute(value, "java")).output);
             }}
           >

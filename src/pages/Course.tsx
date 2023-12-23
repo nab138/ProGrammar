@@ -9,7 +9,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import "./Course.css";
 import { useHistory, useParams } from "react-router";

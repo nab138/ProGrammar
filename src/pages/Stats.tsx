@@ -5,24 +5,33 @@ import {
   IonLabel,
   IonList,
   IonPage,
+  IonSkeletonText,
   IonTitle,
   IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Stats.css";
 import { Achievement, getAchievements } from "../utils/achievements";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/firebase";
 
 const Stats: React.FC = () => {
   let [achievements, setAchievements] = useState<Achievement[]>([]);
+  let [user, loading, error] = useAuthState(auth);
+  let [retrievingAchievements, setRetrievingAchievements] = useState(false);
 
   useIonViewWillEnter(() => {
     const fetchAchievements = async () => {
+      setRetrievingAchievements(true);
       let achievements = await getAchievements();
       setAchievements(achievements);
+      setRetrievingAchievements(false);
     };
     fetchAchievements();
   });
+
+  let isLoading = loading || retrievingAchievements;
   return (
     <IonPage>
       <IonHeader>
@@ -36,22 +45,46 @@ const Stats: React.FC = () => {
             <h2>Achievements</h2>
             <p>Here you can find all of your earned achievements! </p>
           </div>
-          <IonList className="achievement-list" inset>
-            {achievements.map((achievement, index) => {
-              return (
-                <IonItem color="light" key={achievement.name}>
-                  <IonLabel>
-                    <h3 className="ion-text-wrap">
-                      {achievement.name} - {achievement.description}
-                    </h3>
-                    {achievement.gotDate && (
-                      <p>Recieved on {achievement.gotDate}</p>
-                    )}
-                  </IonLabel>
-                </IonItem>
-              );
-            })}
-          </IonList>
+          {!isLoading && (
+            <IonList className="achievement-list" inset>
+              {achievements.map((achievement, index) => {
+                return (
+                  <IonItem color="light" key={achievement.name}>
+                    <IonLabel>
+                      <h3 className="ion-text-wrap">
+                        {achievement.name} - {achievement.description}
+                      </h3>
+                      {achievement.gotDate && (
+                        <p>Recieved on {achievement.gotDate}</p>
+                      )}
+                    </IonLabel>
+                  </IonItem>
+                );
+              })}
+            </IonList>
+          )}
+          {isLoading && (
+            <IonList className="achievement-list" inset>
+              <IonItem color="light">
+                <IonLabel>
+                  <IonSkeletonText animated />
+                  <IonSkeletonText animated style={{ width: "60%" }} />
+                </IonLabel>
+              </IonItem>
+              <IonItem color="light">
+                <IonLabel>
+                  <IonSkeletonText animated />
+                  <IonSkeletonText animated style={{ width: "60%" }} />
+                </IonLabel>
+              </IonItem>
+              <IonItem color="light">
+                <IonLabel>
+                  <IonSkeletonText animated />
+                  <IonSkeletonText animated style={{ width: "60%" }} />
+                </IonLabel>
+              </IonItem>
+            </IonList>
+          )}
         </div>
       </IonContent>
     </IonPage>

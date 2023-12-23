@@ -13,8 +13,6 @@ import {
   Lesson,
   MultipleChoiceQuestion,
   Question,
-  randomizeLesson,
-  loadRichText,
   BuildQuestion,
   prepareLesson,
 } from "../utils/structures";

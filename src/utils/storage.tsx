@@ -1,11 +1,9 @@
-import { Course, Lesson, Unit } from "./structures";
+import { Course } from "./structures";
 import triggerAchievement from "./achievements";
 import { auth, db } from "./firebase";
 import {
-  FieldValue,
   collection,
   deleteField,
-  doc,
   getDoc,
   getDocs,
   query,
@@ -49,7 +47,7 @@ class Storage {
         if (typeof data === "object" && data !== null && key in data) {
           return data[key];
         } else {
-          console.log("No such key in document!");
+          console.log("No such key in document: " + key);
           return null;
         }
       } else {

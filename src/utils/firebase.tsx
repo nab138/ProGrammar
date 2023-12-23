@@ -7,7 +7,6 @@ import {
   initializeAuth,
   updatePassword,
   updateProfile,
-  setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
 import {
@@ -142,6 +141,14 @@ function logErrors(err: any) {
         toast("Email already in use", {
           description:
             "The email you entered is already in use by another account.",
+          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/network-request-failed")) {
+        toast("Unable to connect", {
+          description:
+            "Please check that your are connected to the internet to login or register.",
           duration: 4000,
         });
         return;

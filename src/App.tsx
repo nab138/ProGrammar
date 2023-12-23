@@ -45,6 +45,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import LoginModal from "./components/LoginModal";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import LoadingPage from "./pages/LoadingPage";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -61,6 +62,7 @@ const TabRoutes: React.FC = () => {
       <IonRouterOutlet ref={outlet}>
         <Route exact path="/courses" component={Courses}></Route>
         <Route exact path="/stats" component={Stats}></Route>
+        <Route exact path="/loading" component={LoadingPage}></Route>
         <Route path="/settings" component={Settings}></Route>
         <Route path="/lesson/:id">
           <LessonContainer />
