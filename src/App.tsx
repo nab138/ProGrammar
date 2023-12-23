@@ -40,12 +40,16 @@ import { Toaster } from "sonner";
 import { triggerDailyStreak } from "./utils/achievements";
 import CodeEditor from "./pages/CodeEditor";
 import "./utils/firebase";
+import { auth } from "./utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+import LoginModal from "./components/LoginModal";
+import { useState } from "react";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
   const location = useLocation();
   const outlet = useRef<HTMLIonRouterOutletElement>(null);
+
   useEffect(() => {
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
@@ -99,12 +103,23 @@ const TabRoutes: React.FC = () => {
 };
 
 const AppC: React.FC = () => {
+  const [user, loading, error] = useAuthState(auth);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      setShowLoginModal(true);
+    } else {
+      setShowLoginModal(false);
+    }
+  }, [user, loading]);
   return (
     <IonApp>
       <IonReactRouter>
         <TabRoutes />
       </IonReactRouter>
       <Toaster expand />
+      <LoginModal isOpen={showLoginModal} />
     </IonApp>
   );
 };

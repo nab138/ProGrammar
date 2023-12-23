@@ -2,6 +2,7 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -13,6 +14,8 @@ import "./Settings.css";
 import getStorage from "../utils/storage";
 import { useEffect, useState } from "react";
 import { App, AppInfo } from "@capacitor/app";
+import { logout } from "../utils/firebase";
+import { logOut, logOutOutline } from "ionicons/icons";
 
 const Settings: React.FC = () => {
   const [version, setVersion] = useState("");
@@ -55,6 +58,15 @@ const Settings: React.FC = () => {
             }}
           >
             <IonLabel>Danger: Clear all saved data</IonLabel>
+          </IonItem>
+          <IonItem
+            color="light"
+            onClick={async () => {
+              await logout();
+            }}
+          >
+            <IonIcon slot="start" icon={logOutOutline} />
+            <IonLabel>Sign Out</IonLabel>
           </IonItem>
         </IonList>
       </IonContent>

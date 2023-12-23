@@ -1,0 +1,9 @@
+.login-modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.clickable-link {
+  cursor: pointer;
+  text-decoration: underline;
+}

@@ -5,7 +5,6 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
-  User,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -28,7 +27,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 const db = getFirestore(app);
 
 export async function logInWithEmailAndPassword(
@@ -64,12 +63,17 @@ export async function registerWithEmailAndPassword(
 export async function sendPasswordReset(email: string) {
   try {
     await sendPasswordResetEmail(auth, email);
+    toast("Password reset email sent!", {
+      description:
+        "Please check your inbox for further instructions (including spam folder).",
+      duration: 5000,
+    });
   } catch (err) {
     logErrors(err);
   }
 }
 
-export async function loguout() {
+export async function logout() {
   try {
     await signOut(auth);
   } catch (err) {
@@ -80,7 +84,45 @@ export async function loguout() {
 function logErrors(err: any) {
   console.error(err);
   if (err instanceof Error) {
-    toast("An error has occured.", {
+    if (err.name === "FirebaseError") {
+      if (err.message.includes("auth/invalid-email")) {
+        toast("Invalid email address", {
+          description: "Please check the email address you entered.",
+          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/missing-password")) {
+        toast("Missing password", {
+          description: "Please check the password you entered.",
+          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/invalid-credential")) {
+        toast("Incorrect Login", {
+          description: "Your email or password is incorrect.",
+          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/weak-passiword")) {
+        toast("Password too weak", {
+          description: "Your password must be at least 6 characters long.",
+          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/email-already-in-use")) {
+        toast("Email already in use", {
+          description:
+            "The email you entered is already in use by another account.",
+          duration: 4000,
+        });
+        return;
+      }
+    }
+    toast("An unkown error has occured.", {
       description: err.message,
       duration: 5000,
     });
