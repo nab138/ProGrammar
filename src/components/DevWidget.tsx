@@ -18,7 +18,7 @@ const DevWidget: React.FC = () => {
   const [dragging, setDragging] = useState(false);
   const [showPopover, setShowPopover] = useState<{
     open: boolean;
-    event: React.MouseEvent | undefined;
+    event: React.MouseEvent | React.TouchEvent | undefined;
   }>({ open: false, event: undefined });
   const history = useHistory();
 
@@ -29,7 +29,7 @@ const DevWidget: React.FC = () => {
     }
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
     if (dragging) {
       setDragging(false);
     } else {
@@ -37,8 +37,12 @@ const DevWidget: React.FC = () => {
     }
   };
   return (
-    <Draggable disabled={showPopover.open} onDrag={handleDrag}>
-      <IonFabButton onClick={handleClick}>
+    <Draggable
+      defaultPosition={{ x: 50, y: 100 }}
+      disabled={showPopover.open}
+      onDrag={handleDrag}
+    >
+      <IonFabButton onClick={handleClick} onTouchStart={handleClick}>
         <IonIcon icon={bug} />
         <IonPopover
           isOpen={showPopover.open}
