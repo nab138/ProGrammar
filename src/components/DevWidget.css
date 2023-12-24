@@ -1,0 +1,12 @@
+.debug-console {
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.warn {
+  color: #ff9800;
+}
+
+.error {
+  color: #f44336;
+}

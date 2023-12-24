@@ -138,7 +138,14 @@ const TabRoutes: React.FC = () => {
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
-      {showDevWidget && <DevWidget />}
+      {showDevWidget && (
+        <DevWidget
+          hideDevWidget={() => {
+            setShowDevWidget(false);
+            storage.set("devWidgetEnabled", false);
+          }}
+        />
+      )}
     </>
   );
 };

@@ -1,24 +1,77 @@
 import {
   IonButton,
-  IonFab,
+  IonContent,
   IonFabButton,
+  IonHeader,
   IonIcon,
   IonItem,
   IonList,
+  IonModal,
   IonPopover,
+  IonTextarea,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import { bug } from "ionicons/icons";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
-import { useHistory } from "react-router";
 import { LessonContext } from "../LessonContext";
-import { toast } from "sonner";
+import "./DevWidget.css";
 interface DragInfo {
   x: number;
   y: number;
   time: number;
 }
-const DevWidget: React.FC = () => {
+interface DevWidgetProps {
+  hideDevWidget: () => void;
+}
+const DevWidget: React.FC<DevWidgetProps> = ({ hideDevWidget }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [consoleLog, setConsoleLog] = useState("");
+
+  useEffect(() => {
+    const originalLog = console.log;
+    const originalWarn = console.warn;
+    const originalError = console.error;
+
+    console.log = function (message, ...optionalParams) {
+      setConsoleLog(
+        (prevLog) =>
+          prevLog +
+          `<br/><span class="log">${message} ${optionalParams.join(" ")}</span>`
+      );
+      originalLog.apply(console, [message, ...optionalParams]);
+    };
+
+    console.warn = function (message, ...optionalParams) {
+      setConsoleLog(
+        (prevLog) =>
+          prevLog +
+          `<br/><span class="warn">WARN: ${message} ${optionalParams.join(
+            " "
+          )}</span>`
+      );
+      originalWarn.apply(console, [message, ...optionalParams]);
+    };
+
+    console.error = function (message, ...optionalParams) {
+      setConsoleLog(
+        (prevLog) =>
+          prevLog +
+          `<br/><span class="error">ERROR: ${message} ${optionalParams.join(
+            " "
+          )}</span>`
+      );
+      originalError.apply(console, [message, ...optionalParams]);
+    };
+
+    return () => {
+      console.log = originalLog;
+      console.warn = originalWarn;
+      console.error = originalError;
+    };
+  }, []);
+
   const { skipToEnd } = useContext(LessonContext);
   const fab = React.useRef<HTMLIonFabButtonElement>(null);
   const [showPopover, setShowPopover] = useState<{
@@ -69,8 +122,8 @@ const DevWidget: React.FC = () => {
             <IonItem
               button={true}
               detail={false}
-              onClick={async () => {
-                await skipToEnd();
+              onClick={() => {
+                skipToEnd();
               }}
             >
               Skip to end of lesson
@@ -84,8 +137,42 @@ const DevWidget: React.FC = () => {
             >
               Reload (Wipe State)
             </IonItem>
+            <IonItem
+              button={true}
+              detail={false}
+              onClick={() => {
+                setShowModal(true);
+              }}
+            >
+              View Console
+            </IonItem>
+            <IonItem
+              button={true}
+              detail={false}
+              onClick={() => {
+                hideDevWidget();
+              }}
+            >
+              Hide Dev Widget
+            </IonItem>
           </IonList>
         </IonPopover>
+        <IonModal isOpen={showModal}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Console Log</IonTitle>
+              <IonButton slot="end" onClick={() => setShowModal(false)}>
+                Close
+              </IonButton>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent color="dark">
+            <div
+              dangerouslySetInnerHTML={{ __html: consoleLog }}
+              className="debug-console"
+            />
+          </IonContent>
+        </IonModal>
       </IonFabButton>
     </Draggable>
   );
