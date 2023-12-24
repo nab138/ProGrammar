@@ -46,11 +46,15 @@ import LoginModal from "./components/LoginModal";
 import { useState } from "react";
 import { useHistory } from "react-router";
 import LoadingPage from "./pages/LoadingPage";
+import DevWidget from "./components/DevWidget";
+import storage from "./utils/storage";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
   const location = useLocation();
   const outlet = useRef<HTMLIonRouterOutletElement>(null);
+
+  let [showDevWidget, setShowDevWidget] = useState(false);
 
   useEffect(() => {
     const updateOnlineStatus = () => {
@@ -76,55 +80,67 @@ const TabRoutes: React.FC = () => {
     if (outlet.current == null) return;
     outlet.current.swipeHandler = undefined;
     triggerDailyStreak();
+
+    const loadDevWidget = async () => {
+      let devWidgetEnabled = await storage.get("devWidgetEnabled");
+      setShowDevWidget(devWidgetEnabled);
+    };
+
+    loadDevWidget();
   }, []);
 
   return (
-    <IonTabs>
-      <IonRouterOutlet ref={outlet}>
-        <Route exact path="/courses" component={Courses}></Route>
-        <Route exact path="/stats">
-          <Stats key="stats" />
-        </Route>
-        <Route exact path="/loading" component={LoadingPage}></Route>
-        <Route path="/settings" component={Settings}></Route>
-        <Route path="/lesson/:id">
-          <LessonContainer />
-        </Route>
-        <Route exact path="/editor" component={CodeEditor}></Route>
-        <Route path="/course/:id" component={Course}></Route>
-        <Route exact path="/">
-          <Redirect to="/courses" />
-        </Route>
-      </IonRouterOutlet>
-      <IonTabBar
-        slot="bottom"
-        style={
-          location.pathname.startsWith("/course/") ||
-          location.pathname.startsWith("/lesson/")
-            ? {
-                display: "none",
-              }
-            : {}
-        }
-      >
-        <IonTabButton tab="tab1" href="/courses">
-          <IonIcon aria-hidden="true" icon={book} />
-          <IonLabel>Courses</IonLabel>
-        </IonTabButton>
-        <IonTabButton tab="tab2" href="/editor">
-          <IonIcon aria-hidden="true" icon={hammer} />
-          <IonLabel>Sandbox</IonLabel>
-        </IonTabButton>
-        <IonTabButton tab="tab3" href="/stats">
-          <IonIcon aria-hidden="true" icon={list} />
-          <IonLabel>Stats</IonLabel>
-        </IonTabButton>
-        <IonTabButton tab="tab4" href="/settings">
-          <IonIcon aria-hidden="true" icon={cog} />
-          <IonLabel>Settings</IonLabel>
-        </IonTabButton>
-      </IonTabBar>
-    </IonTabs>
+    <>
+      <IonTabs>
+        <IonRouterOutlet ref={outlet}>
+          <Route exact path="/courses" component={Courses}></Route>
+          <Route exact path="/stats">
+            <Stats key="stats" />
+          </Route>
+          <Route exact path="/loading" component={LoadingPage}></Route>
+          <Route path="/settings">
+            <Settings setDevWidgetEnabled={setShowDevWidget} />
+          </Route>
+          <Route path="/lesson/:id">
+            <LessonContainer />
+          </Route>
+          <Route exact path="/editor" component={CodeEditor}></Route>
+          <Route path="/course/:id" component={Course}></Route>
+          <Route exact path="/">
+            <Redirect to="/courses" />
+          </Route>
+        </IonRouterOutlet>
+        <IonTabBar
+          slot="bottom"
+          style={
+            location.pathname.startsWith("/course/") ||
+            location.pathname.startsWith("/lesson/")
+              ? {
+                  display: "none",
+                }
+              : {}
+          }
+        >
+          <IonTabButton tab="tab1" href="/courses">
+            <IonIcon aria-hidden="true" icon={book} />
+            <IonLabel>Courses</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab2" href="/editor">
+            <IonIcon aria-hidden="true" icon={hammer} />
+            <IonLabel>Sandbox</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab3" href="/stats">
+            <IonIcon aria-hidden="true" icon={list} />
+            <IonLabel>Stats</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab4" href="/settings">
+            <IonIcon aria-hidden="true" icon={cog} />
+            <IonLabel>Settings</IonLabel>
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
+      {showDevWidget && <DevWidget />}
+    </>
   );
 };
 

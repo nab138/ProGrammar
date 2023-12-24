@@ -11,6 +11,7 @@ import {
   IonModal,
   IonPage,
   IonTitle,
+  IonToggle,
   IonToolbar,
 } from "@ionic/react";
 import "./Settings.css";
@@ -22,12 +23,16 @@ import { logOutOutline } from "ionicons/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { OfflineWarning } from "../components/OfflineWarning";
 
-const Settings: React.FC = () => {
+export interface SettingsProps {
+  setDevWidgetEnabled: (enabled: boolean) => void;
+}
+const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   const [version, setVersion] = useState("");
   const [appInfo, setAppInfo] = useState<AppInfo>();
   const [showModal, setShowModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [devWidgetEnabled, setDevWidgetEnabledState] = useState(false);
 
   const [user, loading, error] = useAuthState(auth);
 
@@ -44,6 +49,8 @@ const Settings: React.FC = () => {
   useEffect(() => {
     const loadUsername = async () => {
       setUsername(await storage.get("name"));
+      const devWidgetEnabled = await storage.get("devWidgetEnabled");
+      setDevWidgetEnabledState(devWidgetEnabled);
     };
     loadUsername();
   }, [user, loading]);
@@ -66,6 +73,18 @@ const Settings: React.FC = () => {
           <IonItem color="light">
             {/* Get version from appflows live update patch */}
             <IonLabel>JS Bundle version: {version}</IonLabel>
+          </IonItem>
+          <IonItem color="light">
+            <IonLabel>Enable DevWidget</IonLabel>
+            <IonToggle
+              slot="end"
+              checked={devWidgetEnabled}
+              onIonChange={(e) => {
+                setDevWidgetEnabled(e.detail.checked);
+                setDevWidgetEnabledState(e.detail.checked);
+                storage.set("devWidgetEnabled", e.detail.checked);
+              }}
+            />
           </IonItem>
         </IonList>
         <IonList color="light" inset>
