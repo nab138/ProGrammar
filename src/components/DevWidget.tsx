@@ -56,6 +56,7 @@ const DevWidget: React.FC = () => {
       disabled={showPopover.open}
       onStart={handleDragStart}
       onStop={handleDragStop}
+      nodeRef={fab}
     >
       <IonFabButton ref={fab} onClick={handleClick}>
         <IonIcon icon={bug} />

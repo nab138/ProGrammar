@@ -10,10 +10,10 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import {
-  collection,
-  addDoc,
   persistentLocalCache,
   initializeFirestore,
+  setDoc,
+  doc,
 } from "firebase/firestore";
 import { toast } from "sonner";
 
@@ -55,7 +55,7 @@ export async function registerWithEmailAndPassword(
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
     await updateProfile(user, { displayName: name });
-    await addDoc(collection(db, "users"), {
+    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       name,
       authProvider: "local",
@@ -112,28 +112,24 @@ function logErrors(err: any) {
       if (err.message.includes("auth/invalid-email")) {
         toast.error("Invalid email address", {
           description: "Please check the email address you entered.",
-          duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/missing-password")) {
         toast.error("Missing password", {
           description: "Please check the password you entered.",
-          duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/invalid-credential")) {
         toast.error("Incorrect Login", {
           description: "Your email or password is incorrect.",
-          duration: 4000,
         });
         return;
       }
       if (err.message.includes("auth/weak-password")) {
         toast.error("Password too weak", {
           description: "Your password must be at least 6 characters long.",
-          duration: 4000,
         });
         return;
       }
@@ -141,7 +137,6 @@ function logErrors(err: any) {
         toast.error("Email already in use", {
           description:
             "The email you entered is already in use by another account.",
-          duration: 4000,
         });
         return;
       }
@@ -149,7 +144,13 @@ function logErrors(err: any) {
         toast.error("Unable to connect", {
           description:
             "Please check that your are connected to the internet to login or register.",
-          duration: 4000,
+        });
+        return;
+      }
+      if (err.message.includes("auth/requires-recent-login")) {
+        toast.error("You have not logged in recently", {
+          description:
+            "Please log out and log back in to change your password.",
         });
         return;
       }

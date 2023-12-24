@@ -15,7 +15,7 @@
       "question": "expressions-q1",
       "rich": true,
       "choices": ["double", "myVar", "=", "5.0"],
-      "answer": "2.0",
+      "answer": "5.0",
       "explanations": [
         "double is a type, not an expression.",
         "myVar is the name of a variable, not an expression.",

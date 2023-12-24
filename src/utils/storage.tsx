@@ -2,14 +2,11 @@ import { Course } from "./structures";
 import triggerAchievement from "./achievements";
 import { auth, db } from "./firebase";
 import {
-  collection,
   deleteField,
+  doc,
   getDoc,
-  getDocs,
-  query,
   setDoc,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { toast } from "sonner";
 
@@ -18,21 +15,7 @@ class Storage {
 
   private async getDocRef(uid: string) {
     if (!this.docRefs[uid]) {
-      const usersCollection = collection(db, "users");
-      const q = query(usersCollection, where("uid", "==", uid));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        // User document exists, cache docRef
-        this.docRefs[uid] = querySnapshot.docs[0].ref;
-      } else {
-        console.log("No such document!");
-        toast("Unable to access user data", {
-          description: "Please try again later",
-          duration: 5000,
-        });
-        return null;
-      }
+      this.docRefs[uid] = doc(db, "users", uid);
     }
     return this.docRefs[uid];
   }
@@ -47,15 +30,15 @@ class Storage {
         if (typeof data === "object" && data !== null && key in data) {
           return data[key];
         } else {
-          console.log("No such key in document: " + key);
+          // console.log("No such key in document: " + key);
           return null;
         }
       } else {
-        console.log("No such document!");
+        console.log("No such document: " + user.uid);
         return null;
       }
     } else {
-      console.log("No user is signed in");
+      // console.log("No user is signed in");
       return null;
     }
   }

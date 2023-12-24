@@ -5,7 +5,7 @@
       "question": "numbers-q1",
       "rich": true,
       "choices": ["3.14", "\"Hello!\"", "7", "4.0f"],
-      "answer": "7",
+      "answer": "3.14",
       "explanations": [
         "Correct!",
         "Doubles are positive or negative whole numbers, not text.",
