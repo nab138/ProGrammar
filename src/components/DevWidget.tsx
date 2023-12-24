@@ -9,40 +9,55 @@ import {
 } from "@ionic/react";
 import { bug } from "ionicons/icons";
 import React, { useContext, useState } from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { useHistory } from "react-router";
 import { LessonContext } from "../LessonContext";
-
+import { toast } from "sonner";
+interface DragInfo {
+  x: number;
+  y: number;
+  time: number;
+}
 const DevWidget: React.FC = () => {
   const { skipToEnd } = useContext(LessonContext);
-  const [dragging, setDragging] = useState(false);
+  const fab = React.useRef<HTMLIonFabButtonElement>(null);
   const [showPopover, setShowPopover] = useState<{
     open: boolean;
-    event: React.MouseEvent | React.TouchEvent | undefined;
+    event: React.MouseEvent | undefined;
   }>({ open: false, event: undefined });
-  const history = useHistory();
+  let [dragInfo, setDragInfo] = useState<DragInfo>();
 
-  const handleDrag = (e: any, data: any) => {
-    // If the user has dragged the item, setDragging to true
-    if (data.deltaX !== 0 || data.deltaY !== 0) {
-      setDragging(true);
+  let handleDragStart = (e: DraggableEvent, data: DraggableData) => {
+    setDragInfo({
+      x: data.x,
+      y: data.y,
+      time: Date.now(),
+    });
+  };
+
+  let handleDragStop = (e: DraggableEvent, data: DraggableData) => {
+    if (!dragInfo) return;
+    let change = {
+      x: Math.abs(data.x - dragInfo.x),
+      y: Math.abs(data.y - dragInfo.y),
+      time: Date.now() - dragInfo.time,
+    };
+    if (change.x + change.y <= 10 && change.time < 300) {
+      fab.current?.click();
     }
   };
 
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
-    if (dragging) {
-      setDragging(false);
-    } else {
-      setShowPopover({ open: true, event: e });
-    }
+  const handleClick = (e: React.MouseEvent) => {
+    setShowPopover({ open: true, event: e });
   };
   return (
     <Draggable
       defaultPosition={{ x: 50, y: 100 }}
       disabled={showPopover.open}
-      onDrag={handleDrag}
+      onStart={handleDragStart}
+      onStop={handleDragStop}
     >
-      <IonFabButton onClick={handleClick} onTouchStart={handleClick}>
+      <IonFabButton ref={fab} onClick={handleClick}>
         <IonIcon icon={bug} />
         <IonPopover
           isOpen={showPopover.open}
