@@ -48,7 +48,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
 
   useEffect(() => {
     const loadUsername = async () => {
-      setUsername(await storage.get("name"));
+      setUsername(await storage.get("username"));
       const devWidgetEnabled = await storage.get("devWidgetEnabled");
       setDevWidgetEnabledState(devWidgetEnabled);
     };

@@ -14,6 +14,7 @@ import {
   initializeFirestore,
   setDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import { toast } from "sonner";
 
@@ -47,20 +48,31 @@ export async function logInWithEmailAndPassword(
 }
 
 export async function registerWithEmailAndPassword(
-  name: string,
+  username: string,
+  displayName: string,
   email: string,
   password: string
 ) {
   try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-    await updateProfile(user, { displayName: name });
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      name,
-      authProvider: "local",
-      email,
-    });
+    const usernameDocRef = doc(db, "usernames", username);
+    const usernameDoc = await getDoc(usernameDocRef);
+
+    if (usernameDoc.exists()) {
+      toast.warning("Username taken", {
+        description: "Please choose a different username.",
+      });
+    } else {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const user = res.user;
+      await setDoc(usernameDocRef, { uid: user.uid });
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        username,
+        displayName,
+        authProvider: "local",
+        email,
+      });
+    }
   } catch (err) {
     logErrors(err);
   }

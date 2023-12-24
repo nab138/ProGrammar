@@ -10,7 +10,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { book, cog, hammer, list } from "ionicons/icons";
+import { book, cog, hammer, people } from "ionicons/icons";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -31,7 +31,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import Courses from "./pages/Courses";
-import Stats from "./pages/Stats";
+import Social from "./pages/Social";
 import Settings from "./pages/Settings";
 import Course from "./pages/Course";
 import LessonContainer from "./pages/LessonContainer";
@@ -94,19 +94,17 @@ const TabRoutes: React.FC = () => {
     <>
       <IonTabs>
         <IonRouterOutlet ref={outlet}>
-          <Route exact path="/courses" component={Courses}></Route>
-          <Route exact path="/stats">
-            <Stats key="stats" />
-          </Route>
-          <Route exact path="/loading" component={LoadingPage}></Route>
+          <Route exact path="/courses" component={Courses} />
+          <Route exact path="/social" component={Social} />
+          <Route exact path="/loading" component={LoadingPage} />
           <Route path="/settings">
             <Settings setDevWidgetEnabled={setShowDevWidget} />
           </Route>
           <Route path="/lesson/:id">
             <LessonContainer />
           </Route>
-          <Route exact path="/editor" component={CodeEditor}></Route>
-          <Route path="/course/:id" component={Course}></Route>
+          <Route exact path="/editor" component={CodeEditor} />
+          <Route path="/course/:id" component={Course} />
           <Route exact path="/">
             <Redirect to="/courses" />
           </Route>
@@ -130,9 +128,9 @@ const TabRoutes: React.FC = () => {
             <IonIcon aria-hidden="true" icon={hammer} />
             <IonLabel>Sandbox</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/stats">
-            <IonIcon aria-hidden="true" icon={list} />
-            <IonLabel>Stats</IonLabel>
+          <IonTabButton tab="tab3" href="/social">
+            <IonIcon aria-hidden="true" icon={people} />
+            <IonLabel>Social</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab4" href="/settings">
             <IonIcon aria-hidden="true" icon={cog} />

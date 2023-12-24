@@ -67,7 +67,15 @@ class Storage {
         if (typeof data === "object" && data !== null) {
           const updates: { [key: string]: any } = {};
           for (const key in data) {
-            if (!["name", "email", "uid", "authProvider"].includes(key)) {
+            if (
+              ![
+                "username",
+                "displayName",
+                "email",
+                "uid",
+                "authProvider",
+              ].includes(key)
+            ) {
               updates[key] = deleteField();
             }
           }

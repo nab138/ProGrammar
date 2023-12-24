@@ -10,14 +10,14 @@ import {
   IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
-import "./Stats.css";
+import "./Social.css";
 import { Achievement, getAchievements } from "../utils/achievements";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
 import { OfflineWarning } from "../components/OfflineWarning";
 
-const Stats: React.FC = () => {
+const Social: React.FC = () => {
   let [achievements, setAchievements] = useState<Achievement[]>([]);
   let [user, loading, error] = useAuthState(auth);
   let [retrievingAchievements, setRetrievingAchievements] = useState(false);
@@ -45,7 +45,7 @@ const Stats: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Stats</IonTitle>
+          <IonTitle>Social</IonTitle>
           <OfflineWarning />
         </IonToolbar>
       </IonHeader>
@@ -101,4 +101,4 @@ const Stats: React.FC = () => {
   );
 };
 
-export default Stats;
+export default Social;
