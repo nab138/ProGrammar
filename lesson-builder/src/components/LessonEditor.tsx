@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Lesson, MultipleChoiceQuestion, Question } from "../structures";
+import MDEditor from "@uiw/react-md-editor";
 import "./LessonEditor.css";
 
 interface LessonEditorProps {
@@ -22,7 +23,10 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
                 console.log(question);
               }}
             >
-              <h4>{question.question}</h4>
+              <div style={{ display: "flex", gap: "15px" }}>
+                <h3>{question.type}</h3>
+                <h4>{question.question}</h4>
+              </div>
               <p>{question.answer}</p>
             </div>
           ))}
@@ -30,7 +34,24 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
       </div>
       {selectedQuestion !== undefined && (
         <div className="question-editor">
-          <h1>Question: {selectedQuestion.question}</h1>
+          {selectedQuestion.rich ? (
+            <MDEditor
+              data-color-mode="dark"
+              className="markdown-editor"
+              value={selectedQuestion.question}
+              height={selectedQuestion.type === "text" ? "100%" : "50%"}
+              onChange={(val) => {
+                if (val !== null && val !== undefined) {
+                  setSelectedQuestion({
+                    ...selectedQuestion,
+                    question: val,
+                  });
+                }
+              }}
+            />
+          ) : (
+            <h1>{selectedQuestion.question}</h1>
+          )}
           {selectedQuestion.type === "mc" &&
             selectedQuestion.choices.map((choice, index) => (
               <div

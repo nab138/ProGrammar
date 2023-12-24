@@ -19,6 +19,15 @@
   border-radius: 10px;
   padding-left: 5px;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.question h4,
+p {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .questions {
   display: flex;
@@ -31,6 +40,7 @@
   margin-left: 10px;
   color: white;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  width: calc(100% - 450px);
 }
 
 .choice {
@@ -49,4 +59,9 @@
 
 .correct {
   background-color: #335533;
+}
+
+.markdown-editor {
+  margin: 10px;
+  width: 100%;
 }
