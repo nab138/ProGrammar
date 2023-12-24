@@ -48,6 +48,7 @@ import { useHistory } from "react-router";
 import LoadingPage from "./pages/LoadingPage";
 import DevWidget from "./components/DevWidget";
 import storage from "./utils/storage";
+import { LessonContext } from "./LessonContext";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -174,13 +175,16 @@ const LoginStuff: React.FC = () => {
 };
 
 const AppC: React.FC = () => {
+  const [skipToEnd, setSkipToEnd] = useState(() => () => {});
   return (
-    <IonApp>
-      <IonReactRouter>
-        <LoginStuff />
-      </IonReactRouter>
-      <Toaster richColors expand />
-    </IonApp>
+    <LessonContext.Provider value={{ skipToEnd, setSkipToEnd }}>
+      <IonApp>
+        <IonReactRouter>
+          <LoginStuff />
+        </IonReactRouter>
+        <Toaster richColors expand />
+      </IonApp>
+    </LessonContext.Provider>
   );
 };
 

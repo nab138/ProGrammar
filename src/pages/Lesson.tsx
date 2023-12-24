@@ -1,14 +1,12 @@
 import {
   IonContent,
   IonHeader,
-  IonIcon,
-  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./Lesson.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   LessonInfo,
   Course,
@@ -29,13 +27,17 @@ import triggerAchievement, {
   shouldAllowTrigger,
   triggerStreakAchievement,
 } from "../utils/achievements";
-import { cloudOffline } from "ionicons/icons";
 import { OfflineWarning } from "../components/OfflineWarning";
+import { LessonContext } from "../LessonContext";
+import { useHistory } from "react-router";
+import { toast } from "sonner";
 
 interface LessonPageParams {
   id: string;
 }
 const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
+  const { setSkipToEnd } = useContext(LessonContext);
+  const history = useHistory();
   // id is in the format course$unit$lesson
   let curInfo = id.split("$");
   let curCourse = curInfo[0];
@@ -75,6 +77,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     fetchInfo();
   }, [id]);
 
+  useEffect(() => {
+    setSkipToEnd(() => () => {
+      toNextQuestion(true);
+    });
+  }, [lesson, lessonInfo]);
+
   // If the last question was answered incorrectly, it would not be added to the incorrectQuestions array when toNextQuestion()
   // is called, so instead we call it when the totalIncorrect changes
   useEffect(() => {
@@ -82,10 +90,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     toNextQuestion();
   }, [totalIncorrect, incorrectQuestions]);
 
-  const toNextQuestion = async () => {
-    if (!lessonInfo || !lesson) return <></>;
+  const toNextQuestion = async (skipToEnd = false) => {
+    if (!lessonInfo || !lesson) {
+      return;
+    }
     // If we are in review mode, we need to check if we are done reviewing, and if not, go to the next incorrect question
-    if (displayState == "review") {
+    if (displayState == "review" && !skipToEnd) {
       if (incorrectQuestions.length == 1) {
         saveProgress();
         let shouldTriggerAchievements = await shouldAllowTrigger(
@@ -110,29 +120,28 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     } else {
       // If we are not in review mode, we need to check if we are done with the lesson, and if not, go to the next question
       if (
-        lesson?.questions.length &&
-        currentQuestion >= lesson?.questions.length - 1
+        (lesson?.questions.length &&
+          currentQuestion >= lesson?.questions.length - 1) ||
+        skipToEnd
       ) {
         // If there are no incorrect questions, we are done with the lesson
-        if (incorrectQuestions.length === 0) {
+        if (incorrectQuestions.length === 0 || skipToEnd) {
           (async () => {
-            await saveProgress();
-            let shouldTriggerAchievements = await shouldAllowTrigger(
-              "lesson-complete-" + lessonInfo.id
-            );
+            let [_, shouldTriggerAchievements] = await Promise.all([
+              saveProgress(),
+              shouldAllowTrigger("lesson-complete-" + lessonInfo.id),
+            ]);
             if (shouldTriggerAchievements) {
-              await triggerAchievement("lesson-complete", lessonInfo.id, true);
-              await triggerAchievement(
-                "no-mistakes-lesson",
-                lessonInfo.id,
-                true
-              );
-              await triggerStreakAchievement(
-                "no-mistakes-lesson-streak",
-                lessonInfo.id,
-                false,
-                true
-              );
+              await Promise.all([
+                triggerAchievement("lesson-complete", lessonInfo.id, true),
+                triggerAchievement("no-mistakes-lesson", lessonInfo.id, true),
+                triggerStreakAchievement(
+                  "no-mistakes-lesson-streak",
+                  lessonInfo.id,
+                  false,
+                  true
+                ),
+              ]);
             }
             setDisplayState("complete");
           })();

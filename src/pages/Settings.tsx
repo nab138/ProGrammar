@@ -96,6 +96,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
             onClick={async () => {
               setShowModal(true);
             }}
+            button={true}
           >
             <IonLabel>Change Password</IonLabel>
           </IonItem>
@@ -104,11 +105,12 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
             onClick={async () => {
               await logout();
             }}
+            button={true}
           >
             <IonIcon slot="start" icon={logOutOutline} />
             <IonLabel>Sign Out</IonLabel>
           </IonItem>
-          <IonItem id="present-clear-alert" color="danger">
+          <IonItem button={true} id="present-clear-alert" color="danger">
             <IonLabel>Danger: Clear all saved data</IonLabel>
           </IonItem>
         </IonList>

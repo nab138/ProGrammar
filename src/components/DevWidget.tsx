@@ -1,15 +1,26 @@
-import { IonButton, IonFab, IonFabButton, IonIcon, IonPopover } from "@ionic/react";
+import {
+  IonButton,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonItem,
+  IonList,
+  IonPopover,
+} from "@ionic/react";
 import { bug } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Draggable from "react-draggable";
 import { useHistory } from "react-router";
+import { LessonContext } from "../LessonContext";
 
 const DevWidget: React.FC = () => {
+  const { skipToEnd } = useContext(LessonContext);
   const [dragging, setDragging] = useState(false);
   const [showPopover, setShowPopover] = useState<{
     open: boolean;
     event: React.MouseEvent | undefined;
   }>({ open: false, event: undefined });
+  const history = useHistory();
 
   const handleDrag = (e: any, data: any) => {
     // If the user has dragged the item, setDragging to true
@@ -26,7 +37,7 @@ const DevWidget: React.FC = () => {
     }
   };
   return (
-    <Draggable onDrag={handleDrag}>
+    <Draggable disabled={showPopover.open} onDrag={handleDrag}>
       <IonFabButton onClick={handleClick}>
         <IonIcon icon={bug} />
         <IonPopover
@@ -34,18 +45,26 @@ const DevWidget: React.FC = () => {
           event={showPopover.event}
           onDidDismiss={() => setShowPopover({ open: false, event: undefined })}
         >
-          <IonButton
-            expand="full"
-            onClick={() => console.log("Button 1 clicked")}
-          >
-            Button 1
-          </IonButton>
-          <IonButton
-            expand="full"
-            onClick={() => console.log("Button 2 clicked")}
-          >
-            Button 2
-          </IonButton>
+          <IonList>
+            <IonItem
+              button={true}
+              detail={false}
+              onClick={async () => {
+                await skipToEnd();
+              }}
+            >
+              Skip to end of lesson
+            </IonItem>
+            <IonItem
+              button={true}
+              detail={false}
+              onClick={() => {
+                history.go(0);
+              }}
+            >
+              Reload (Wipe State)
+            </IonItem>
+          </IonList>
         </IonPopover>
       </IonFabButton>
     </Draggable>
