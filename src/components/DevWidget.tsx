@@ -30,11 +30,11 @@ const DevWidget: React.FC<DevWidgetProps> = ({ hideDevWidget }) => {
   const [consoleLog, setConsoleLog] = useState("");
 
   useEffect(() => {
-    const originalLog = console.log;
-    const originalWarn = console.warn;
-    const originalError = console.error;
+    const originalLog = window.console.log;
+    const originalWarn = window.console.warn;
+    const originalError = window.console.error;
 
-    console.log = function (message, ...optionalParams) {
+    window.console.log = function (message, ...optionalParams) {
       setConsoleLog(
         (prevLog) =>
           prevLog +
@@ -43,7 +43,7 @@ const DevWidget: React.FC<DevWidgetProps> = ({ hideDevWidget }) => {
       originalLog.apply(console, [message, ...optionalParams]);
     };
 
-    console.warn = function (message, ...optionalParams) {
+    window.console.warn = function (message, ...optionalParams) {
       setConsoleLog(
         (prevLog) =>
           prevLog +
@@ -54,7 +54,7 @@ const DevWidget: React.FC<DevWidgetProps> = ({ hideDevWidget }) => {
       originalWarn.apply(console, [message, ...optionalParams]);
     };
 
-    console.error = function (message, ...optionalParams) {
+    window.console.error = function (message, ...optionalParams) {
       setConsoleLog(
         (prevLog) =>
           prevLog +
