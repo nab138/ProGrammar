@@ -12,7 +12,7 @@ const TextScreen: React.FC<TextScreenProps> = ({ question, onCorrect }) => {
     <>
       <div className="lesson-content-container">
         <RichDisplay
-          content={question.rich ? question.content ?? "" : question.question}
+          content={question.question}
           richDisplay={question.rich ?? false}
         />
       </div>

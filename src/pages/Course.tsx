@@ -31,7 +31,7 @@ const CoursePage: React.FC = () => {
   let [completions, setCompletions] = useState<Completions>({});
   useEffect(() => {
     const fetchInfo = async () => {
-      let infoModule = await import(`../courses/${id}/info.json`);
+      let infoModule = await import(`../courses/${id}.json`);
       let info: Course = infoModule.default;
       let unit = (await storage.get(`unit-progress-${id}`)) ?? 0;
       let lesson = (await storage.get(`lesson-progress-${id}`)) ?? 0;

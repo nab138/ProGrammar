@@ -1,0 +1,33 @@
+.app input {
+  margin-left: 15px;
+}
+
+.courses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  flex-direction: column;
+  gap: 15px;
+}
+.courseList {
+  margin-top: 15px;
+  width: fit-content;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.courseBtn {
+  background-color: #3d424d;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: -2px;
+  border: 2px solid #1f2227;
+}
+
+.sidebar {
+  position: fixed;
+  top: 10%;
+  left: 15px;
+  bottom: 0;
+  width: 300px;
+}

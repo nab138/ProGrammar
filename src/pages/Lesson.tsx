@@ -8,7 +8,6 @@ import {
 import "./Lesson.css";
 import { useContext, useEffect, useState } from "react";
 import {
-  LessonInfo,
   Course,
   Lesson,
   MultipleChoiceQuestion,
@@ -43,7 +42,6 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   let curCourse = curInfo[0];
   let curUnit = parseInt(curInfo[1]);
   let curLesson = parseInt(curInfo[2]);
-  let [lessonInfo, setLessonInfo] = useState<LessonInfo>();
   let [info, setInfo] = useState<Course>();
   let [lesson, setLesson] = useState<Lesson>();
   let [incorrectQuestions, setIncorrectQuestions] = useState<number[]>([]);
@@ -56,23 +54,18 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
 
   useEffect(() => {
     const fetchInfo = async () => {
-      let infoModule = await import(`../courses/${curCourse}/info.json`);
+      let infoModule = await import(`../courses/${curCourse}.json`);
       let info: Course = infoModule.default;
       let unit = info.units[curUnit];
-      let lessonInfo = unit.lessons[curLesson];
-      let lessonModule = await import(
-        `../courses/${curCourse}/${unit.id}/${lessonInfo.id}.json`
-      );
+      let rawLesson = unit.lessons[curLesson];
       let lesson = await prepareLesson(
-        lessonModule.default,
-        info,
-        unit,
-        lessonInfo
+        rawLesson
+        // info,
+        // unit
       );
 
       setLesson(lesson);
       setInfo(info);
-      setLessonInfo(lessonInfo);
     };
     fetchInfo();
   }, [id]);
@@ -81,7 +74,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     setSkipToEnd(() => () => {
       toNextQuestion(true);
     });
-  }, [lesson, lessonInfo]);
+  }, [lesson]);
 
   // If the last question was answered incorrectly, it would not be added to the incorrectQuestions array when toNextQuestion()
   // is called, so instead we call it when the totalIncorrect changes
@@ -91,7 +84,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   }, [totalIncorrect, incorrectQuestions]);
 
   const toNextQuestion = async (skipToEnd = false) => {
-    if (!lessonInfo || !lesson) {
+    if (!lesson) {
       return;
     }
     // If we are in review mode, we need to check if we are done reviewing, and if not, go to the next incorrect question
@@ -99,13 +92,13 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       if (incorrectQuestions.length == 1) {
         saveProgress();
         let shouldTriggerAchievements = await shouldAllowTrigger(
-          "lesson-complete-" + lessonInfo.id
+          "lesson-complete-" + lesson.id
         );
         if (shouldTriggerAchievements) {
-          triggerAchievement("lesson-complete", lessonInfo.id);
+          triggerAchievement("lesson-complete", lesson.id);
           triggerStreakAchievement(
             "no-mistakes-lesson-streak",
-            lessonInfo.id,
+            lesson.id,
             true,
             true
           );
@@ -129,15 +122,15 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           (async () => {
             let [_, shouldTriggerAchievements] = await Promise.all([
               saveProgress(),
-              shouldAllowTrigger("lesson-complete-" + lessonInfo.id),
+              shouldAllowTrigger("lesson-complete-" + lesson.id),
             ]);
             if (shouldTriggerAchievements) {
               await Promise.all([
-                triggerAchievement("lesson-complete", lessonInfo.id, true),
-                triggerAchievement("no-mistakes-lesson", lessonInfo.id, true),
+                triggerAchievement("lesson-complete", lesson.id, true),
+                triggerAchievement("no-mistakes-lesson", lesson.id, true),
                 triggerStreakAchievement(
                   "no-mistakes-lesson-streak",
-                  lessonInfo.id,
+                  lesson.id,
                   false,
                   true
                 ),
@@ -166,7 +159,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     setCompleteType(res);
   };
 
-  if (!lessonInfo || !lesson) return <></>;
+  if (!lesson || !lesson) return <></>;
   const getQuestion = (question: Question, isReview = false) => {
     switch (question?.type) {
       case "mc":
@@ -221,7 +214,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>
-            {curUnit + 1}.{curLesson + 1} - {lessonInfo?.name}
+            {curUnit + 1}.{curLesson + 1} - {lesson?.name}
           </IonTitle>
           <OfflineWarning />
           <CloseButton key={awaitingSave.toString()} isLesson={awaitingSave} />
@@ -234,7 +227,6 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           totalIncorrect={totalIncorrect}
           currentIncorrect={currentIncorrect}
           lesson={lesson}
-          lessonInfo={lessonInfo}
           hard={lesson.questions[currentQuestion].hard ?? false}
         />
         {(() => {

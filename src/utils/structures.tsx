@@ -11,16 +11,13 @@ export interface Unit {
   name: string;
   description: string;
   id: string;
-  lessons: LessonInfo[];
-}
-
-export interface LessonInfo {
-  name: string;
-  type: "quiz" | "learn";
-  id: string;
+  lessons: Lesson[];
 }
 
 export interface Lesson {
+  name: string;
+  type: "quiz" | "learn";
+  id: string;
   questions: Question[];
 }
 
@@ -54,12 +51,9 @@ export interface MultipleChoiceQuestion {
   hard?: boolean;
   rich?: boolean;
 }
-export function randomizeLesson(
-  lesson: Lesson,
-  lessonInfo: LessonInfo
-): Lesson {
+export function randomizeLesson(lesson: Lesson): Lesson {
   let newQuestions: Question[];
-  if (lessonInfo.type == "learn") {
+  if (lesson.type == "learn") {
     newQuestions = [...lesson.questions];
   } else {
     newQuestions = [...shuffleArray(lesson.questions)];
@@ -86,7 +80,12 @@ export function randomizeLesson(
       buildQuestion.choices = shuffleArray(buildQuestion.choices);
     }
   });
-  return { questions: newQuestions };
+  return {
+    questions: newQuestions,
+    name: lesson.name,
+    type: lesson.type,
+    id: lesson.id,
+  };
 }
 
 function shuffleArray(array: any[]) {
@@ -111,21 +110,36 @@ export async function loadRichText(
     }
     newQuestions.push(question);
   }
-  return { questions: newQuestions };
+  return {
+    questions: newQuestions,
+    name: lesson.name,
+    type: lesson.type,
+    id: lesson.id,
+  };
 }
 
-export async function addQuestionIds(lesson: Lesson, lessonInfo: LessonInfo) {
+export async function addQuestionIds(lesson: Lesson): Promise<Lesson> {
   let newQuestions: Question[] = [];
   for (let i = 0; i < lesson.questions.length; i++) {
     let question = lesson.questions[i];
-    question.id = lessonInfo.id + "-q" + i;
+    question.id = lesson.id + "-q" + i;
     newQuestions.push(question);
   }
-  return { questions: newQuestions };
+  return {
+    questions: newQuestions,
+    name: lesson.name,
+    type: lesson.type,
+    id: lesson.id,
+  };
 }
 
-export async function prepareLesson(lesson: Lesson, course: Course, unit: Unit, lessonInfo: LessonInfo) {
-  let lessonWithIds = await addQuestionIds(lesson, lessonInfo);
-  let radnomizedLesson = randomizeLesson(lessonWithIds, lessonInfo);
-  return await loadRichText(course, unit, radnomizedLesson);
+export async function prepareLesson(
+  lesson: Lesson
+  // course: Course,
+  // unit: Unit
+) {
+  let lessonWithIds = await addQuestionIds(lesson);
+  let radnomizedLesson = randomizeLesson(lessonWithIds);
+  //return await loadRichText(course, unit, radnomizedLesson);
+  return radnomizedLesson;
 }

@@ -39,7 +39,7 @@ const Courses: React.FC = () => {
       }
       let coursesTemp = [];
       for (let course of coursesList) {
-        let infoModule = await import(`../courses/${course}/info.json`);
+        let infoModule = await import(`../courses/${course}.json`);
         let info: Course = infoModule.default;
         info.currentUnit = await storage.get(`unit-progress-${course}`);
         info.currentLesson = await storage.get(`lesson-progress-${course}`);

@@ -1,6 +1,6 @@
-import { IonAlert, IonIcon, IonProgressBar } from "@ionic/react";
+import { IonIcon, IonProgressBar } from "@ionic/react";
 import "./LessonHeader.css";
-import { Lesson, LessonInfo } from "../utils/structures";
+import { Lesson } from "../utils/structures";
 import { alertCircle } from "ionicons/icons";
 
 interface LessonHeaderProps {
@@ -9,14 +9,12 @@ interface LessonHeaderProps {
   totalIncorrect: number;
   currentIncorrect: number;
   lesson: Lesson;
-  lessonInfo: LessonInfo;
   hard: boolean;
 }
 const LessonHeader: React.FC<LessonHeaderProps> = ({
   displayState,
   currentQuestion,
   lesson,
-  lessonInfo,
   totalIncorrect,
   currentIncorrect,
   hard,
@@ -42,7 +40,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
           )}
           <h4>
             {inReviewMode ? "Review " : ""}{" "}
-            {lessonInfo.type == "learn" ? "Part" : "Question"}{" "}
+            {lesson.type == "learn" ? "Part" : "Question"}{" "}
             {currentQuestionCount + 1}/{questionCount}
           </h4>
         </div>
