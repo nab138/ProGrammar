@@ -112,6 +112,18 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
               <div style={{ display: "flex", gap: "15px" }}>
                 <h3>{question.type}</h3>
                 <h4>{question.question}</h4>
+                <button
+                  className={"deleteBtn"}
+                  onClick={() => {
+                    const newLesson = { ...lesson };
+                    newLesson.questions.splice(index, 1);
+                    const newCourse = { ...originalJSON };
+                    newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+                    updateJSON(newCourse);
+                  }}
+                >
+                  -
+                </button>
               </div>
               {question.answer !== undefined && <p>{question.answer}</p>}
             </div>
@@ -133,6 +145,34 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
           </div>
         </div>
       </div>
+      {selectedQuestionIndex !== undefined && (
+        <div
+          className="next-question-button"
+          onClick={() => {
+            if (selectedQuestionIndex + 1 >= lesson.questions.length) {
+              const newLesson = { ...lesson };
+              newLesson.questions.push({
+                type: "text",
+                question: "",
+              });
+              const newCourse = { ...originalJSON };
+              newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+              updateJSON(newCourse);
+            }
+            setSelectedQuestion(lesson.questions[selectedQuestionIndex + 1]);
+            setSelectedQuestionIndex(selectedQuestionIndex + 1);
+            // Scroll to bottom of sidebar
+            const questions = document.getElementsByClassName(
+              "lesson-editor-sidebar"
+            )[0];
+            if (questions !== undefined) {
+              questions.scrollTop = questions.scrollHeight;
+            }
+          }}
+        >
+          Next Question
+        </div>
+      )}
       {selectedQuestion !== undefined && (
         <div className="question-editor">
           <div className="settings">
