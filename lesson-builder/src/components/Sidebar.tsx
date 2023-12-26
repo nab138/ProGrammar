@@ -4,8 +4,18 @@ import "./Sidebar.css";
 
 interface SidebarProps {
   setSelectedLesson: (lesson: Lesson) => void;
+  setJSON: (json: Course) => void;
+  setCourseDir: (dir: string) => void;
+  setSelectedUnitIndex: (index: number) => void;
+  setSelectedLessonIndex: (index: number) => void;
 }
-const Sidebar: React.FC<SidebarProps> = ({ setSelectedLesson }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  setSelectedLesson,
+  setJSON,
+  setCourseDir,
+  setSelectedUnitIndex,
+  setSelectedLessonIndex,
+}) => {
   const [courses, setCourses] = useState<string[]>([]);
   const [courseName, setCourseName] = useState<string>("");
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -40,6 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedLesson }) => {
   useEffect(() => {
     if (courseName) {
       const coursePath = `${directory}/${courseName}.json`;
+      setCourseDir(coursePath);
       fetch("http://localhost:8081/api/getCourse", {
         method: "POST",
         headers: {
@@ -52,6 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedLesson }) => {
             // If the data fits the Course interface
             if (data.name && data.description && data.units && data.id) {
               const course: Course = data;
+              setJSON(course);
               setUnits(course.units);
             }
           })
@@ -100,6 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedLesson }) => {
               className="courseBtn"
               key={index}
               onClick={() => {
+                setSelectedUnitIndex(index);
                 setUnit(unit);
               }}
             >
@@ -113,6 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedLesson }) => {
               className="courseBtn"
               key={index}
               onClick={() => {
+                setSelectedLessonIndex(index);
                 setSelectedLesson(lesson);
               }}
             >

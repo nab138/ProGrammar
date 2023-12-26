@@ -1,13 +1,40 @@
-import { useState } from "react";
-import { Lesson, MultipleChoiceQuestion, Question } from "../structures";
+import { useEffect, useState } from "react";
+import {
+  Course,
+  Lesson,
+  MultipleChoiceQuestion,
+  Question,
+} from "../structures";
 import MDEditor from "@uiw/react-md-editor";
 import "./LessonEditor.css";
 
 interface LessonEditorProps {
   lesson: Lesson;
+  updateJSON: (lesson: Course) => void;
+  originalJSON: Course;
+  unitIndex: number;
+  lessonIndex: number;
 }
-const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
+const LessonEditor: React.FC<LessonEditorProps> = ({
+  lesson,
+  updateJSON,
+  originalJSON,
+  unitIndex,
+  lessonIndex,
+}) => {
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>();
+
+  useEffect(() => {
+    if (selectedQuestion !== undefined && selectedQuestionIndex !== undefined) {
+      const newLesson = { ...lesson };
+      newLesson.questions[selectedQuestionIndex] = selectedQuestion;
+      const newCourse = { ...originalJSON };
+      newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+      updateJSON(newCourse);
+    }
+  }, [selectedQuestion]);
+
   return (
     <div className="lesson-editor">
       <div className="lesson-editor-sidebar">
@@ -20,7 +47,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
               key={index}
               onClick={() => {
                 setSelectedQuestion(question);
-                console.log(question);
+                setSelectedQuestionIndex(index);
               }}
             >
               <div style={{ display: "flex", gap: "15px" }}>
@@ -34,6 +61,21 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
       </div>
       {selectedQuestion !== undefined && (
         <div className="question-editor">
+          <div className="settings">
+            {/* Add a checkbox for rich */}
+            <label htmlFor="rich">Rich:</label>
+            <input
+              type="checkbox"
+              id="rich"
+              checked={!!selectedQuestion.rich}
+              onChange={(event) => {
+                setSelectedQuestion({
+                  ...selectedQuestion,
+                  rich: event.target.checked,
+                });
+              }}
+            />
+          </div>
           {selectedQuestion.rich ? (
             <MDEditor
               data-color-mode="dark"
@@ -50,7 +92,16 @@ const LessonEditor: React.FC<LessonEditorProps> = ({ lesson }) => {
               }}
             />
           ) : (
-            <h1>{selectedQuestion.question}</h1>
+            <textarea
+              className="question-input"
+              value={selectedQuestion.question}
+              onChange={(e) => {
+                setSelectedQuestion({
+                  ...selectedQuestion,
+                  question: e.target.value,
+                });
+              }}
+            />
           )}
           {selectedQuestion.type === "mc" &&
             selectedQuestion.choices.map((choice, index) => (

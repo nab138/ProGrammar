@@ -65,3 +65,20 @@ p {
   margin: 10px;
   width: 100%;
 }
+
+.settings {
+  margin-top: 10px;
+  margin-bottom: -10px;
+}
+
+.question-input {
+  /* Style this text-area to be like an h1 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  background-color: #282c34;
+  color: white;
+  width: 100%;
+  margin-top: 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
