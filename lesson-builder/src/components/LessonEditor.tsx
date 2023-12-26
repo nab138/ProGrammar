@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  BuildQuestion,
   Course,
   Lesson,
   MultipleChoiceQuestion,
@@ -271,6 +272,66 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
             >
               Add
             </button>
+          )}
+          {selectedQuestion.type === "build" && (
+            <>
+              <label htmlFor="build-answer">Answer:</label>
+              <textarea
+                id="build-answer"
+                value={selectedQuestion.answer}
+                onChange={(e) => {
+                  const newQuestion = {
+                    ...selectedQuestion,
+                  } as BuildQuestion;
+                  newQuestion.answer = e.target.value;
+                  setSelectedQuestion(newQuestion);
+                }}
+              />
+            </>
+          )}
+          {selectedQuestion.type === "build" && (
+            <div className="build-choices">
+              {(selectedQuestion as BuildQuestion).choices.map(
+                (choice, index) => (
+                  <div className={"build-choice"} key={index}>
+                    <input
+                      type="text"
+                      value={choice}
+                      onChange={(e) => {
+                        const newQuestion = {
+                          ...selectedQuestion,
+                        } as BuildQuestion;
+                        newQuestion.choices[index] = e.target.value;
+                        setSelectedQuestion(newQuestion);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const newQuestion = {
+                          ...selectedQuestion,
+                        } as BuildQuestion;
+                        newQuestion.choices.splice(index, 1);
+                        setSelectedQuestion(newQuestion);
+                      }}
+                    >
+                      -
+                    </button>
+                  </div>
+                )
+              )}
+              <button
+                onClick={() => {
+                  const newQuestion = {
+                    ...selectedQuestion,
+                  } as BuildQuestion;
+                  newQuestion.choices.push("");
+                  setSelectedQuestion(newQuestion);
+                }}
+                className="build-choice add-build-choice"
+              >
+                Add
+              </button>
+            </div>
           )}
         </div>
       )}
