@@ -17,7 +17,7 @@ interface LessonEditorProps {
   lessonIndex: number;
 }
 const LessonEditor: React.FC<LessonEditorProps> = ({
-  lesson,
+  lesson: inputLesson,
   updateJSON,
   originalJSON,
   unitIndex,
@@ -25,6 +25,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
 }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>();
+  const [lesson, setLesson] = useState<Lesson>(inputLesson);
   const [lessonName, setLessonName] = useState<string>(lesson.name);
   const [lessonId, setLessonId] = useState<string>(lesson.id);
   const [lessonType, setLessonType] = useState<"learn" | "quiz">(lesson.type);
@@ -35,6 +36,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
       const newCourse = { ...originalJSON };
       newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
       updateJSON(newCourse);
+      setLesson(newLesson);
     }
   }, [selectedQuestion]);
 
@@ -44,6 +46,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
     const newCourse = { ...originalJSON };
     newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
     updateJSON(newCourse);
+    setLesson(newLesson);
   }, [lessonName]);
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
     const newCourse = { ...originalJSON };
     newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
     updateJSON(newCourse);
+    setLesson(newLesson);
   }, [lessonId]);
 
   useEffect(() => {
@@ -60,6 +64,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
     const newCourse = { ...originalJSON };
     newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
     updateJSON(newCourse);
+    setLesson(newLesson);
   }, [lessonType]);
 
   return (
@@ -176,48 +181,66 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
       {selectedQuestion !== undefined && (
         <div className="question-editor">
           <div className="settings">
-            <label htmlFor="rich">Rich:</label>
-            <input
-              type="checkbox"
-              id="rich"
-              checked={!!selectedQuestion.rich}
-              onChange={(event) => {
-                setSelectedQuestion({
-                  ...selectedQuestion,
-                  rich: event.target.checked,
-                });
-              }}
-            />
-            <label htmlFor="q-type">Question Type:</label>
-            <select
-              id="q-type"
-              value={selectedQuestion.type}
-              onChange={(e) => {
-                const newQuestion = { ...selectedQuestion };
-                if (e.target.value === "mc") {
-                  newQuestion.choices = [];
-                  newQuestion.explanations = [];
-                  newQuestion.answer = "";
-                }
-                if (e.target.value === "build") {
-                  newQuestion.choices = [];
-                  newQuestion.answer = "";
-                }
-                newQuestion.type = e.target.value as "mc" | "build" | "text";
-                setSelectedQuestion(newQuestion);
-              }}
-            >
-              <option value="text">Text</option>
-              <option value="mc">Multiple Choice</option>
-              <option value="build">Build</option>
-            </select>
+            <div>
+              <label htmlFor="rich">Rich:</label>
+              <input
+                type="checkbox"
+                id="rich"
+                checked={!!selectedQuestion.rich}
+                onChange={(event) => {
+                  setSelectedQuestion({
+                    ...selectedQuestion,
+                    rich: event.target.checked,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label htmlFor="hard">Hard:</label>
+              <input
+                type="checkbox"
+                id="hard"
+                checked={!!selectedQuestion.hard}
+                onChange={(event) => {
+                  setSelectedQuestion({
+                    ...selectedQuestion,
+                    hard: event.target.checked,
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label htmlFor="q-type">Question Type:</label>
+              <select
+                id="q-type"
+                value={selectedQuestion.type}
+                onChange={(e) => {
+                  const newQuestion = { ...selectedQuestion };
+                  if (e.target.value === "mc") {
+                    newQuestion.choices = [];
+                    newQuestion.explanations = [];
+                    newQuestion.answer = "";
+                  }
+                  if (e.target.value === "build") {
+                    newQuestion.choices = [];
+                    newQuestion.answer = "";
+                  }
+                  newQuestion.type = e.target.value as "mc" | "build" | "text";
+                  setSelectedQuestion(newQuestion);
+                }}
+              >
+                <option value="text">Text</option>
+                <option value="mc">Multiple Choice</option>
+                <option value="build">Build</option>
+              </select>
+            </div>
           </div>
           {selectedQuestion.rich ? (
             <MDEditor
               data-color-mode="dark"
               className="markdown-editor"
               value={selectedQuestion.question}
-              height={selectedQuestion.type === "text" ? "100%" : "50%"}
+              height={selectedQuestion.type === "text" ? "95%" : "50%"}
               onChange={(val) => {
                 if (val !== null && val !== undefined) {
                   setSelectedQuestion({
@@ -245,7 +268,9 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                 <div
                   className={
                     "choice" +
-                    (choice === selectedQuestion.answer ? " correct" : "")
+                    (choice === selectedQuestion.answer && choice !== ""
+                      ? " correct"
+                      : "")
                   }
                   key={index}
                   onDoubleClick={() => {

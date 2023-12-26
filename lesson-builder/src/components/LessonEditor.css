@@ -109,6 +109,8 @@ p {
 
 .settings {
   margin-top: 10px;
+  display: flex;
+  gap: 25px;
 }
 
 .question-input {
