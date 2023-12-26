@@ -20,17 +20,14 @@ function App() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ course: courseDir, data: newJson }),
-    })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    }).catch((error) => {
+      console.error("Error:", error);
+    });
   };
   return (
     <>
       <Sidebar
+        updateJSON={updateJson}
         setCourseDir={setCourseDir}
         setJSON={setJSON}
         setSelectedLesson={setSelectedLesson}
@@ -46,6 +43,7 @@ function App() {
           selectedLessonIndex !== undefined &&
           selectedUnitIndex !== undefined && (
             <LessonEditor
+              key={selectedLessonIndex}
               unitIndex={selectedUnitIndex}
               lessonIndex={selectedLessonIndex}
               updateJSON={updateJson}

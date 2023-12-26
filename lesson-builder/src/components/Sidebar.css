@@ -31,3 +31,12 @@
   bottom: 0;
   width: 300px;
 }
+
+.addBtn {
+  background-color: #314b30;
+  text-align: center;
+}
+
+.selected {
+  background-color: #313338;
+}

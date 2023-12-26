@@ -43,7 +43,8 @@ p {
   width: calc(100% - 450px);
 }
 
-.choice {
+.choice,
+.add-choice {
   width: 100%;
   background-color: #282c34;
   border-radius: 10px;
@@ -51,10 +52,46 @@ p {
   margin: 5px 0;
   display: flex;
   justify-content: space-between;
+  border: 1px solid #282c34;
+  height: 60px;
 }
 
-.choice p {
-  width: 50%;
+.add-choice {
+  font-size: 1.5rem;
+  cursor: pointer;
+  /* Center text in the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: antiquewhite;
+}
+.choice textarea {
+  width: 46%;
+  /* Style to look like p */
+  font-size: 1rem;
+  border: none;
+  background-color: #282c34;
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Allow wrapping if text is too long */
+  white-space: normal;
+  overflow-wrap: break-word;
+  resize: none;
+}
+
+.choice button {
+  background-color: #553a3a;
+  border: none;
+  border-radius: 5px;
+  flex-grow: 0.5;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0 5px;
+}
+
+.correct textarea {
+  background-color: #335533;
 }
 
 .correct {
@@ -81,4 +118,21 @@ p {
   width: 100%;
   margin-top: 15px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#lesson-name {
+  /* Style input like h1 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  color: white;
+}
+
+#lesson-id {
+  /* Style input like h1 */
+  font-size: 1rem;
+  border: none;
+  background-color: transparent;
+  color: white;
 }

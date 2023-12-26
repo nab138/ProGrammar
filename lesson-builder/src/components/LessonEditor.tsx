@@ -24,7 +24,9 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
 }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>();
-
+  const [lessonName, setLessonName] = useState<string>(lesson.name);
+  const [lessonId, setLessonId] = useState<string>(lesson.id);
+  const [lessonType, setLessonType] = useState<"learn" | "quiz">(lesson.type);
   useEffect(() => {
     if (selectedQuestion !== undefined && selectedQuestionIndex !== undefined) {
       const newLesson = { ...lesson };
@@ -35,10 +37,63 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
     }
   }, [selectedQuestion]);
 
+  useEffect(() => {
+    const newLesson = { ...lesson };
+    newLesson.name = lessonName;
+    const newCourse = { ...originalJSON };
+    newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+    updateJSON(newCourse);
+  }, [lessonName]);
+
+  useEffect(() => {
+    const newLesson = { ...lesson };
+    newLesson.id = lessonId;
+    const newCourse = { ...originalJSON };
+    newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+    updateJSON(newCourse);
+  }, [lessonId]);
+
+  useEffect(() => {
+    const newLesson = { ...lesson };
+    newLesson.type = lessonType;
+    const newCourse = { ...originalJSON };
+    newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+    updateJSON(newCourse);
+  }, [lessonType]);
+
   return (
     <div className="lesson-editor">
       <div className="lesson-editor-sidebar">
-        <h1>Lesson: {lesson.name}</h1>
+        <label htmlFor="lesson-name">Lesson Name:</label>
+        <input
+          type="text"
+          id="lesson-name"
+          value={lessonName}
+          onChange={(e) => {
+            setLessonName(e.target.value);
+          }}
+        />
+        <label htmlFor="lesson-id">Lesson ID:</label>
+        <input
+          type="text"
+          id="lesson-id"
+          value={lessonId}
+          onChange={(e) => {
+            setLessonId(e.target.value);
+          }}
+        />
+        <label htmlFor="lesson-type">Lesson Type:</label>
+        {/* Dropdown for type */}
+        <select
+          id="lesson-type"
+          value={lessonType}
+          onChange={(e) => {
+            setLessonType(e.target.value as "learn" | "quiz");
+          }}
+        >
+          <option value="learn">Learn</option>
+          <option value="quiz">Quiz</option>
+        </select>
         <h3>Parts</h3>
         <div className="questions">
           {lesson.questions.map((question, index) => (
@@ -111,17 +166,65 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                   (choice === selectedQuestion.answer ? " correct" : "")
                 }
                 key={index}
+                onDoubleClick={() => {
+                  const newQuestion = { ...selectedQuestion };
+                  newQuestion.answer = choice;
+                  setSelectedQuestion(newQuestion);
+                }}
               >
-                <p>{choice}</p>
-                <p>
-                  {
+                <textarea
+                  value={choice}
+                  onChange={(e) => {
+                    const newQuestion = { ...selectedQuestion };
+                    newQuestion.choices[index] = e.target.value;
+                    if (newQuestion.answer === choice) {
+                      newQuestion.answer = e.target.value;
+                    }
+                    setSelectedQuestion(newQuestion);
+                  }}
+                />
+                <textarea
+                  value={
                     (selectedQuestion as MultipleChoiceQuestion).explanations[
                       index
                     ]
                   }
-                </p>
+                  onChange={(e) => {
+                    const newQuestion = { ...selectedQuestion };
+                    (newQuestion as MultipleChoiceQuestion).explanations[
+                      index
+                    ] = e.target.value;
+                    setSelectedQuestion(newQuestion);
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    const newQuestion = { ...selectedQuestion };
+                    newQuestion.choices.splice(index, 1);
+                    (newQuestion as MultipleChoiceQuestion).explanations.splice(
+                      index,
+                      1
+                    );
+                    setSelectedQuestion(newQuestion);
+                  }}
+                >
+                  -
+                </button>
               </div>
             ))}
+          {selectedQuestion.type === "mc" && (
+            <button
+              onClick={() => {
+                const newQuestion = { ...selectedQuestion };
+                newQuestion.choices.push("");
+                (newQuestion as MultipleChoiceQuestion).explanations.push("");
+                setSelectedQuestion(newQuestion);
+              }}
+              className="add-choice"
+            >
+              Add
+            </button>
+          )}
         </div>
       )}
     </div>

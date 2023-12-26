@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Course, Lesson, Unit } from "../structures";
+import { Course, Lesson, Question, Unit } from "../structures";
 import "./Sidebar.css";
 
 interface SidebarProps {
@@ -8,6 +8,7 @@ interface SidebarProps {
   setCourseDir: (dir: string) => void;
   setSelectedUnitIndex: (index: number) => void;
   setSelectedLessonIndex: (index: number) => void;
+  updateJSON: (newJson: Course) => void;
 }
 const Sidebar: React.FC<SidebarProps> = ({
   setSelectedLesson,
@@ -15,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   setCourseDir,
   setSelectedUnitIndex,
   setSelectedLessonIndex,
+  updateJSON,
 }) => {
   const [courses, setCourses] = useState<string[]>([]);
   const [courseName, setCourseName] = useState<string>("");
@@ -24,6 +26,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [directory, setDirectory] = useState<string>(
     "/home/nicholas/coding/robotics/programming-duolingo/src/courses"
   );
+  const [course, setCourse] = useState<Course>();
+  const [selectedUnitIndex, setSelectedUnitIndexState] = useState<number>();
+  const [selectedLessonIndex, setSelectedLessonIndexState] = useState<number>();
+  const [selectedCourseIndex, setSelectedCourseIndex] = useState<number>();
+
+  useEffect(() => {
+    if (course) {
+      updateJSON(course);
+    }
+  }, [course]);
 
   useEffect(() => {
     if (directory) {
@@ -63,6 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             // If the data fits the Course interface
             if (data.name && data.description && data.units && data.id) {
               const course: Course = data;
+              setCourse(course);
               setJSON(course);
               setUnits(course.units);
             }
@@ -79,6 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       setLessons(unit.lessons);
     }
   }, [unit]);
+
   return (
     <div className="sidebar">
       <label htmlFor="directory">Directory:</label>
@@ -96,10 +110,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="courseList">
           {courses.map((project, index) => (
             <div
-              className="courseBtn"
+              className={
+                "courseBtn" + (index === selectedCourseIndex ? " selected" : "")
+              }
               key={index}
               onClick={() => {
                 setCourseName(project);
+                setSelectedCourseIndex(index);
               }}
             >
               {project}
@@ -109,30 +126,87 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="courseList">
           {units.map((unit, index) => (
             <div
-              className="courseBtn"
+              className={
+                "courseBtn" + (index === selectedUnitIndex ? " selected" : "")
+              }
               key={index}
               onClick={() => {
                 setSelectedUnitIndex(index);
+                setSelectedUnitIndexState(index);
                 setUnit(unit);
               }}
             >
               {unit.name}
             </div>
           ))}
+          {units.length > 0 && (
+            <div
+              className="courseBtn addBtn"
+              onClick={() => {
+                if (!course) return;
+                const newUnit = {
+                  name: "New Unit",
+                  description: "",
+                  lessons: [] as Lesson[],
+                  id: "new-unit",
+                };
+                const newCourse = { ...course };
+                newCourse.units.push(newUnit);
+                setCourse(newCourse);
+                setUnits(newCourse.units);
+              }}
+            >
+              Add Unit +
+            </div>
+          )}
         </div>
         <div className="courseList">
           {lessons.map((lesson, index) => (
             <div
-              className="courseBtn"
+              className={
+                "courseBtn" + (index === selectedLessonIndex ? " selected" : "")
+              }
               key={index}
               onClick={() => {
                 setSelectedLessonIndex(index);
+                setSelectedLessonIndexState(index);
                 setSelectedLesson(lesson);
               }}
             >
               {lesson.name}
             </div>
           ))}
+          {lessons && (
+            <div
+              className="courseBtn addBtn"
+              onClick={() => {
+                if (!unit) return;
+                const newLesson = {
+                  name: "New Lesson",
+                  description: "",
+                  questions: [] as Question[],
+                  id: "new-lesson",
+                  type: "learn" as "learn" | "quiz",
+                };
+                const newUnit = { ...unit };
+                newUnit.lessons.push(newLesson);
+                const newCourse = { ...course } as Course;
+                if (
+                  newCourse === undefined ||
+                  newCourse.units === undefined ||
+                  selectedUnitIndex === undefined
+                )
+                  return;
+                newCourse.units[selectedUnitIndex] = newUnit;
+                setCourse(newCourse);
+                setUnit(newUnit);
+                setUnits(newCourse.units);
+                setLessons(newUnit.lessons);
+              }}
+            >
+              Add Lesson +
+            </div>
+          )}
         </div>
       </div>
     </div>

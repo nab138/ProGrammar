@@ -11,7 +11,8 @@ app.post("/api/courses", (req, res) => {
   try {
     const dirPath = path.resolve(req.body.dir);
     const coursesPath = path.join(dirPath, "courses.json");
-    const courses = require(coursesPath);
+    // Load courses.json file via fs.readFileSync
+    let courses = JSON.parse(fs.readFileSync(coursesPath));
     res.send(courses);
   } catch (err) {
     console.log(err);
@@ -23,8 +24,7 @@ app.post("/api/getCourse", (req, res) => {
   try {
     const dirPath = path.resolve(req.body.course);
 
-    let course = require(dirPath);
-    console.log(course.units);
+    let course = JSON.parse(fs.readFileSync(dirPath));
     res.send(course);
   } catch (err) {
     console.log(err);
