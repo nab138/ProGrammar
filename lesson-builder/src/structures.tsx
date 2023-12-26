@@ -23,9 +23,8 @@ export interface Question {
   question: string;
   content?: string;
   type: "mc" | "build" | "text";
-  choices: string[];
-  answer: string;
-  id: string;
+  choices?: string[];
+  answer?: string;
   explanations?: string[];
   hard?: boolean;
   rich?: boolean;
@@ -35,7 +34,6 @@ export interface BuildQuestion {
   type: "build";
   choices: string[];
   answer: string;
-  id: string;
   hard?: boolean;
 }
 export interface MultipleChoiceQuestion {
@@ -45,7 +43,6 @@ export interface MultipleChoiceQuestion {
   choices: string[];
   answer: string;
   explanations: string[];
-  id: string;
   hard?: boolean;
   rich?: boolean;
 }

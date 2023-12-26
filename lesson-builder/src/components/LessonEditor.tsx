@@ -98,7 +98,10 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
         <div className="questions">
           {lesson.questions.map((question, index) => (
             <div
-              className="question"
+              className={
+                "question" +
+                (index === selectedQuestionIndex ? " selected" : "")
+              }
               key={index}
               onClick={() => {
                 setSelectedQuestion(question);
@@ -109,15 +112,29 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                 <h3>{question.type}</h3>
                 <h4>{question.question}</h4>
               </div>
-              <p>{question.answer}</p>
+              {question.answer !== undefined && <p>{question.answer}</p>}
             </div>
           ))}
+          <div
+            className={"question addQuestionBtn"}
+            onClick={() => {
+              const newLesson = { ...lesson };
+              newLesson.questions.push({
+                type: "text",
+                question: "",
+              });
+              const newCourse = { ...originalJSON };
+              newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+              updateJSON(newCourse);
+            }}
+          >
+            <h2>Add Question +</h2>
+          </div>
         </div>
       </div>
       {selectedQuestion !== undefined && (
         <div className="question-editor">
           <div className="settings">
-            {/* Add a checkbox for rich */}
             <label htmlFor="rich">Rich:</label>
             <input
               type="checkbox"
@@ -130,6 +147,29 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                 });
               }}
             />
+            <label htmlFor="q-type">Question Type:</label>
+            <select
+              id="q-type"
+              value={selectedQuestion.type}
+              onChange={(e) => {
+                const newQuestion = { ...selectedQuestion };
+                if (e.target.value === "mc") {
+                  newQuestion.choices = [];
+                  newQuestion.explanations = [];
+                  newQuestion.answer = "";
+                }
+                if (e.target.value === "build") {
+                  newQuestion.choices = [];
+                  newQuestion.answer = "";
+                }
+                newQuestion.type = e.target.value as "mc" | "build" | "text";
+                setSelectedQuestion(newQuestion);
+              }}
+            >
+              <option value="text">Text</option>
+              <option value="mc">Multiple Choice</option>
+              <option value="build">Build</option>
+            </select>
           </div>
           {selectedQuestion.rich ? (
             <MDEditor
@@ -159,63 +199,70 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
             />
           )}
           {selectedQuestion.type === "mc" &&
-            selectedQuestion.choices.map((choice, index) => (
-              <div
-                className={
-                  "choice" +
-                  (choice === selectedQuestion.answer ? " correct" : "")
-                }
-                key={index}
-                onDoubleClick={() => {
-                  const newQuestion = { ...selectedQuestion };
-                  newQuestion.answer = choice;
-                  setSelectedQuestion(newQuestion);
-                }}
-              >
-                <textarea
-                  value={choice}
-                  onChange={(e) => {
-                    const newQuestion = { ...selectedQuestion };
-                    newQuestion.choices[index] = e.target.value;
-                    if (newQuestion.answer === choice) {
-                      newQuestion.answer = e.target.value;
-                    }
-                    setSelectedQuestion(newQuestion);
-                  }}
-                />
-                <textarea
-                  value={
-                    (selectedQuestion as MultipleChoiceQuestion).explanations[
-                      index
-                    ]
+            (selectedQuestion as MultipleChoiceQuestion).choices.map(
+              (choice, index) => (
+                <div
+                  className={
+                    "choice" +
+                    (choice === selectedQuestion.answer ? " correct" : "")
                   }
-                  onChange={(e) => {
+                  key={index}
+                  onDoubleClick={() => {
                     const newQuestion = { ...selectedQuestion };
-                    (newQuestion as MultipleChoiceQuestion).explanations[
-                      index
-                    ] = e.target.value;
-                    setSelectedQuestion(newQuestion);
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    const newQuestion = { ...selectedQuestion };
-                    newQuestion.choices.splice(index, 1);
-                    (newQuestion as MultipleChoiceQuestion).explanations.splice(
-                      index,
-                      1
-                    );
+                    newQuestion.answer = choice;
                     setSelectedQuestion(newQuestion);
                   }}
                 >
-                  -
-                </button>
-              </div>
-            ))}
+                  <textarea
+                    value={choice}
+                    onChange={(e) => {
+                      const newQuestion = {
+                        ...selectedQuestion,
+                      } as MultipleChoiceQuestion;
+                      newQuestion.choices[index] = e.target.value;
+                      if (newQuestion.answer === choice) {
+                        newQuestion.answer = e.target.value;
+                      }
+                      setSelectedQuestion(newQuestion);
+                    }}
+                  />
+                  <textarea
+                    value={
+                      (selectedQuestion as MultipleChoiceQuestion).explanations[
+                        index
+                      ]
+                    }
+                    onChange={(e) => {
+                      const newQuestion = { ...selectedQuestion };
+                      (newQuestion as MultipleChoiceQuestion).explanations[
+                        index
+                      ] = e.target.value;
+                      setSelectedQuestion(newQuestion);
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      const newQuestion = {
+                        ...selectedQuestion,
+                      } as MultipleChoiceQuestion;
+                      newQuestion.choices.splice(index, 1);
+                      (
+                        newQuestion as MultipleChoiceQuestion
+                      ).explanations.splice(index, 1);
+                      setSelectedQuestion(newQuestion);
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+              )
+            )}
           {selectedQuestion.type === "mc" && (
             <button
               onClick={() => {
-                const newQuestion = { ...selectedQuestion };
+                const newQuestion = {
+                  ...selectedQuestion,
+                } as MultipleChoiceQuestion;
                 newQuestion.choices.push("");
                 (newQuestion as MultipleChoiceQuestion).explanations.push("");
                 setSelectedQuestion(newQuestion);

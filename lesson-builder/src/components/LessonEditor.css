@@ -136,3 +136,12 @@ p {
   background-color: transparent;
   color: white;
 }
+
+.questions .selected {
+  background-color: #16171a;
+}
+
+.addQuestionBtn {
+  background-color: #335533;
+  text-align: center;
+}
