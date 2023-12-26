@@ -39,6 +39,7 @@ export interface BuildQuestion {
   answer: string;
   id: string;
   hard?: boolean;
+  rich?: boolean;
 }
 export interface MultipleChoiceQuestion {
   question: string;

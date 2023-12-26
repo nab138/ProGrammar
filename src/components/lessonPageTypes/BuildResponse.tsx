@@ -41,7 +41,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
           className="build-question-rich-display"
           smallHeader={true}
           content={question.question}
-          richDisplay={false}
+          richDisplay={question.rich ?? false}
         />
         <div className="build-question-test">
           <div className="build-answer">
