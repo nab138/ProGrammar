@@ -76,7 +76,7 @@ const CoursePage: React.FC = () => {
                           await initializeLesson(id);
                           history.push(
                             `/lesson/${id}$${unitIndex}$${index}$${
-                              completions[curUnit + "-" + index]
+                              completions[unitIndex + "-" + index]
                             }`
                           );
                         }}
