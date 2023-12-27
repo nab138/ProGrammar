@@ -103,35 +103,52 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
         <h3>Parts</h3>
         <div className="questions">
           {lesson.questions.map((question, index) => (
-            <div
-              className={
-                "question" +
-                (index === selectedQuestionIndex ? " selected" : "")
-              }
-              key={index}
-              onClick={() => {
-                setSelectedQuestion(question);
-                setSelectedQuestionIndex(index);
-              }}
-            >
-              <div style={{ display: "flex", gap: "15px" }}>
-                <h3>{question.type}</h3>
-                <h4>{question.question}</h4>
-                <button
-                  className={"deleteBtn"}
-                  onClick={() => {
-                    const newLesson = { ...lesson };
-                    newLesson.questions.splice(index, 1);
-                    const newCourse = { ...originalJSON };
-                    newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
-                    updateJSON(newCourse);
-                  }}
-                >
-                  -
-                </button>
+            <>
+              <div
+                className={
+                  "question" +
+                  (index === selectedQuestionIndex ? " selected" : "")
+                }
+                key={index}
+                onClick={() => {
+                  setSelectedQuestion(question);
+                  setSelectedQuestionIndex(index);
+                }}
+              >
+                <div style={{ display: "flex", gap: "15px" }}>
+                  <h3>{question.type}</h3>
+                  <h4>{question.question}</h4>
+                  <button
+                    className={"deleteBtn"}
+                    onClick={() => {
+                      const newLesson = { ...lesson };
+                      newLesson.questions.splice(index, 1);
+                      const newCourse = { ...originalJSON };
+                      newCourse.units[unitIndex].lessons[lessonIndex] =
+                        newLesson;
+                      updateJSON(newCourse);
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+                {question.answer !== undefined && <p>{question.answer}</p>}
               </div>
-              {question.answer !== undefined && <p>{question.answer}</p>}
-            </div>
+              <div className="add-inbetween-question" onClick={
+                () => {
+                  const newLesson = { ...lesson };
+                  newLesson.questions.splice(index + 1, 0, {
+                    type: "text",
+                    question: "",
+                  });
+                  const newCourse = { ...originalJSON };
+                  newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+                  updateJSON(newCourse);
+                }
+              }>
+                +
+              </div>
+            </>
           ))}
           <div
             className={"question addQuestionBtn"}

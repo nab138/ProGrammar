@@ -26,10 +26,15 @@
 
 .sidebar {
   position: fixed;
-  top: 10%;
+  top: 100px;
   left: 15px;
   bottom: 0;
-  width: 300px;
+  width: 250px;
+  /* Scroll if goes off page */
+  overflow-y: auto;
+  /* Scrollbar width */
+  scrollbar-width: thin;
+  scrollbar-color: #3d424d #1f2227;
 }
 
 .addBtn {

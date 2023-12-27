@@ -14,7 +14,7 @@ function App() {
   const updateJson = (newJson: Course) => {
     setJSON(newJson);
     // Send a post request to the server to update the json file
-    fetch("http://localhost:8081/api/writeCourse", {
+    fetch("/api/writeCourse", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ function App() {
           <h1>Lesson Builder</h1>
         </header>
         {selectedLesson !== undefined &&
-          json != undefined &&
+          json !== undefined &&
           selectedLessonIndex !== undefined &&
           selectedUnitIndex !== undefined && (
             <LessonEditor

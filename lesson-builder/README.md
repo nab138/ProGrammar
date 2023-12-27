@@ -12,3 +12,4 @@ A simple internal app to make it much easier to design courses for ProGrammar.
 - Add new course
 - No more bugs :(
 - Press enter to add build question answers
+- Preset directories for different devices

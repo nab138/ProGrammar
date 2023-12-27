@@ -39,22 +39,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     if (directory) {
-      fetch("http://localhost:8081/api/courses", {
+      fetch("/api/courses", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ dir: directory }),
       })
-        .then((response) =>
+        .then((response) => {
           response.json().then((data) => {
             if (data instanceof Array) {
               setCourses(data);
             }
-          })
-        )
+          });
+        })
         .catch((error) => {
           console.error("Error:", error);
+          alert("Error: " + error);
         });
     }
   }, [directory]);
@@ -63,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (courseName) {
       const coursePath = `${directory}/${courseName}.json`;
       setCourseDir(coursePath);
-      fetch("http://localhost:8081/api/getCourse", {
+      fetch("/api/getCourse", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -24,6 +24,19 @@
   text-overflow: ellipsis;
 }
 
+.add-inbetween-question {
+  /* A small, thin, almost invisible div button that goes between questions */
+  background-color: #282c3455;
+  border-radius: 10px;
+  text-align: center;
+  padding: 1px;
+  font-size: 0.5rem;
+}
+
+.add-inbetween-question:hover {
+  background-color: #282c34bb;
+}
+
 .question h4,
 p {
   text-overflow: ellipsis;
