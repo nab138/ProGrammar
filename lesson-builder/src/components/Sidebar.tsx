@@ -106,6 +106,20 @@ const Sidebar: React.FC<SidebarProps> = ({
           setCourseName("");
         }}
       />
+      <label htmlFor="directory">Codespace?:</label>
+      <input
+        type="checkbox"
+        id="codespace"
+        checked={directory === "/workspaces/programming-duolingo/src/courses"}
+        onChange={(event) => {
+          setDirectory(
+            event.target.checked
+              ? "/workspaces/programming-duolingo/src/courses"
+              : "/home/nicholas/coding/robotics/programming-duolingo/src/courses"
+          );
+          setCourseName("");
+        }}
+      />
       <h2>Courses</h2>
       <div className="courses">
         <div className="courseList">

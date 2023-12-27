@@ -43,7 +43,11 @@ function App() {
           selectedLessonIndex !== undefined &&
           selectedUnitIndex !== undefined && (
             <LessonEditor
-              key={selectedLessonIndex}
+              key={
+                selectedLessonIndex +
+                json.units[selectedUnitIndex].lessons[selectedLessonIndex]
+                  .questions.length
+              }
               unitIndex={selectedUnitIndex}
               lessonIndex={selectedLessonIndex}
               updateJSON={updateJson}

@@ -103,13 +103,28 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
         <h3>Parts</h3>
         <div className="questions">
           {lesson.questions.map((question, index) => (
-            <>
+            <div key={index}>
+              <div
+                className="add-inbetween-question"
+                onClick={() => {
+                  const newLesson = { ...lesson };
+                  newLesson.questions.splice(index, 0, {
+                    type: "text",
+                    question: "",
+                  });
+                  const newCourse = { ...originalJSON };
+                  newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
+                  updateJSON(newCourse);
+                }}
+              >
+                +
+              </div>
               <div
                 className={
                   "question" +
                   (index === selectedQuestionIndex ? " selected" : "")
                 }
-                key={index}
+                key={hashCode(question.question)}
                 onClick={() => {
                   setSelectedQuestion(question);
                   setSelectedQuestionIndex(index);
@@ -134,21 +149,7 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                 </div>
                 {question.answer !== undefined && <p>{question.answer}</p>}
               </div>
-              <div className="add-inbetween-question" onClick={
-                () => {
-                  const newLesson = { ...lesson };
-                  newLesson.questions.splice(index + 1, 0, {
-                    type: "text",
-                    question: "",
-                  });
-                  const newCourse = { ...originalJSON };
-                  newCourse.units[unitIndex].lessons[lessonIndex] = newLesson;
-                  updateJSON(newCourse);
-                }
-              }>
-                +
-              </div>
-            </>
+            </div>
           ))}
           <div
             className={"question addQuestionBtn"}
@@ -422,3 +423,10 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
 };
 
 export default LessonEditor;
+
+function hashCode(s: string) {
+  return s.split("").reduce(function (a, b) {
+    a = (a << 5) - a + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+}
