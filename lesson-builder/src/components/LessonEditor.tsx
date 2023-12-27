@@ -10,14 +10,12 @@ import MDEditor from "@uiw/react-md-editor";
 import "./LessonEditor.css";
 
 interface LessonEditorProps {
-  lesson: Lesson;
-  updateJSON: (lesson: Course) => void;
+  updateJSON: React.Dispatch<React.SetStateAction<Course | undefined>>;
   originalJSON: Course;
   unitIndex: number;
   lessonIndex: number;
 }
 const LessonEditor: React.FC<LessonEditorProps> = ({
-  lesson: inputLesson,
   updateJSON,
   originalJSON,
   unitIndex,
@@ -25,10 +23,16 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
 }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<Question>();
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>();
-  const [lesson, setLesson] = useState<Lesson>(inputLesson);
+  const [lesson, setLesson] = useState<Lesson>(
+    originalJSON.units[unitIndex].lessons[lessonIndex]
+  );
   const [lessonName, setLessonName] = useState<string>(lesson.name);
   const [lessonId, setLessonId] = useState<string>(lesson.id);
   const [lessonType, setLessonType] = useState<"learn" | "quiz">(lesson.type);
+
+  useEffect(() => {
+    setLesson(originalJSON.units[unitIndex].lessons[lessonIndex]);
+  }, [originalJSON, unitIndex, lessonIndex]);
   useEffect(() => {
     if (selectedQuestion !== undefined && selectedQuestionIndex !== undefined) {
       const newLesson = { ...lesson };
@@ -124,12 +128,37 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                   "question" +
                   (index === selectedQuestionIndex ? " selected" : "")
                 }
-                key={hashCode(question.question)}
+                key={index}
                 onClick={() => {
                   setSelectedQuestion(question);
                   setSelectedQuestionIndex(index);
                 }}
               >
+                {index > 0 && (
+                  <div
+                    className="move-question up"
+                    onClick={() => {
+                      updateJSON((old) => {
+                        if (old === undefined) return old;
+                        const newLesson = JSON.parse(
+                          JSON.stringify(
+                            old.units[unitIndex].lessons[lessonIndex]
+                          )
+                        );
+                        const toMoveUp = newLesson.questions[index];
+                        const toMoveDown = newLesson.questions[index - 1];
+                        newLesson.questions[index] = toMoveDown;
+                        newLesson.questions[index - 1] = toMoveUp;
+                        const newCourse = JSON.parse(JSON.stringify(old));
+                        newCourse.units[unitIndex].lessons[lessonIndex] =
+                          newLesson;
+                        return newCourse;
+                      });
+                    }}
+                  >
+                    ↑
+                  </div>
+                )}
                 <div style={{ display: "flex", gap: "15px" }}>
                   <h3>{question.type}</h3>
                   <h4>{question.question}</h4>
@@ -148,6 +177,31 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                   </button>
                 </div>
                 {question.answer !== undefined && <p>{question.answer}</p>}
+                {index < lesson.questions.length - 1 && (
+                  <div
+                    className="move-question down"
+                    onClick={() => {
+                      updateJSON((old) => {
+                        if (old === undefined) return old;
+                        const newLesson = JSON.parse(
+                          JSON.stringify(
+                            old.units[unitIndex].lessons[lessonIndex]
+                          )
+                        );
+                        const toMoveUp = newLesson.questions[index + 1];
+                        const toMoveDown = newLesson.questions[index];
+                        newLesson.questions[index + 1] = toMoveDown;
+                        newLesson.questions[index] = toMoveUp;
+                        const newCourse = JSON.parse(JSON.stringify(old));
+                        newCourse.units[unitIndex].lessons[lessonIndex] =
+                          newLesson;
+                        return newCourse;
+                      });
+                    }}
+                  >
+                    ↓
+                  </div>
+                )}
               </div>
             </div>
           ))}

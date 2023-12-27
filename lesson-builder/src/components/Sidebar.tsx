@@ -3,7 +3,6 @@ import { Course, Lesson, Question, Unit } from "../structures";
 import "./Sidebar.css";
 
 interface SidebarProps {
-  setSelectedLesson: (lesson: Lesson) => void;
   setJSON: (json: Course) => void;
   setCourseDir: (dir: string) => void;
   setSelectedUnitIndex: (index: number) => void;
@@ -11,7 +10,6 @@ interface SidebarProps {
   updateJSON: (newJson: Course) => void;
 }
 const Sidebar: React.FC<SidebarProps> = ({
-  setSelectedLesson,
   setJSON,
   setCourseDir,
   setSelectedUnitIndex,
@@ -185,7 +183,6 @@ const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => {
                 setSelectedLessonIndex(index);
                 setSelectedLessonIndexState(index);
-                setSelectedLesson(lesson);
               }}
             >
               {lesson.name}

@@ -6,7 +6,6 @@ A simple internal app to make it much easier to design courses for ProGrammar.
 
 ### Wanted features
 
-- Reorder questions in lesson
 - Reorder lessons in unit
 - Reorder units in course
 - Add new course

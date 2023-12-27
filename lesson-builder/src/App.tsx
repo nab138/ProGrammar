@@ -1,36 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 import { Course, Lesson } from "./structures";
 import LessonEditor from "./components/LessonEditor";
 
 function App() {
-  const [selectedLesson, setSelectedLesson] = useState<Lesson>();
   const [courseDir, setCourseDir] = useState<string>("");
   const [json, setJSON] = useState<Course>();
   const [selectedUnitIndex, setSelectedUnitIndex] = useState<number>();
   const [selectedLessonIndex, setSelectedLessonIndex] = useState<number>();
 
-  const updateJson = (newJson: Course) => {
-    setJSON(newJson);
-    // Send a post request to the server to update the json file
+  useEffect(() => {
+    if (json == undefined || courseDir == "") return;
     fetch("/api/writeCourse", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ course: courseDir, data: newJson }),
+      body: JSON.stringify({ course: courseDir, data: json }),
     }).catch((error) => {
       console.error("Error:", error);
     });
-  };
+  }, [json, courseDir]);
   return (
     <>
       <Sidebar
-        updateJSON={updateJson}
+        updateJSON={setJSON}
         setCourseDir={setCourseDir}
         setJSON={setJSON}
-        setSelectedLesson={setSelectedLesson}
         setSelectedLessonIndex={setSelectedLessonIndex}
         setSelectedUnitIndex={setSelectedUnitIndex}
       />
@@ -38,8 +35,7 @@ function App() {
         <header>
           <h1>Lesson Builder</h1>
         </header>
-        {selectedLesson !== undefined &&
-          json !== undefined &&
+        {json !== undefined &&
           selectedLessonIndex !== undefined &&
           selectedUnitIndex !== undefined && (
             <LessonEditor
@@ -50,9 +46,8 @@ function App() {
               }
               unitIndex={selectedUnitIndex}
               lessonIndex={selectedLessonIndex}
-              updateJSON={updateJson}
+              updateJSON={setJSON}
               originalJSON={json}
-              lesson={selectedLesson}
             />
           )}
       </div>
