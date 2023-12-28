@@ -28,6 +28,7 @@ const TextScreen: React.FC<TextScreenProps> = ({ question, onCorrect }) => {
         onCorrect={onCorrect}
         onIncorrect={onCorrect}
         onFirstClick={onCorrect}
+        isNotQuestion={true}
       />
     </>
   );

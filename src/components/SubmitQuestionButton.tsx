@@ -3,13 +3,15 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardSubtitle,
   IonCardTitle,
-  IonFab,
-  IonFooter,
 } from "@ionic/react";
 import "./SubmitQuestionButton.css";
 import { useState } from "react";
+import useSound from "use-sound";
+
+import correctSfx from "../sfx/correct.mp3";
+import wrongSfx from "../sfx/wrong.mp3";
+
 interface SubmitQuestionButtonProps {
   disabled: boolean;
   isCorrect: () => boolean;
@@ -18,6 +20,7 @@ interface SubmitQuestionButtonProps {
   onIncorrect: () => void;
   onFirstClick: () => void;
   text?: string;
+  isNotQuestion?: boolean;
 }
 const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   isCorrect,
@@ -27,15 +30,17 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   getExplanation,
   disabled,
   text,
+  isNotQuestion = false,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   let [curText, setCurText] = useState<string>(text ?? "Submit");
   let [firstClick, setFirstClick] = useState<boolean>(true);
   let [color, setColor] = useState<string>("primary");
+
+  let [playCorrect] = useSound(correctSfx);
+  let [playWrong] = useSound(wrongSfx);
   return (
-    <div
-      className="submit-button-container"
-    >
+    <div className="submit-button-container">
       <IonButton
         disabled={disabled}
         size="large"
@@ -46,13 +51,15 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
           if (firstClick) {
             if (isCorrect()) {
               setColor("success");
+              if (!isNotQuestion) playCorrect();
             } else {
               setColor("danger");
+              if (!isNotQuestion) playWrong();
             }
             setFirstClick(false);
             onFirstClick();
-            setCurText("Next");
-            setShowExplanation(true);
+            if (!isNotQuestion) setCurText("Next");
+            if (!isNotQuestion) setShowExplanation(true);
           } else {
             if (isCorrect()) {
               onCorrect();

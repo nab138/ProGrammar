@@ -42,7 +42,8 @@
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
     "react-shadow": "^20.4.0",
-    "sonner": "^1.2.4"
+    "sonner": "^1.2.4",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@capacitor/cli": "5.5.1",
