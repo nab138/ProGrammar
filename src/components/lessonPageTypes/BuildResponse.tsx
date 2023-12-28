@@ -22,7 +22,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
 }) => {
   let answerButtons = useRef<HTMLDivElement>(null);
 
-  let [answer, setAnswer] = useState<string[]>([]);
+  let [answer, setAnswer] = useState<number[]>([]);
   let [disabled, setDisabled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -46,7 +46,8 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         <div className="build-question-test">
           <div className="build-answer">
             <div className="build-answer-buttons" ref={answerButtons}>
-              {answer.map((choice, i) => {
+              {answer.map((index, i) => {
+                let choice = index === -1 ? " " : question.choices[index];
                 return (
                   <IonButton
                     disabled={disabled}
@@ -65,7 +66,13 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
             </div>
             <div className="underline" />
             <HighlightedMarkdown className="build-q-code" key={answer.join("")}>
-              {"```java\n" + answer.join("") + "\n```"}
+              {"```java\n" +
+                answer
+                  .map((index) =>
+                    index === -1 ? " " : question.choices[index]
+                  )
+                  .join("") +
+                "\n```"}
             </HighlightedMarkdown>
           </div>
           <div className="choices">
@@ -74,14 +81,14 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
                 <IonButton
                   disabled={disabled}
                   className={
-                    "build-choice" + (answer.includes(choice) ? " hidden" : "")
+                    "build-choice" + (answer.includes(i) ? " hidden" : "")
                   }
                   mode="ios"
                   shape="round"
                   fill="outline"
                   key={choice + i}
                   onClick={() => {
-                    setAnswer([...answer, choice]);
+                    setAnswer([...answer, i]);
                   }}
                 >
                   {choice}
@@ -97,7 +104,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
               expand="block"
               color="secondary"
               onClick={() => {
-                setAnswer([...answer, " "]);
+                setAnswer([...answer, -1]);
               }}
             >
               Space
@@ -108,10 +115,17 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
       <SubmitQuestionButton
         disabled={answer.length == 0}
         isCorrect={() => {
-          return answer.join("") == question.answer;
+          return (
+            answer
+              .map((index) => (index === -1 ? " " : question.choices[index]))
+              .join("") == question.answer
+          );
         }}
         getExplanation={() => {
-          let isCorrect = answer.join("") == question.answer;
+          let isCorrect =
+            answer
+              .map((index) => (index === -1 ? " " : question.choices[index]))
+              .join("") == question.answer;
           return isCorrect ? "Correct!" : question.answer;
         }}
         onCorrect={onCorrect}
