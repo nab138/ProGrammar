@@ -3,6 +3,7 @@ export interface Course {
   description: string;
   currentUnit: number;
   currentLesson: number;
+  difficulty: number;
   units: Unit[];
   id: string;
 }
@@ -52,6 +53,15 @@ export interface MultipleChoiceQuestion {
   hard?: boolean;
   rich?: boolean;
 }
+
+export const difficultyLookup: { [key: number]: string } = {
+  0: "Beginner",
+  1: "Beginner-Intermediate",
+  2: "Intermediate",
+  3: "Intermediate-Advanced",
+  4: "Advanced",
+};
+
 export function randomizeLesson(lesson: Lesson): Lesson {
   let newQuestions: Question[];
   if (lesson.type == "learn") {

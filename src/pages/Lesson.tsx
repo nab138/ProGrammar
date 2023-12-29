@@ -28,15 +28,12 @@ import triggerAchievement, {
 } from "../utils/achievements";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { LessonContext } from "../LessonContext";
-import { useHistory } from "react-router";
-import { toast } from "sonner";
 
 interface LessonPageParams {
   id: string;
 }
 const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   const { setSkipToEnd } = useContext(LessonContext);
-  const history = useHistory();
   // id is in the format course$unit$lesson
   let curInfo = id.split("$");
   let curCourse = curInfo[0];
@@ -126,7 +123,13 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             ]);
             if (shouldTriggerAchievements) {
               triggerAchievement("lesson-complete", lesson.id, true);
-              triggerAchievement("no-mistakes-lesson", lesson.id, true);
+              if (
+                lesson.questions.filter(
+                  (q) => q.type == "mc" || q.type == "build"
+                ).length > 0
+              ) {
+                triggerAchievement("no-mistakes-lesson", lesson.id, true);
+              }
               triggerStreakAchievement(
                 "no-mistakes-lesson-streak",
                 lesson.id,

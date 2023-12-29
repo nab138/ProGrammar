@@ -16,7 +16,7 @@ import coursesList from "../courses/courses.json";
 import { useEffect, useState } from "react";
 import storage, { getProgress, initializeLesson } from "../utils/storage";
 import { useHistory, useLocation } from "react-router-dom";
-import { Course } from "../utils/structures";
+import { Course, difficultyLookup } from "../utils/structures";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
 import LoadingCourseCard from "../components/LoadingCourseCard";
@@ -86,6 +86,8 @@ const Courses: React.FC = () => {
                           course.currentLesson + 1
                         }`
                       : "Not Started"}
+                    <br />
+                    {difficultyLookup[course.difficulty]}
                   </IonCardSubtitle>
                 </IonCardHeader>
                 <IonCardContent>{course.description}</IonCardContent>

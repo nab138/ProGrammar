@@ -48,9 +48,9 @@ const achievements: AchievementTable = {
     name: "Consistent Scholar",
     description: "Open the app 10 days in a row",
   },
-  "lesson-complete.2": {
+  "lesson-complete.1": {
     name: "New Learner",
-    description: "Complete 2 lessons",
+    description: "Complete your first lesson",
   },
   "lesson-complete.5": {
     name: "Getting Started",
