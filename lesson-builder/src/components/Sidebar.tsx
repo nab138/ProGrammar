@@ -195,7 +195,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                 if (!unit) return;
                 const newLesson = {
                   name: "New Lesson",
-                  description: "",
                   questions: [] as Question[],
                   id: "new-lesson",
                   type: "learn" as "learn" | "quiz",
