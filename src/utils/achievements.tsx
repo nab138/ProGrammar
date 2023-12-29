@@ -3,8 +3,13 @@ import { toast } from "sonner";
 
 import { App } from "@capacitor/app";
 
+import { Mutex } from "async-mutex";
+
+const achievementMutex = new Mutex();
+const triggerMutex = new Mutex();
+const categoryMutex = new Mutex();
+
 App.addListener("appStateChange", (state) => {
-  // state.isActive contains the active state
   if (state.isActive) {
     triggerDailyStreak();
   }
@@ -88,7 +93,7 @@ const achievements: AchievementTable = {
     description: "Complete a lesson without making any mistakes",
   },
   "no-mistakes-lesson.5": {
-    name: "Flawless Scholar",
+    name: "Accomplished Scholar",
     description: "Complete 5 lessons without making any mistakes",
   },
   "no-mistakes-lesson-streak.3": {
@@ -111,45 +116,64 @@ export default async function triggerAchievement(
   id: string,
   override = false
 ) {
-  let shouldAllow = await shouldAllowTrigger(category + "-" + id);
-  if (!override && !shouldAllow) return;
-  let count = await increment(category);
-  let achievement = achievements[category + "." + count];
-  if (achievement) {
-    let existingAchievements: Achievement[] =
-      (await storage.get("achievements")) ?? [];
-    achievement.gotDate = new Date().toLocaleDateString();
-    existingAchievements.push(achievement);
-    await storage.set("achievements", existingAchievements);
-    // Display a toast
-    toast(achievement.name + " - Achievement Unlocked!", {
-      description: achievement.description,
-      duration: 2500,
-    });
+  if (!override) {
+    let shouldAllow = await shouldAllowTrigger(category + "-" + id);
+    if (!shouldAllow) return;
   }
-}
 
-export async function resetCategory(achievement: AchievementCategory) {
-  await storage.set("achievement-category-" + achievement, 0);
+  const release = await achievementMutex.acquire();
+
+  try {
+    let count = await increment(category);
+    let achievementKey = category + "." + count;
+    let achievement = achievements[achievementKey];
+    if (achievement) {
+      let existingAchievements: string[] =
+        (await storage.get("achievements")) ?? [];
+      achievement.gotDate = new Date().toLocaleDateString();
+      existingAchievements.push(achievementKey);
+      await storage.set("achievements", existingAchievements);
+      // Display a toast
+      toast(achievement.name + " - Achievement Unlocked!", {
+        description: achievement.description,
+        duration: 2500,
+      });
+    }
+  } finally {
+    release();
+  }
 }
 
 export async function getAchievements() {
   return (await storage.get("achievements")) ?? [];
 }
 
-async function increment(achievement: AchievementCategory) {
-  let count: number =
-    (await storage.get("achievement-category-" + achievement)) ?? 0;
-  count++;
-  await storage.set("achievement-category-" + achievement, count);
-  return count;
+async function increment(category: AchievementCategory) {
+  const release = await categoryMutex.acquire();
+
+  try {
+    let counts: Record<AchievementCategory, number> =
+      (await storage.get("achievement-counts")) || {};
+    counts[category] = (counts[category] || 0) + 1;
+    await storage.set("achievement-counts", counts);
+    return counts[category];
+  } finally {
+    release();
+  }
 }
 
 export async function shouldAllowTrigger(id: string) {
-  let triggered = await storage.get("achievement-triggered-" + id);
-  if (triggered) return false;
-  await storage.set("achievement-triggered-" + id, true);
-  return true;
+  const release = await triggerMutex.acquire();
+
+  try {
+    let triggers = (await storage.get("achievement-triggers")) || {};
+    if (triggers[id]) return false;
+    triggers[id] = true;
+    await storage.set("achievement-triggers", triggers);
+    return true;
+  } finally {
+    release();
+  }
 }
 
 export async function triggerStreakAchievement(
@@ -158,35 +182,44 @@ export async function triggerStreakAchievement(
   shouldBreak: boolean,
   override = false
 ) {
-  let shouldAllow = await shouldAllowTrigger(category + "-" + id);
-  if (!override && !shouldAllow) return;
-  let streakCount: number =
-    (await storage.get("achievement-streak-" + category)) ?? 0;
+  const release = await achievementMutex.acquire();
 
-  if (shouldBreak) {
-    // If the streak should be broken, reset the streak count
-    await storage.set("achievement-streak-" + category, 0);
-  } else {
-    // If the streak should not be broken, increment the streak count
-    streakCount++;
-    await storage.set("achievement-streak-" + category, streakCount);
+  try {
+    let shouldAllow = await shouldAllowTrigger(category + "-" + id);
+    if (!override && !shouldAllow) return;
 
-    // Check if there's an achievement for the current streak count
-    let achievement = achievements[category + "." + streakCount];
-    if (achievement) {
-      let existingAchievements: Achievement[] =
-        (await storage.get("achievements")) ?? [];
-      if (existingAchievements.find((a) => a.name === achievement.name)) return;
-      achievement.gotDate = new Date().toLocaleDateString();
-      existingAchievements.push(achievement);
-      await storage.set("achievements", existingAchievements);
+    let streakCounts: Record<AchievementCategory, number> =
+      (await storage.get("achievement-streaks")) || {};
 
-      // Display a toast
-      toast(achievement.name + " - Achievement Unlocked!", {
-        description: achievement.description,
-        duration: 2500,
-      });
+    if (shouldBreak) {
+      // If the streak should be broken, reset the streak count
+      streakCounts[category] = 0;
+    } else {
+      // If the streak should not be broken, increment the streak count
+      streakCounts[category] = (streakCounts[category] || 0) + 1;
+
+      // Check if there's an achievement for the current streak count
+      let achievementKey = category + "." + streakCounts[category];
+      let achievement = achievements[achievementKey];
+      if (achievement) {
+        let existingAchievements: string[] =
+          (await storage.get("achievements")) ?? [];
+        if (existingAchievements.includes(achievementKey)) return;
+        achievement.gotDate = new Date().toLocaleDateString();
+        existingAchievements.push(achievementKey);
+        await storage.set("achievements", existingAchievements);
+
+        // Display a toast
+        toast(achievement.name + " - Achievement Unlocked!", {
+          description: achievement.description,
+          duration: 2500,
+        });
+      }
     }
+
+    await storage.set("achievement-streaks", streakCounts);
+  } finally {
+    release();
   }
 }
 
@@ -216,4 +249,8 @@ export async function triggerDailyStreak() {
     // Trigger the streak achievement with break set to false
     triggerStreakAchievement("daily-streak", "", false, true);
   }
+}
+
+export function lookupAchievements(achievementKeys: string[]) {
+  return achievementKeys.map((key) => achievements[key]);
 }

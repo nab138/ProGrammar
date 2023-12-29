@@ -49,7 +49,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   useEffect(() => {
     const loadUsername = async () => {
       setUsername(await storage.get("username"));
-      const devWidgetEnabled = await storage.get("devWidgetEnabled");
+      const devWidgetEnabled = await storage.getLocal("devWidgetEnabled");
       setDevWidgetEnabledState(devWidgetEnabled);
     };
     loadUsername();
@@ -82,7 +82,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
               onIonChange={(e) => {
                 setDevWidgetEnabled(e.detail.checked);
                 setDevWidgetEnabledState(e.detail.checked);
-                storage.set("devWidgetEnabled", e.detail.checked);
+                storage.setLocal("devWidgetEnabled", e.detail.checked);
               }}
             />
           </IonItem>
@@ -111,7 +111,10 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
             <IonLabel>Sign Out</IonLabel>
           </IonItem>
           <IonItem button={true} id="present-clear-alert" color="danger">
-            <IonLabel>Danger: Clear all saved data</IonLabel>
+            <IonLabel>Danger: Clear all saved data (Cloud)</IonLabel>
+          </IonItem>
+          <IonItem button={true} id="present-clear-local-alert" color="danger">
+            <IonLabel>Danger: Clear all saved data (Local)</IonLabel>
           </IonItem>
         </IonList>
         <IonAlert
@@ -124,6 +127,20 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
               text: "Confirm",
               handler: async () => {
                 await storage.clear();
+              },
+            },
+          ]}
+        ></IonAlert>
+        <IonAlert
+          trigger="present-clear-local-alert"
+          header="Clear Local Saved Data"
+          message="This will reset some data, such as settings, completions, and more. This cannot be undone. Are you sure?"
+          buttons={[
+            "Cancel",
+            {
+              text: "Confirm",
+              handler: async () => {
+                await storage.clearLocal();
               },
             },
           ]}

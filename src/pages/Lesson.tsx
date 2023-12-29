@@ -92,10 +92,10 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       if (incorrectQuestions.length == 1) {
         saveProgress();
         let shouldTriggerAchievements = await shouldAllowTrigger(
-          "lesson-complete-" + lesson.id
+          "lesson-completed-" + lesson.id
         );
         if (shouldTriggerAchievements) {
-          triggerAchievement("lesson-complete", lesson.id);
+          triggerAchievement("lesson-complete", lesson.id, true);
           triggerStreakAchievement(
             "no-mistakes-lesson-streak",
             lesson.id,
@@ -122,19 +122,17 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           (async () => {
             let [_, shouldTriggerAchievements] = await Promise.all([
               saveProgress(),
-              shouldAllowTrigger("lesson-complete-" + lesson.id),
+              shouldAllowTrigger("lesson-completed-" + lesson.id),
             ]);
             if (shouldTriggerAchievements) {
-              await Promise.all([
-                triggerAchievement("lesson-complete", lesson.id, true),
-                triggerAchievement("no-mistakes-lesson", lesson.id, true),
-                triggerStreakAchievement(
-                  "no-mistakes-lesson-streak",
-                  lesson.id,
-                  false,
-                  true
-                ),
-              ]);
+              triggerAchievement("lesson-complete", lesson.id, true);
+              triggerAchievement("no-mistakes-lesson", lesson.id, true);
+              triggerStreakAchievement(
+                "no-mistakes-lesson-streak",
+                lesson.id,
+                false,
+                true
+              );
             }
             setDisplayState("complete");
           })();
@@ -152,9 +150,10 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   const saveProgress = async () => {
     if (!info) return;
     let res = await incrementLessonIfOlder(curCourse, curUnit, curLesson, info);
-    let completions = (await storage.get(`completions-${curCourse}`)) ?? {};
+    let completions =
+      (await storage.getLocal(`completions-${curCourse}`)) ?? {};
     completions[`${curUnit}-${curLesson}`] = Date.now();
-    await storage.set(`completions-${curCourse}`, completions);
+    await storage.setLocal(`completions-${curCourse}`, completions);
     setAwaitingSave(false);
     setCompleteType(res);
   };

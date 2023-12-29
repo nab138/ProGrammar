@@ -14,7 +14,11 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Social.css";
-import { Achievement, getAchievements } from "../utils/achievements";
+import {
+  Achievement,
+  getAchievements,
+  lookupAchievements,
+} from "../utils/achievements";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
@@ -51,7 +55,8 @@ const Social: React.FC = () => {
       if (!hasLoadedOnce) {
         timeoutId = setTimeout(() => setRetrievingAchievements(true), 50);
       }
-      let achievements = await getAchievements();
+      let achievementKeys = await getAchievements();
+      let achievements = lookupAchievements(achievementKeys);
       setAchievements(achievements);
       if (!hasLoadedOnce) {
         clearTimeout(timeoutId);

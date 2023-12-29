@@ -1,0 +1,1 @@
+concurrently "ionic serve" "cd lesson-builder && npm run run"

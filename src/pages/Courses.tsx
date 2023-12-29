@@ -14,7 +14,7 @@ import {
 import "./Courses.css";
 import coursesList from "../courses/courses.json";
 import { useEffect, useState } from "react";
-import storage, { initializeLesson } from "../utils/storage";
+import storage, { getProgress, initializeLesson } from "../utils/storage";
 import { useHistory, useLocation } from "react-router-dom";
 import { Course } from "../utils/structures";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -37,12 +37,14 @@ const Courses: React.FC = () => {
       if (!hasLoadedOnce) {
         timeoutId = setTimeout(() => setRetrievingCourses(true), 15);
       }
+      let userProgress = await getProgress();
       let coursesTemp = [];
       for (let course of coursesList) {
         let infoModule = await import(`../courses/${course}.json`);
         let info: Course = infoModule.default;
-        info.currentUnit = await storage.get(`unit-progress-${course}`);
-        info.currentLesson = await storage.get(`lesson-progress-${course}`);
+        let courseProgress = userProgress[course] ?? {};
+        info.currentUnit = courseProgress.unit;
+        info.currentLesson = courseProgress.lesson;
         coursesTemp.push(info);
       }
       if (!hasLoadedOnce) {

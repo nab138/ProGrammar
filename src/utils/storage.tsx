@@ -9,9 +9,16 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { toast } from "sonner";
+import { Storage as IonicStorage } from "@ionic/storage";
 
 class Storage {
   private docRefs: { [key: string]: any } = {};
+  private local: IonicStorage;
+
+  constructor() {
+    this.local = new IonicStorage();
+    this.local.create();
+  }
 
   private async getDocRef(uid: string) {
     if (!this.docRefs[uid]) {
@@ -90,9 +97,50 @@ class Storage {
       console.log("No user is signed in");
     }
   }
+  async getLocal(key: string): Promise<any> {
+    return await this.local.get(key);
+  }
+
+  async setLocal(key: string, value: any): Promise<void> {
+    await this.local.set(key, value);
+  }
+
+  async clearLocal(): Promise<void> {
+    await this.local.clear();
+  }
 }
 const storage = new Storage();
 export default storage;
+
+export interface UserProgress {
+  [key: string]: CourseProgress;
+}
+
+export interface CourseProgress {
+  unit: number;
+  lesson: number;
+}
+
+export async function getProgress() {
+  let progress = (await storage.get("progress")) as UserProgress;
+  if (!progress) {
+    progress = {};
+    await storage.set("progress", progress);
+  }
+  return progress;
+}
+
+// export async function getCourseProgress(course: string) {
+//   let progress = await getProgress();
+//   if(!progress[course]) {
+//     progress[course] = {
+//       unit: 0,
+//       lesson: 0,
+//     }
+//     await storage.set("progress", progress);
+//   }
+//   return progress[course];
+// }
 
 export async function incrementLessonIfOlder(
   course: string,
@@ -100,8 +148,15 @@ export async function incrementLessonIfOlder(
   curLesson: number,
   courseInfo: Course
 ): Promise<string> {
-  let storedUnit = parseInt(await storage.get(`unit-progress-${course}`));
-  let storedLesson = parseInt(await storage.get(`lesson-progress-${course}`));
+  let progress = await getProgress();
+  let storedUnit = progress[course]?.unit;
+  let storedLesson = progress[course]?.lesson;
+  if (storedUnit == null || storedLesson == null) {
+    toast("You haven't started this course yet!", {
+      description: "How did you finish a lesson without starting the course?",
+    });
+    return "end-course";
+  }
   let unit = curUnit;
   let lesson = curLesson + 1;
 
@@ -128,20 +183,27 @@ export async function incrementLessonIfOlder(
     lesson = curLesson + 1;
   }
   if (shouldSave) {
-    await storage.set(`unit-progress-${course}`, unit);
-    await storage.set(`lesson-progress-${course}`, lesson);
+    progress[course] = {
+      unit,
+      lesson,
+    };
+    await storage.set("progress", progress);
   }
 
   return result;
 }
 
 export async function initializeLesson(course: string) {
-  let storedUnit = await storage.get(`unit-progress-${course}`);
-  let storedLesson = await storage.get(`lesson-progress-${course}`);
+  let progress = await getProgress();
+  let storedUnit = progress[course]?.unit;
+  let storedLesson = progress[course]?.lesson;
   if (storedUnit == null || storedLesson == null) {
-    await storage.set(`unit-progress-${course}`, 0);
-    await storage.set(`lesson-progress-${course}`, 0);
+    progress[course] = {
+      unit: 0,
+      lesson: 0,
+    };
+    await storage.set("progress", progress);
     triggerAchievement("course-start", course);
   }
-  await storage.set("current-course", course);
+  await storage.setLocal("current-course", course);
 }

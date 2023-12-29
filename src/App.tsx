@@ -83,7 +83,7 @@ const TabRoutes: React.FC = () => {
     triggerDailyStreak();
 
     const loadDevWidget = async () => {
-      let devWidgetEnabled = await storage.get("devWidgetEnabled");
+      let devWidgetEnabled = await storage.getLocal("devWidgetEnabled");
       setShowDevWidget(devWidgetEnabled);
     };
 
@@ -142,7 +142,7 @@ const TabRoutes: React.FC = () => {
         <DevWidget
           hideDevWidget={() => {
             setShowDevWidget(false);
-            storage.set("devWidgetEnabled", false);
+            storage.setLocal("devWidgetEnabled", false);
           }}
         />
       )}
