@@ -57,7 +57,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onClosed}>
+    <IonModal canDismiss={false} isOpen={isOpen} onDidDismiss={onClosed}>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login to ProGrammar</IonTitle>

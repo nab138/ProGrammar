@@ -54,6 +54,16 @@ export interface MultipleChoiceQuestion {
   rich?: boolean;
 }
 
+export interface ProjectLanguage {
+  name: string;
+  id: string;
+  projects: Project[];
+}
+
+export interface Project {
+  name: string;
+  difficulty: string;
+}
 export const difficultyLookup: { [key: number]: string } = {
   0: "Beginner",
   1: "Beginner-Intermediate",

@@ -17,7 +17,15 @@ import execute from "../utils/jdoodle";
 import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import { OfflineWarning } from "../components/OfflineWarning";
+import { useParams } from "react-router";
+import { toast } from "sonner";
+
+// Object of key sting, value CodeMirror LanguageSupport
+const langToHighlight: { [key: string]: any } = {
+  java: java,
+};
 const CodeEditor: React.FC = () => {
+  const { lang } = useParams<{ lang: string }>();
   const [value, setValue] = useState(
     'public class MyClass {\n    public static void main(String args[]) {\n      int x=10;\n      int y=25;\n      int z=x+y;\n\n      System.out.println("Sum of x+y = " + z);\n    }\n}'
   );
@@ -25,6 +33,13 @@ const CodeEditor: React.FC = () => {
     setValue(val);
   }, []);
 
+  useEffect(() => {
+    if (langToHighlight[lang] === undefined) {
+      toast.error("Invalid language", {
+        duration: 5000,
+      });
+    }
+  }, [lang]);
   const [lastOutput, setLastOutput] = useState("");
   return (
     <IonPage>
@@ -41,7 +56,9 @@ const CodeEditor: React.FC = () => {
               style={{ height: "100%" }}
               height="100%"
               value={value}
-              extensions={[java()]}
+              extensions={
+                langToHighlight[lang] ? [langToHighlight[lang]()] : []
+              }
               onChange={onChange}
               theme={
                 window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -53,7 +70,7 @@ const CodeEditor: React.FC = () => {
           <IonButton
             onClick={async () => {
               setLastOutput("Running...");
-              setLastOutput((await execute(value, "java")).output);
+              setLastOutput((await execute(value, lang)).output);
             }}
           >
             <IonIcon icon={play} />

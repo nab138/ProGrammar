@@ -44,6 +44,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   const [devWidgetEnabled, setDevWidgetEnabledState] = useState<boolean>();
   const [hapticsEnabled, setHapticsEnabled] = useState<boolean>();
   const [sfxEnabled, setSfxEnabled] = useState<boolean>();
+  const [isPremium, setIsPremium] = useState<boolean>();
 
   const [user, loading, error] = useAuthState(auth);
 
@@ -59,17 +60,24 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
 
   useEffect(() => {
     const loadUsername = async () => {
-      const [username, devWidgetEnabled, hapticsEnabled, sfxEnabled] =
-        await Promise.all([
-          storage.get("username"),
-          storage.getLocal("devWidgetEnabled"),
-          storage.getLocal("hapticsEnabled"),
-          storage.getLocalWithDefault("sfxEnabled", true),
-        ]);
+      const [
+        username,
+        devWidgetEnabled,
+        hapticsEnabled,
+        sfxEnabled,
+        isPremium,
+      ] = await Promise.all([
+        storage.get("username"),
+        storage.getLocal("devWidgetEnabled"),
+        storage.getLocal("hapticsEnabled"),
+        storage.getLocalWithDefault("sfxEnabled", true),
+        storage.get("isPremium"),
+      ]);
       setUsername(username);
       setDevWidgetEnabledState(devWidgetEnabled);
       setHapticsEnabled(hapticsEnabled);
       setSfxEnabled(sfxEnabled);
+      setIsPremium(isPremium);
     };
     loadUsername();
   }, [user, loading]);
@@ -136,6 +144,19 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
               }}
             >
               Enable DevWidget
+            </IonToggle>
+          </IonItem>
+          <IonItem color="light">
+            <IonToggle
+              slot="end"
+              checked={isPremium}
+              className="settings-toggle"
+              onIonChange={(e) => {
+                setIsPremium(e.detail.checked);
+                storage.set("isPremium", e.detail.checked);
+              }}
+            >
+              Premium Account (Requires Reload)
             </IonToggle>
           </IonItem>
         </IonList>

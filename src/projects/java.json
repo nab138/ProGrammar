@@ -1,0 +1,10 @@
+{
+  "name": "Java",
+  "id": "java",
+  "projects": [
+    {
+      "name": "Guessing Game",
+      "difficulty": "Easy"
+    }
+  ]
+}

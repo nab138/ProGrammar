@@ -1,0 +1,23 @@
+.premium-barrier {
+  text-align: center;
+}
+
+.premium-header {
+  padding: 0;
+}
+
+.premium-header h1,
+.premium-header p {
+  margin: 0;
+}
+
+.premium-header p {
+  color: #555;
+}
+
+/* if dark mode */
+@media (prefers-color-scheme: dark) {
+  .premium-header p {
+    color: #ccc;
+  }
+}
