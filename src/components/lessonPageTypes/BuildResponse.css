@@ -38,7 +38,7 @@
 .add-space-container {
   /* Add margin to ensure it will always be at the bottom of the page */
   flex-grow: 1;
-  min-height: 60px;
+  min-height: 65px;
   position: relative;
 }
 

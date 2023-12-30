@@ -1,16 +1,23 @@
 .back-button {
   font-size: 24px;
   margin: 0;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .forward-button {
   font-size: 24px;
   margin: 0;
-  margin-top: 5px;
+  margin-top: 10px;
   padding-left: 10px;
 }
 
 .disabled-btn {
   color: #0005 !important;
+}
+
+/* If dark mode */
+@media (prefers-color-scheme: dark) {
+  .disabled-btn {
+    color: #fff5 !important;
+  }
 }

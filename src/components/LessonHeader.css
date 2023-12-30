@@ -44,3 +44,9 @@
 .hard-text {
   color: var(--ion-color-danger-shade);
 }
+
+.hardAndBack {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}

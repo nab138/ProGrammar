@@ -51,16 +51,18 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
             {currentQuestionCount + 1}/{questionCount}
           </h4>
         </div>
-        {hard && <h4 className="hard-text">Hard Question!</h4>}
-        {!inReviewMode && (
-          <BackButton
-            lesson={lesson}
-            waitingToClick={waitingToClick}
-            currentQuestion={currentQuestion}
-            setCurrentQuestion={setCurrentQuestion}
-            actualProgress={actualProgress}
-          />
-        )}
+        <div className="hardAndBack">
+          {hard && <h4 className="hard-text">Hard Question!</h4>}
+          {!inReviewMode && lesson.type == "learn" && (
+            <BackButton
+              lesson={lesson}
+              waitingToClick={waitingToClick}
+              currentQuestion={currentQuestion}
+              setCurrentQuestion={setCurrentQuestion}
+              actualProgress={actualProgress}
+            />
+          )}
+        </div>
       </div>
       <IonProgressBar
         color={inReviewMode ? "warning" : ""}
