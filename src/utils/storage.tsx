@@ -101,6 +101,15 @@ class Storage {
     return await this.local.get(key);
   }
 
+  async getLocalWithDefault(key: string, defaultValue: any): Promise<any> {
+    let result = await this.local.get(key);
+    if (result == null) {
+      result = defaultValue;
+      await this.local.set(key, result);
+    }
+    return result;
+  }
+
   async setLocal(key: string, value: any): Promise<void> {
     await this.local.set(key, value);
   }

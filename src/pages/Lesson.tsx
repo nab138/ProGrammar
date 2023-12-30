@@ -55,11 +55,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       let info: Course = infoModule.default;
       let unit = info.units[curUnit];
       let rawLesson = unit.lessons[curLesson];
-      let lesson = await prepareLesson(
-        rawLesson
-        // info,
-        // unit
-      );
+      let lesson = await prepareLesson(rawLesson);
 
       setLesson(lesson);
       setInfo(info);

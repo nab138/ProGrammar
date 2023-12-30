@@ -6,11 +6,13 @@ import {
   IonCardTitle,
 } from "@ionic/react";
 import "./SubmitQuestionButton.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSound from "use-sound";
 
 import correctSfx from "../sfx/correct.mp3";
 import wrongSfx from "../sfx/wrong.mp3";
+import storage from "../utils/storage";
+import { hapticsImpactHeavy } from "../utils/haptics";
 
 interface SubmitQuestionButtonProps {
   disabled: boolean;
@@ -39,6 +41,20 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
 
   let [playCorrect] = useSound(correctSfx);
   let [playWrong] = useSound(wrongSfx);
+
+  let [sfxEnabled, setSfxEnabled] = useState<boolean>(true);
+  let [hapticsEnabled, setHapticsEnabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      let [sfxEnabled, hapticsEnabled] = await Promise.all([
+        storage.getLocalWithDefault("sfxEnabled", true),
+        storage.getLocalWithDefault("hapticsEnabled", false),
+      ]);
+      setSfxEnabled(sfxEnabled);
+      setHapticsEnabled(hapticsEnabled);
+    })();
+  }, []);
   return (
     <div className="submit-button-container">
       <IonButton
@@ -51,10 +67,16 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
           if (firstClick) {
             if (isCorrect()) {
               setColor("success");
-              if (!isNotQuestion) playCorrect();
+              if (!isNotQuestion) {
+                if (sfxEnabled) playCorrect();
+                if (hapticsEnabled) hapticsImpactHeavy();
+              }
             } else {
               setColor("danger");
-              if (!isNotQuestion) playWrong();
+              if (!isNotQuestion) {
+                if (sfxEnabled) playWrong();
+                if (hapticsEnabled) hapticsImpactHeavy();
+              }
             }
             setFirstClick(false);
             onFirstClick();

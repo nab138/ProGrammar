@@ -41,7 +41,9 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   const [showModal, setShowModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [devWidgetEnabled, setDevWidgetEnabledState] = useState(false);
+  const [devWidgetEnabled, setDevWidgetEnabledState] = useState<boolean>();
+  const [hapticsEnabled, setHapticsEnabled] = useState<boolean>();
+  const [sfxEnabled, setSfxEnabled] = useState<boolean>();
 
   const [user, loading, error] = useAuthState(auth);
 
@@ -57,9 +59,17 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
 
   useEffect(() => {
     const loadUsername = async () => {
-      setUsername(await storage.get("username"));
-      const devWidgetEnabled = await storage.getLocal("devWidgetEnabled");
+      const [username, devWidgetEnabled, hapticsEnabled, sfxEnabled] =
+        await Promise.all([
+          storage.get("username"),
+          storage.getLocal("devWidgetEnabled"),
+          storage.getLocal("hapticsEnabled"),
+          storage.getLocalWithDefault("sfxEnabled", true),
+        ]);
+      setUsername(username);
       setDevWidgetEnabledState(devWidgetEnabled);
+      setHapticsEnabled(hapticsEnabled);
+      setSfxEnabled(sfxEnabled);
     };
     loadUsername();
   }, [user, loading]);
@@ -73,26 +83,34 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
       </IonHeader>
       <IonContent>
         <IonList inset>
-          <IonItem color="light" button onClick={hapticsImpactHeavy}>
-            <IonLabel>Test Heavy Haptics</IonLabel>
+          <IonItem color="light">
+            <IonToggle
+              slot="end"
+              checked={sfxEnabled}
+              className="settings-toggle"
+              onIonChange={(e) => {
+                setSfxEnabled(e.detail.checked);
+                storage.setLocal("sfxEnabled", e.detail.checked);
+              }}
+            >
+              SFX
+            </IonToggle>
           </IonItem>
-          <IonItem color="light" button onClick={hapticsImpactMedium}>
-            <IonLabel>Test Medium Haptics</IonLabel>
-          </IonItem>
-          <IonItem color="light" button onClick={hapticsImpactLight}>
-            <IonLabel>Test Light Haptics</IonLabel>
-          </IonItem>
-          <IonItem color="light" button onClick={hapticsVibrate}>
-            <IonLabel>Test Vibrate</IonLabel>
-          </IonItem>
-          <IonItem color="light" button onClick={hapticsSelectionStart}>
-            <IonLabel>Test Selection Start</IonLabel>
-          </IonItem>
-          <IonItem color="light" button onClick={hapticsSelectionChanged}>
-            <IonLabel>Test Selection Changed</IonLabel>
-          </IonItem>
-          <IonItem color="light" button onClick={hapticsSelectionEnd}>
-            <IonLabel>Test Selection End</IonLabel>
+          <IonItem color="light">
+            <IonToggle
+              slot="end"
+              checked={hapticsEnabled}
+              className="settings-toggle"
+              onIonChange={(e) => {
+                setHapticsEnabled(e.detail.checked);
+                storage.setLocal("hapticsEnabled", e.detail.checked);
+                if (e.detail.checked) {
+                  hapticsImpactHeavy();
+                }
+              }}
+            >
+              Haptics
+            </IonToggle>
           </IonItem>
         </IonList>
         <IonList inset>
@@ -107,16 +125,18 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
             <IonLabel>JS Bundle version: {version}</IonLabel>
           </IonItem>
           <IonItem color="light">
-            <IonLabel>Enable DevWidget</IonLabel>
             <IonToggle
               slot="end"
               checked={devWidgetEnabled}
+              className="settings-toggle"
               onIonChange={(e) => {
                 setDevWidgetEnabled(e.detail.checked);
                 setDevWidgetEnabledState(e.detail.checked);
                 storage.setLocal("devWidgetEnabled", e.detail.checked);
               }}
-            />
+            >
+              Enable DevWidget
+            </IonToggle>
           </IonItem>
         </IonList>
         <IonList color="light" inset>
@@ -147,6 +167,29 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
           </IonItem>
           <IonItem button={true} id="present-clear-local-alert" color="danger">
             <IonLabel>Danger: Clear all saved data (Local)</IonLabel>
+          </IonItem>
+        </IonList>
+        <IonList inset>
+          <IonItem color="light" button onClick={hapticsImpactHeavy}>
+            <IonLabel>Test Heavy Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsImpactMedium}>
+            <IonLabel>Test Medium Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsImpactLight}>
+            <IonLabel>Test Light Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsVibrate}>
+            <IonLabel>Test Vibrate</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionStart}>
+            <IonLabel>Test Selection Start</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionChanged}>
+            <IonLabel>Test Selection Changed</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionEnd}>
+            <IonLabel>Test Selection End</IonLabel>
           </IonItem>
         </IonList>
         <IonAlert
