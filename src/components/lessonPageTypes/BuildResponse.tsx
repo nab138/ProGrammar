@@ -10,6 +10,9 @@ interface BuildResponseProps {
   question: BuildQuestion;
   onCorrect: () => void;
   onIncorrect: () => void;
+  skipToNext: () => void;
+  setWaitingToClick: (waiting: boolean) => void;
+  isRevisiting: boolean;
 }
 
 // The build response question will allow a user to select the blocks in the right order to "build" a line or several lines of code.
@@ -19,11 +22,15 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
   question,
   onCorrect,
   onIncorrect,
+  skipToNext,
+  setWaitingToClick,
+  isRevisiting = false,
 }) => {
   let answerButtons = useRef<HTMLDivElement>(null);
 
   let [answer, setAnswer] = useState<number[]>([]);
   let [disabled, setDisabled] = useState<boolean>(false);
+  let answerRef = useRef<number[]>([]);
 
   useEffect(() => {
     // Using requestAnimationFrame to ensure the scroll operation occurs after the DOM update
@@ -32,7 +39,17 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         answerButtons.current.scrollLeft = answerButtons.current.scrollWidth;
       }
     });
+    answerRef.current = answer;
   }, [answer]);
+
+  useEffect(() => {
+    if (isRevisiting) {
+      setAnswer(
+        (JSON.parse(sessionStorage.getItem(question.id) ?? "") ??
+          []) as number[]
+      );
+    }
+  }, [isRevisiting]);
 
   return (
     <>
@@ -113,6 +130,8 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         </div>
       </div>
       <SubmitQuestionButton
+        isRevisiting={isRevisiting}
+        skipToNext={skipToNext}
         disabled={answer.length == 0}
         isCorrect={() => {
           return (
@@ -131,6 +150,14 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         onCorrect={onCorrect}
         onIncorrect={onIncorrect}
         onFirstClick={() => {
+          if (!isRevisiting) {
+            sessionStorage.setItem(
+              question.id,
+              JSON.stringify(answerRef.current)
+            );
+            setWaitingToClick(true);
+          }
+
           setDisabled(true);
         }}
       />

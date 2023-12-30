@@ -28,6 +28,7 @@
   /* Keep all on same line, centered vertically */
   display: flex;
   align-items: center;
+  align-content: center;
   justify-content: space-between;
 }
 

@@ -21,8 +21,10 @@ interface SubmitQuestionButtonProps {
   onCorrect: () => void;
   onIncorrect: () => void;
   onFirstClick: () => void;
+  skipToNext?: () => void;
   text?: string;
   isNotQuestion?: boolean;
+  isRevisiting?: boolean;
 }
 const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   isCorrect,
@@ -30,9 +32,11 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
   onIncorrect,
   onFirstClick,
   getExplanation,
+  skipToNext,
   disabled,
   text,
   isNotQuestion = false,
+  isRevisiting = false,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   let [curText, setCurText] = useState<string>(text ?? "Submit");
@@ -55,6 +59,16 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
       setHapticsEnabled(hapticsEnabled);
     })();
   }, []);
+
+  useEffect(() => {
+    if (isRevisiting === true) {
+      setCurText("Next");
+      setColor("primary");
+      setShowExplanation(true);
+      setFirstClick(false);
+      onFirstClick();
+    }
+  }, [isRevisiting]);
   return (
     <div className="submit-button-container">
       <IonButton
@@ -83,6 +97,10 @@ const SubmitQuestionButton: React.FC<SubmitQuestionButtonProps> = ({
             if (!isNotQuestion) setCurText("Next");
             if (!isNotQuestion) setShowExplanation(true);
           } else {
+            if (isRevisiting && skipToNext) {
+              skipToNext();
+              return;
+            }
             if (isCorrect()) {
               onCorrect();
             } else {

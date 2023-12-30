@@ -1,8 +1,16 @@
 .back-button {
-  padding-left: 16px;
   font-size: 24px;
+  margin: 0;
+  margin-top: 5px;
 }
 
-.hidden {
-  display: none;
+.forward-button {
+  font-size: 24px;
+  margin: 0;
+  margin-top: 5px;
+  padding-left: 10px;
+}
+
+.disabled-btn {
+  color: #0005 !important;
 }

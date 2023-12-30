@@ -13,6 +13,7 @@ interface LessonHeaderProps {
   hard: boolean;
   setCurrentQuestion: React.Dispatch<React.SetStateAction<number>>;
   actualProgress: number;
+  waitingToClick: boolean;
 }
 const LessonHeader: React.FC<LessonHeaderProps> = ({
   displayState,
@@ -23,6 +24,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
   hard,
   setCurrentQuestion,
   actualProgress,
+  waitingToClick,
 }) => {
   let inReviewMode = displayState == "review";
   let questionCount = inReviewMode
@@ -49,13 +51,16 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
             {currentQuestionCount + 1}/{questionCount}
           </h4>
         </div>
-        <BackButton
-          lesson={lesson}
-          currentQuestion={currentQuestion}
-          setCurrentQuestion={setCurrentQuestion}
-          actualProgress={actualProgress}
-        />
         {hard && <h4 className="hard-text">Hard Question!</h4>}
+        {!inReviewMode && (
+          <BackButton
+            lesson={lesson}
+            waitingToClick={waitingToClick}
+            currentQuestion={currentQuestion}
+            setCurrentQuestion={setCurrentQuestion}
+            actualProgress={actualProgress}
+          />
+        )}
       </div>
       <IonProgressBar
         color={inReviewMode ? "warning" : ""}

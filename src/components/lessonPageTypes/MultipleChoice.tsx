@@ -1,7 +1,7 @@
 import { IonButton, IonRadio, IonRadioGroup, IonTitle } from "@ionic/react";
 import { MultipleChoiceQuestion } from "../../utils/structures";
 import "./MultipleChoice.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SubmitQuestionButton from "../SubmitQuestionButton";
 import RichDisplay from "../RichDisplay";
 
@@ -9,15 +9,32 @@ interface MultipleChoiceProps {
   question: MultipleChoiceQuestion;
   onCorrect: () => void;
   onIncorrect: () => void;
+  skipToNext: () => void;
+  setWaitingToClick: (waiting: boolean) => void;
+  isRevisiting: boolean;
 }
 const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   question,
   onCorrect,
   onIncorrect,
+  skipToNext,
+  setWaitingToClick,
+  isRevisiting = false,
 }) => {
   let [selected, setSelected] = useState<string>("");
   let [disabled, setDisabled] = useState<boolean>(false);
   let correctAnswer = useRef<HTMLIonRadioElement>(null);
+  const selectedRef = useRef(selected);
+
+  useEffect(() => {
+    if (isRevisiting) {
+      setSelected(sessionStorage.getItem(question.id) ?? "");
+    }
+  }, [isRevisiting]);
+
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
   return (
     <>
       <div className="lesson-content-container">
@@ -30,6 +47,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           onIonChange={(event) => {
             setSelected(event.detail.value);
           }}
+          value={selected}
         >
           {question.choices.map((choice, i) => {
             return (
@@ -61,7 +79,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
         </IonRadioGroup>
       </div>
       <SubmitQuestionButton
-        disabled={selected == ""}
+        disabled={selected == "" && !isRevisiting}
         isCorrect={() => {
           return selected === question.answer;
         }}
@@ -71,9 +89,15 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
         onCorrect={onCorrect}
         onIncorrect={onIncorrect}
         onFirstClick={() => {
+          if (!isRevisiting) {
+            setWaitingToClick(true);
+            sessionStorage.setItem(question.id, selectedRef.current);
+          }
           setDisabled(true);
           correctAnswer.current?.classList.add("correct-answer");
         }}
+        isRevisiting={isRevisiting}
+        skipToNext={skipToNext}
       />
     </>
   );

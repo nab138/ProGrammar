@@ -28,8 +28,6 @@ import triggerAchievement, {
 } from "../utils/achievements";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { LessonContext } from "../LessonContext";
-import BackButton from "../components/BackButton";
-
 interface LessonPageParams {
   id: string;
 }
@@ -49,6 +47,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   let [currentIncorrect, setCurrentIncorrect] = useState<number>(0);
   let [awaitingSave, setAwaitingSave] = useState<boolean>(true);
   let [completeType, setCompleteType] = useState<string>("continue");
+  let [waitingToClick, setWaitingToClick] = useState<boolean>(false);
 
   let [actualLessonProgress, setActualLessonProgress] = useState<number>(0);
 
@@ -83,6 +82,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
     if (!lesson) {
       return;
     }
+    setWaitingToClick(false);
     // If we are in review mode, we need to check if we are done reviewing, and if not, go to the next incorrect question
     if (displayState == "review" && !skipToEnd) {
       if (incorrectQuestions.length == 1) {
@@ -170,6 +170,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       case "mc":
         return (
           <MultipleChoice
+            setWaitingToClick={setWaitingToClick}
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as MultipleChoiceQuestion}
             onCorrect={toNextQuestion}
@@ -180,6 +181,10 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
               }
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
+            }}
+            isRevisiting={!isReview && actualLessonProgress > currentQuestion}
+            skipToNext={() => {
+              setCurrentQuestion(currentQuestion + 1);
             }}
           />
         );
@@ -194,7 +199,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       case "build":
         return (
           <BuildResponse
+            setWaitingToClick={setWaitingToClick}
             key={currentQuestion + (isReview ? "r" : "")}
+            skipToNext={() => {
+              setCurrentQuestion(currentQuestion + 1);
+            }}
+            isRevisiting={!isReview && actualLessonProgress > currentQuestion}
             question={question as BuildQuestion}
             onCorrect={() => {
               if ((question.hard ?? false) && !isReview) {
@@ -227,6 +237,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       </IonHeader>
       <IonContent className="lesson-page">
         <LessonHeader
+          waitingToClick={waitingToClick}
           displayState={displayState}
           currentQuestion={currentQuestion}
           totalIncorrect={totalIncorrect}

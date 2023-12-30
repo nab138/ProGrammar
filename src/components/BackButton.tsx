@@ -9,24 +9,29 @@ interface BackButtonProps {
   setCurrentQuestion: React.Dispatch<React.SetStateAction<number>>;
   currentQuestion: number;
   actualProgress: number;
+  waitingToClick: boolean;
 }
 const BackButton: React.FC<BackButtonProps> = ({
   lesson,
   setCurrentQuestion,
   currentQuestion,
   actualProgress,
+  waitingToClick,
 }) => {
+  let backDisabled =
+    lesson.type !== "learn" || currentQuestion === 0 || waitingToClick;
+  let forwardDisabled =
+    lesson.type !== "learn" ||
+    currentQuestion >= actualProgress ||
+    waitingToClick;
   return (
     <div>
       <IonIcon
         icon={chevronBack}
         slot="start"
-        className={
-          lesson.type !== "learn" || currentQuestion === 0
-            ? "hidden"
-            : "back-button"
-        }
+        className={backDisabled ? "back-button disabled-btn" : "back-button"}
         onClick={() => {
+          if (backDisabled) return;
           if (lesson.type === "learn") {
             setCurrentQuestion(currentQuestion - 1);
           }
@@ -36,15 +41,14 @@ const BackButton: React.FC<BackButtonProps> = ({
         icon={chevronForward}
         slot="start"
         className={
-          lesson.type !== "learn" || currentQuestion >= actualProgress
-            ? "hidden"
-            : "back-button"
+          forwardDisabled ? "forward-button disabled-btn" : "forward-button"
         }
         onClick={() => {
           if (
             lesson.type === "learn" &&
             actualProgress >= currentQuestion + 1
           ) {
+            if (forwardDisabled) return;
             setCurrentQuestion(currentQuestion + 1);
           }
         }}
