@@ -22,6 +22,15 @@ import { auth, changePassword, logout } from "../utils/firebase";
 import { logOutOutline } from "ionicons/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { OfflineWarning } from "../components/OfflineWarning";
+import {
+  hapticsImpactHeavy,
+  hapticsImpactLight,
+  hapticsImpactMedium,
+  hapticsSelectionChanged,
+  hapticsSelectionEnd,
+  hapticsSelectionStart,
+  hapticsVibrate,
+} from "../utils/haptics";
 
 export interface SettingsProps {
   setDevWidgetEnabled: (enabled: boolean) => void;
@@ -63,6 +72,29 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonList inset>
+          <IonItem color="light" button onClick={hapticsImpactHeavy}>
+            <IonLabel>Test Heavy Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsImpactMedium}>
+            <IonLabel>Test Medium Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsImpactLight}>
+            <IonLabel>Test Light Haptics</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsVibrate}>
+            <IonLabel>Test Vibrate</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionStart}>
+            <IonLabel>Test Selection Start</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionChanged}>
+            <IonLabel>Test Selection Changed</IonLabel>
+          </IonItem>
+          <IonItem color="light" button onClick={hapticsSelectionEnd}>
+            <IonLabel>Test Selection End</IonLabel>
+          </IonItem>
+        </IonList>
         <IonList inset>
           <IonItem color="light">
             <IonLabel>Native version: {appInfo?.version}</IonLabel>
