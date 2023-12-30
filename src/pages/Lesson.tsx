@@ -28,6 +28,7 @@ import triggerAchievement, {
 } from "../utils/achievements";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { LessonContext } from "../LessonContext";
+import BackButton from "../components/BackButton";
 
 interface LessonPageParams {
   id: string;
@@ -48,6 +49,8 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
   let [currentIncorrect, setCurrentIncorrect] = useState<number>(0);
   let [awaitingSave, setAwaitingSave] = useState<boolean>(true);
   let [completeType, setCompleteType] = useState<string>("continue");
+
+  let [actualLessonProgress, setActualLessonProgress] = useState<number>(0);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -102,6 +105,7 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
       setIncorrectQuestions(incorrectQuestions.slice(1));
       setCurrentQuestion(incorrectQuestions[1]);
       setCurrentIncorrect(currentIncorrect + 1);
+
       return;
     } else {
       // If we are not in review mode, we need to check if we are done with the lesson, and if not, go to the next question
@@ -142,6 +146,9 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
         }
       } else {
         setCurrentQuestion(currentQuestion + 1);
+        setActualLessonProgress(
+          Math.max(currentQuestion + 1, actualLessonProgress)
+        );
       }
     }
   };
@@ -226,6 +233,8 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
           currentIncorrect={currentIncorrect}
           lesson={lesson}
           hard={lesson.questions[currentQuestion].hard ?? false}
+          setCurrentQuestion={setCurrentQuestion}
+          actualProgress={actualLessonProgress}
         />
         {(() => {
           switch (displayState) {

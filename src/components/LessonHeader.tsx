@@ -2,6 +2,7 @@ import { IonIcon, IonProgressBar } from "@ionic/react";
 import "./LessonHeader.css";
 import { Lesson } from "../utils/structures";
 import { alertCircle } from "ionicons/icons";
+import BackButton from "./BackButton";
 
 interface LessonHeaderProps {
   displayState: string;
@@ -10,6 +11,8 @@ interface LessonHeaderProps {
   currentIncorrect: number;
   lesson: Lesson;
   hard: boolean;
+  setCurrentQuestion: React.Dispatch<React.SetStateAction<number>>;
+  actualProgress: number;
 }
 const LessonHeader: React.FC<LessonHeaderProps> = ({
   displayState,
@@ -18,6 +21,8 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
   totalIncorrect,
   currentIncorrect,
   hard,
+  setCurrentQuestion,
+  actualProgress,
 }) => {
   let inReviewMode = displayState == "review";
   let questionCount = inReviewMode
@@ -44,6 +49,12 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
             {currentQuestionCount + 1}/{questionCount}
           </h4>
         </div>
+        <BackButton
+          lesson={lesson}
+          currentQuestion={currentQuestion}
+          setCurrentQuestion={setCurrentQuestion}
+          actualProgress={actualProgress}
+        />
         {hard && <h4 className="hard-text">Hard Question!</h4>}
       </div>
       <IonProgressBar
