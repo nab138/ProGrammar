@@ -82,6 +82,16 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+  --rt-color-white: #fff;
+  --rt-color-dark: #222;
+  --rt-color-success: var(--ion-color-success);
+  --rt-color-error: var(--ion-color-danger);
+  --rt-color-warning: var(--ion-color-warning);
+  --rt-color-info: var(--ion-color-tertiary);
+  --rt-opacity: 0.9;
+  --rt-transition-show-delay: 0.15s;
+  --rt-transition-closing-delay: 0.15s;
 }
 
 @media (prefers-color-scheme: dark) {

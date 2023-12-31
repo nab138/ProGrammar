@@ -3,6 +3,7 @@ import Markdown from "markdown-to-jsx";
 import hljs from "highlight.js";
 import "./HighlightedMarkdown.css";
 import { Tooltip } from "react-tooltip";
+import { flip, offset, shift, size } from "@floating-ui/dom";
 
 interface HighlightedMarkdownProps {
   children: string;
@@ -46,10 +47,37 @@ export function HighlightedMarkdown({
                       data-tooltip-id={id}
                       data-tooltip-content={decodedHref}
                       data-tooltip-variant="info"
+                      data-tooltip-position-strategy="fixed"
                     >
                       {children}
                     </u>
-                    <Tooltip id={id} openOnClick={true} />
+                    <Tooltip
+                      wrapper="span"
+                      id={id}
+                      openOnClick={true}
+                      middlewares={[
+                        offset(10),
+                        flip(),
+                        size({
+                          apply: ({
+                            availableWidth,
+                            availableHeight,
+                            elements,
+                          }) => {
+                            Object.assign(elements.floating.style, {
+                              maxWidth: `${Math.max(
+                                200,
+                                availableWidth - 50
+                              )}px`,
+                            });
+                          },
+                        }),
+                        shift({ padding: 5 }),
+                        flip({
+                          fallbackAxisSideDirection: "start",
+                        }),
+                      ]}
+                    />
                   </>
                 );
               },
