@@ -18,12 +18,9 @@ const BackButton: React.FC<BackButtonProps> = ({
   actualProgress,
   waitingToClick,
 }) => {
-  let backDisabled =
-    lesson.type !== "learn" || currentQuestion === 0 || waitingToClick;
+  let backDisabled = lesson.type !== "learn" || currentQuestion === 0;
   let forwardDisabled =
-    lesson.type !== "learn" ||
-    currentQuestion >= actualProgress ||
-    waitingToClick;
+    lesson.type !== "learn" || currentQuestion >= actualProgress;
   return (
     <div>
       <IonIcon
@@ -31,7 +28,7 @@ const BackButton: React.FC<BackButtonProps> = ({
         slot="start"
         className={backDisabled ? "back-button disabled-btn" : "back-button"}
         onClick={() => {
-          if (backDisabled) return;
+          if (backDisabled || waitingToClick) return;
           if (lesson.type === "learn") {
             setCurrentQuestion(currentQuestion - 1);
           }
@@ -48,7 +45,7 @@ const BackButton: React.FC<BackButtonProps> = ({
             lesson.type === "learn" &&
             actualProgress >= currentQuestion + 1
           ) {
-            if (forwardDisabled) return;
+            if (forwardDisabled || waitingToClick) return;
             setCurrentQuestion(currentQuestion + 1);
           }
         }}
