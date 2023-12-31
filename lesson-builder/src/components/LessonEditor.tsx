@@ -321,6 +321,25 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                   });
                 }
               }}
+              onBlur={() => {
+                if (
+                  selectedQuestion.question !== null &&
+                  selectedQuestion.question !== undefined
+                ) {
+                  // Automatically replace spaces in URLs with %20
+                  const updatedVal = selectedQuestion.question.replace(
+                    /\[(.*?)\]\((.*?)\)/g,
+                    (match, title, link) => {
+                      return `[${title}](${link.replace(/ /g, "%20")})`;
+                    }
+                  );
+
+                  setSelectedQuestion({
+                    ...selectedQuestion,
+                    question: updatedVal,
+                  });
+                }
+              }}
             />
           ) : (
             <textarea

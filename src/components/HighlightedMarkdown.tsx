@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import Markdown from "markdown-to-jsx";
 import hljs from "highlight.js";
 import "./HighlightedMarkdown.css";
+import { Tooltip } from "react-tooltip";
 
 interface HighlightedMarkdownProps {
   children: string;
@@ -30,7 +31,34 @@ export function HighlightedMarkdown({
 
   return (
     <div className={className} ref={rootRef}>
-      <Markdown>{children}</Markdown>
+      <Markdown
+        options={{
+          overrides: {
+            a: {
+              component: ({ href, children }) => {
+                let decodedHref = decodeURIComponent(href);
+                // replace all spaces with dashes
+                let id = decodedHref.replace(/ /g, "-").toLowerCase();
+                return (
+                  <>
+                    <u
+                      className="vocab-term"
+                      data-tooltip-id={id}
+                      data-tooltip-content={decodedHref}
+                      data-tooltip-variant="info"
+                    >
+                      {children}
+                    </u>
+                    <Tooltip id={id} openOnClick={true} />
+                  </>
+                );
+              },
+            },
+          },
+        }}
+      >
+        {children}
+      </Markdown>
     </div>
   );
 }

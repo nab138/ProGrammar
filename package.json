@@ -44,6 +44,7 @@
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
     "react-shadow": "^20.4.0",
+    "react-tooltip": "^5.25.1",
     "sonner": "^1.2.4",
     "use-sound": "^4.0.1"
   },
