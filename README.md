@@ -6,8 +6,8 @@ Currently a WIP. I hope to release this on the app store/play store at some poin
 
 ### Todo for supabase migration
 
+- [ ] jdoodle api
 - [ ] last-streak-date should be date
-- [ ] signup redirect
 - [ ] password reset not working
 - [ ] Unique username ensuring
 - [ ] Offline caching
