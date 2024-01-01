@@ -67,7 +67,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
           storage.getLocal("devWidgetEnabled"),
           storage.getLocal("hapticsEnabled"),
           storage.getLocalWithDefault("sfxEnabled", true),
-          storage.get("isPremium"),
+          storage.get("is_premium"),
         ]);
       setDevWidgetEnabledState(devWidgetEnabled);
       setHapticsEnabled(hapticsEnabled);
@@ -148,7 +148,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
               className="settings-toggle"
               onIonChange={(e) => {
                 setIsPremium(e.detail.checked);
-                storage.set("isPremium", e.detail.checked);
+                storage.set("is_premium", e.detail.checked);
               }}
             >
               Premium Account (Requires Reload)

@@ -22,15 +22,18 @@ class Storage {
   constructor() {
     this.local = new IonicStorage();
     this.local.create();
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      this.session = session;
+    });
   }
 
   async get(key: string): Promise<any> {
     const user = (await this.getSession())?.user;
     if (user) {
       const { data, error } = await supabase
-        .from("users")
+        .from("profiles")
         .select(key)
-        .eq("uid", user.id)
+        .eq("id", user.id)
         .single();
 
       if (error) {
@@ -49,9 +52,9 @@ class Storage {
     const user = (await this.getSession())?.user;
     if (user) {
       const { error } = await supabase
-        .from("users")
+        .from("profiles")
         .update({ [key]: value })
-        .eq("uid", user.id);
+        .eq("id", user.id);
 
       if (error) {
         console.log(error.message);
@@ -62,23 +65,26 @@ class Storage {
   }
 
   async clear(): Promise<void> {
-    // const user = supabase.auth.user();
-    // if (user) {
-    //   const { error } = await supabase
-    //     .from("users")
-    //     .update({
-    //       // List all the fields you want to clear
-    //       field1: null,
-    //       field2: null,
-    //       // ...
-    //     })
-    //     .eq("id", user.id);
-    //   if (error) {
-    //     console.log(error.message);
-    //   }
-    // } else {
-    //   console.log("No user is signed in");
-    // }
+    const user = (await this.getSession())?.user;
+    if (user) {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          progress: {},
+          achievements: [],
+          achievement_counts: {},
+          achievement_streaks: {},
+          achievement_triggers: {},
+          last_daily_streak: null,
+        })
+        .eq("id", user.id);
+
+      if (error) {
+        console.log(error.message);
+      }
+    } else {
+      console.log("No user is signed in");
+    }
   }
 
   async getLocal(key: string): Promise<any> {

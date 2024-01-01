@@ -29,7 +29,7 @@ interface UserProfile {
   displayName: string;
 }
 const Social: React.FC = () => {
-  let [achievements, setAchievements] = useState<Achievement[]>([]);
+  let [achievements, setAchievements] = useState<any[]>([]);
   let [session, loading, error] = useSupabaseAuth();
   let [retrievingAchievements, setRetrievingAchievements] = useState(false);
   let [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -38,7 +38,7 @@ const Social: React.FC = () => {
   useEffect(() => {
     if (session) {
       let username = session.user.user_metadata.username;
-      let displayName = session.user.user_metadata.displayName;
+      let displayName = session.user.user_metadata.display_name;
       setUserProfile({ username, displayName });
     }
   }, [session, loading, error]);

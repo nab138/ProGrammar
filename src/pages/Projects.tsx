@@ -36,7 +36,7 @@ const Projects: React.FC = () => {
       setLanguages(projectLanguages);
     };
     const fetchPremium = async () => {
-      let isPremium = await storage.get("isPremium");
+      let isPremium = await storage.get("is_premium");
       setIsPremium(isPremium);
     };
     fetchLanguages();
@@ -55,12 +55,13 @@ const Projects: React.FC = () => {
           <IonAccordionGroup multiple>
             {languages.map((lang) => {
               return (
-                <IonAccordion>
+                <IonAccordion key={lang.id}>
                   <IonItem slot="header" color="light">
                     <IonLabel>{lang.name}</IonLabel>
                   </IonItem>
                   <IonList className="ion-no-padding" slot="content">
                     <IonItem
+                      key={"sandbox-" + lang.id}
                       button
                       onClick={() => {
                         history.push("/sandbox/" + lang.id);
@@ -73,7 +74,7 @@ const Projects: React.FC = () => {
                     </IonItem>
                     {lang.projects.map((project) => {
                       return (
-                        <IonItem button onClick={() => {}}>
+                        <IonItem key={project.name} button onClick={() => {}}>
                           <IonLabel>{project.name}</IonLabel>
                         </IonItem>
                       );

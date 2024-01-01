@@ -36,29 +36,12 @@ export async function signup(
       options: {
         data: {
           username,
-          displayName,
+          display_name: displayName,
         },
       },
     });
-    if (error) {
-      throw error;
-    }
 
-    if (data.session?.user) {
-      const { data: insertData, error: insertError } = await supabase
-        .from("users")
-        .insert([{ uid: data.session.user.id, created_at: new Date() }]);
-
-      if (insertError) {
-        throw insertError;
-      }
-    } else {
-      toast.error("An auth error has occured", {
-        description:
-          "Please try again. If you just created your account, please wait a few minutes and try to login.",
-        duration: 5000,
-      });
-    }
+    if (error) throw error;
 
     return data;
   } catch (err) {
@@ -151,8 +134,23 @@ export async function changePassword(password: string) {
   }
 }
 function logErrors(e: any) {
-  toast.error("An error occured: ", {
-    description: e.error_description || e.message,
+  let title = "An error occured:";
+  let msg = e.error_description || e.message;
+  if (msg.includes("Password should be at least 6 characters.")) {
+    title = "Invalid Password";
+    msg =
+      "Password should be at least 6 characters and contain at least 1 lowercase letter, 1 uppercase letter, and 1 number.";
+  } else if (msg.includes("Failed to fetch")) {
+    title = "Unable to connect";
+    msg = "Check your internet connection and try again in a few minutes.";
+  } else if (msg.includes("duplicate key value violates unique constraint")) {
+    if (msg.includes("profiles_username_key")) {
+      title = "Username already taken";
+      msg = "Please try a different username.";
+    }
+  }
+  toast.error(title, {
+    description: msg,
     duration: 5000,
   });
 }

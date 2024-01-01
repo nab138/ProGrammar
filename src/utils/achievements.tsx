@@ -28,9 +28,12 @@ export type AchievementCategory =
 export interface Achievement {
   name: string;
   description: string;
-  gotDate?: string;
 }
 
+interface RecievedAchievement {
+  gotDate: string;
+  achievementKey: string;
+}
 interface AchievementTable {
   [key: string]: Achievement;
 }
@@ -128,10 +131,12 @@ export default async function triggerAchievement(
     let achievementKey = category + "." + count;
     let achievement = achievements[achievementKey];
     if (achievement) {
-      let existingAchievements: string[] =
+      let existingAchievements: RecievedAchievement[] =
         (await storage.get("achievements")) ?? [];
-      achievement.gotDate = new Date().toLocaleDateString();
-      existingAchievements.push(achievementKey);
+      existingAchievements.push({
+        achievementKey,
+        gotDate: new Date().toLocaleDateString(),
+      });
       await storage.set("achievements", existingAchievements);
       // Display a toast
       toast(achievement.name + " - Achievement Unlocked!", {
@@ -144,7 +149,7 @@ export default async function triggerAchievement(
   }
 }
 
-export async function getAchievements() {
+export async function getAchievements(): Promise<RecievedAchievement[]> {
   return (await storage.get("achievements")) ?? [];
 }
 
@@ -153,9 +158,9 @@ async function increment(category: AchievementCategory) {
 
   try {
     let counts: Record<AchievementCategory, number> =
-      (await storage.get("achievement-counts")) || {};
+      (await storage.get("achievement_counts")) || {};
     counts[category] = (counts[category] || 0) + 1;
-    await storage.set("achievement-counts", counts);
+    await storage.set("achievement_counts", counts);
     return counts[category];
   } finally {
     release();
@@ -166,10 +171,10 @@ export async function shouldAllowTrigger(id: string) {
   const release = await triggerMutex.acquire();
 
   try {
-    let triggers = (await storage.get("achievement-triggers")) || {};
+    let triggers = (await storage.get("achievement_triggers")) || {};
     if (triggers[id]) return false;
     triggers[id] = true;
-    await storage.set("achievement-triggers", triggers);
+    await storage.set("achievement_triggers", triggers);
     return true;
   } finally {
     release();
@@ -189,7 +194,7 @@ export async function triggerStreakAchievement(
     if (!override && !shouldAllow) return;
 
     let streakCounts: Record<AchievementCategory, number> =
-      (await storage.get("achievement-streaks")) || {};
+      (await storage.get("achievement_streaks")) || {};
 
     if (shouldBreak) {
       // If the streak should be broken, reset the streak count
@@ -202,11 +207,16 @@ export async function triggerStreakAchievement(
       let achievementKey = category + "." + streakCounts[category];
       let achievement = achievements[achievementKey];
       if (achievement) {
-        let existingAchievements: string[] =
+        let existingAchievements: RecievedAchievement[] =
           (await storage.get("achievements")) ?? [];
-        if (existingAchievements.includes(achievementKey)) return;
-        achievement.gotDate = new Date().toLocaleDateString();
-        existingAchievements.push(achievementKey);
+        if (
+          existingAchievements.filter((a) => a.achievementKey == achievementKey)
+        )
+          return;
+        existingAchievements.push({
+          achievementKey,
+          gotDate: new Date().toLocaleDateString(),
+        });
         await storage.set("achievements", existingAchievements);
 
         // Display a toast
@@ -217,31 +227,31 @@ export async function triggerStreakAchievement(
       }
     }
 
-    await storage.set("achievement-streaks", streakCounts);
+    await storage.set("achievement_streaks", streakCounts);
   } finally {
     release();
   }
 }
 
 export async function triggerDailyStreak() {
-  let lastDateStr = await storage.get("last-daily-streak");
+  let lastDate = await storage.get("last_daily_streak");
   let today = new Date();
-  let todayStr = today.toLocaleDateString();
 
-  if (lastDateStr === todayStr) return; // If the app was already opened today
-  await storage.set("last-daily-streak", todayStr); // Update the last streak date
+  if (
+    lastDate &&
+    new Date(lastDate).toLocaleDateString() === today.toLocaleDateString()
+  )
+    return; // If the app was already opened today
+  await storage.set("last_daily_streak", today); // Update the last streak date
 
-  if (lastDateStr) {
-    let lastDate = new Date(lastDateStr);
-    let diff = new Date(todayStr).getTime() - lastDate.getTime();
+  if (lastDate) {
+    let diff = today.getTime() - new Date(lastDate).getTime();
     let diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
     if (diffDays === 1) {
       // Trigger the streak achievement with break set to false
       triggerStreakAchievement("daily-streak", "", false, true);
     } else {
-      // If it's been more than 1 day, reset the streak counter
-      await storage.set("streak-count", 0);
       // Break the streak
       triggerStreakAchievement("daily-streak", "", true, true);
     }
@@ -251,6 +261,12 @@ export async function triggerDailyStreak() {
   }
 }
 
-export function lookupAchievements(achievementKeys: string[]) {
-  return achievementKeys.map((key) => achievements[key]);
+export function lookupAchievements(achievementKeys: RecievedAchievement[]) {
+  return achievementKeys.map((key) => {
+    let achieve = achievements[key.achievementKey];
+    return {
+      ...achieve,
+      gotDate: key.gotDate,
+    };
+  });
 }
