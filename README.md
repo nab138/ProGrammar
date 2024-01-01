@@ -10,6 +10,7 @@ Currently a WIP. I hope to release this on the app store/play store at some poin
 - [ ] signup redirect
 - [ ] password reset not working
 - [ ] Unique username ensuring
+- [ ] Offline caching
 
 # Usage
 
