@@ -6,7 +6,6 @@ Currently a WIP. I hope to release this on the app store/play store at some poin
 
 ### Todo for supabase migration
 
-- [ ] jdoodle api
 - [ ] password reset not working
 - [ ] Offline caching
 

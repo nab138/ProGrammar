@@ -30,15 +30,10 @@ export default async function execute(
     throw new Error("No user is signed in");
   }
   try {
-    let res = await axios.post(
-      "https://programmar.vercel.app/api/execute",
-      program,
-      {
-        headers: {
-          Authorization: `Bearer ${await user.id}`,
-        },
-      }
-    );
+    let res = await supabase.functions.invoke("jdoodle-api", {
+      body: program,
+    });
+    if (res.error) throw new Error(res.error);
     return res.data;
   } catch (err) {
     if (err instanceof Error) {
