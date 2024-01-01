@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth } from "./firebase";
+import { supabase } from "./supabaseClient";
 
 interface LanguageVersionTable {
   [key: string]: string;
@@ -25,7 +25,7 @@ export default async function execute(
     versionIndex: languageVersions[language] ?? "0",
   };
 
-  const user = auth.currentUser;
+  const user = (await supabase.auth.getSession()).data.session?.user;
   if (!user) {
     throw new Error("No user is signed in");
   }
@@ -35,7 +35,7 @@ export default async function execute(
       program,
       {
         headers: {
-          Authorization: `Bearer ${await user.getIdToken()}`,
+          Authorization: `Bearer ${await user.id}`,
         },
       }
     );

@@ -18,9 +18,7 @@ import "./Settings.css";
 import storage from "../utils/storage";
 import { useEffect, useState } from "react";
 import { App, AppInfo } from "@capacitor/app";
-import { auth, changePassword, logout } from "../utils/firebase";
 import { logOutOutline } from "ionicons/icons";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { OfflineWarning } from "../components/OfflineWarning";
 import {
   hapticsImpactHeavy,
@@ -31,6 +29,11 @@ import {
   hapticsSelectionStart,
   hapticsVibrate,
 } from "../utils/haptics";
+import {
+  changePassword,
+  signout,
+  useSupabaseAuth,
+} from "../utils/supabaseClient";
 
 export interface SettingsProps {
   setDevWidgetEnabled: (enabled: boolean) => void;
@@ -40,13 +43,12 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   const [appInfo, setAppInfo] = useState<AppInfo>();
   const [showModal, setShowModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-  const [username, setUsername] = useState("");
   const [devWidgetEnabled, setDevWidgetEnabledState] = useState<boolean>();
   const [hapticsEnabled, setHapticsEnabled] = useState<boolean>();
   const [sfxEnabled, setSfxEnabled] = useState<boolean>();
   const [isPremium, setIsPremium] = useState<boolean>();
 
-  const [user, loading, error] = useAuthState(auth);
+  const [session, loading, error] = useSupabaseAuth();
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -60,27 +62,20 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
 
   useEffect(() => {
     const loadUsername = async () => {
-      const [
-        username,
-        devWidgetEnabled,
-        hapticsEnabled,
-        sfxEnabled,
-        isPremium,
-      ] = await Promise.all([
-        storage.get("username"),
-        storage.getLocal("devWidgetEnabled"),
-        storage.getLocal("hapticsEnabled"),
-        storage.getLocalWithDefault("sfxEnabled", true),
-        storage.get("isPremium"),
-      ]);
-      setUsername(username);
+      const [devWidgetEnabled, hapticsEnabled, sfxEnabled, isPremium] =
+        await Promise.all([
+          storage.getLocal("devWidgetEnabled"),
+          storage.getLocal("hapticsEnabled"),
+          storage.getLocalWithDefault("sfxEnabled", true),
+          storage.get("isPremium"),
+        ]);
       setDevWidgetEnabledState(devWidgetEnabled);
       setHapticsEnabled(hapticsEnabled);
       setSfxEnabled(sfxEnabled);
       setIsPremium(isPremium);
     };
     loadUsername();
-  }, [user, loading]);
+  }, [session, loading]);
   return (
     <IonPage>
       <IonHeader>
@@ -162,7 +157,9 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
         </IonList>
         <IonList color="light" inset>
           <IonItem color="light">
-            <IonLabel>Username: {username}</IonLabel>
+            <IonLabel>
+              Username: {session?.user.user_metadata.username}
+            </IonLabel>
           </IonItem>
           <IonItem
             color="light"
@@ -176,7 +173,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
           <IonItem
             color="light"
             onClick={async () => {
-              await logout();
+              await signout();
             }}
             button={true}
           >

@@ -17,17 +17,16 @@ import { useEffect, useState } from "react";
 import storage, { getProgress, initializeLesson } from "../utils/storage";
 import { useHistory, useLocation } from "react-router-dom";
 import { Course, difficultyLookup } from "../utils/structures";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../utils/firebase";
 import LoadingCourseCard from "../components/LoadingCourseCard";
 import { OfflineWarning } from "../components/OfflineWarning";
+import { useSupabaseAuth } from "../utils/supabaseClient";
 
 const Courses: React.FC = () => {
   const { pathname } = useLocation();
   let history = useHistory();
 
   let [courses, setCourses] = useState<Course[]>([]);
-  let [user, loading, error] = useAuthState(auth);
+  let [session, loading, error] = useSupabaseAuth();
   let [retrievingCourses, setRetrievingCourses] = useState(false);
   let [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 

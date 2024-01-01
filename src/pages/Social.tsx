@@ -20,35 +20,28 @@ import {
   lookupAchievements,
 } from "../utils/achievements";
 import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../utils/firebase";
 import { OfflineWarning } from "../components/OfflineWarning";
 import storage from "../utils/storage";
 import { person } from "ionicons/icons";
+import { useSupabaseAuth } from "../utils/supabaseClient";
 interface UserProfile {
   username: string;
   displayName: string;
 }
 const Social: React.FC = () => {
   let [achievements, setAchievements] = useState<Achievement[]>([]);
-  let [user, loading, error] = useAuthState(auth);
+  let [session, loading, error] = useSupabaseAuth();
   let [retrievingAchievements, setRetrievingAchievements] = useState(false);
-  let [loadingProfile, setLoadingProfile] = useState(false);
   let [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   let [userProfile, setUserProfile] = useState<UserProfile>();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (user) {
-        setLoadingProfile(true);
-        let username = await storage.get("username");
-        let displayName = await storage.get("displayName");
-        setUserProfile({ username, displayName });
-        setLoadingProfile(false);
-      }
-    };
-    fetchUserProfile();
-  }, [user, loading]);
+    if (session) {
+      let username = session.user.user_metadata.username;
+      let displayName = session.user.user_metadata.displayName;
+      setUserProfile({ username, displayName });
+    }
+  }, [session, loading, error]);
   useIonViewWillEnter(() => {
     const fetchAchievements = async () => {
       let timeoutId;
@@ -68,7 +61,7 @@ const Social: React.FC = () => {
   });
 
   let isLoadingAchievements = loading || retrievingAchievements;
-  let isLoadingProfile = loading || loadingProfile || !userProfile;
+  let isLoadingProfile = loading || !userProfile;
   return (
     <IonPage>
       <IonHeader>

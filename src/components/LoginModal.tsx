@@ -9,14 +9,12 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonList,
 } from "@ionic/react";
 import "./LoginModal.css";
-import {
-  logInWithEmailAndPassword,
-  registerWithEmailAndPassword,
-  sendPasswordReset,
-} from "../utils/firebase";
 import { toast } from "sonner";
+
+import { login, resetPassword, signup } from "../utils/supabaseClient";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -32,8 +30,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
 
-  const handleLogin = () => {
-    logInWithEmailAndPassword(email, password);
+  const handleLogin = async () => {
+    login(email, password);
   };
 
   const handleSignup = () => {
@@ -49,15 +47,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       });
       return;
     }
-    registerWithEmailAndPassword(username, displayName, email, password);
+    signup(username, email, displayName, password);
   };
 
   const handleResetPassword = () => {
-    sendPasswordReset(email);
+    resetPassword(email);
   };
 
   return (
-    <IonModal canDismiss={false} isOpen={isOpen} onDidDismiss={onClosed}>
+    <IonModal isOpen={isOpen} onDidDismiss={onClosed}>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login to ProGrammar</IonTitle>
@@ -70,7 +68,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
               ? "Reset your password"
               : `Welcome ${isSignup ? "" : "back"} to ProGrammar!`}
           </h1>
-          <div className="login-buttons">
+          <IonList className="login-buttons">
             {isSignup && (
               <>
                 <IonItem>
@@ -173,7 +171,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 </p>
               )}
             </div>
-          </div>
+          </IonList>
         </div>
       </IonContent>
     </IonModal>

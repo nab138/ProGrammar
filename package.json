@@ -26,6 +26,7 @@
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
     "@ionic/storage": "^4.0.0",
+    "@supabase/supabase-js": "^2.39.1",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "@uiw/codemirror-theme-okaidia": "^4.21.21",

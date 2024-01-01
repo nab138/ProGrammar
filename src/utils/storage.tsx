@@ -1,63 +1,60 @@
 import { Course } from "./structures";
 import triggerAchievement from "./achievements";
-import { auth, db } from "./firebase";
-import {
-  deleteField,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
 import { toast } from "sonner";
 import { Storage as IonicStorage } from "@ionic/storage";
+import { supabase } from "./supabaseClient";
+import { Session } from "@supabase/supabase-js";
 
+interface Data {
+  [key: string]: any;
+}
 class Storage {
-  private docRefs: { [key: string]: any } = {};
   private local: IonicStorage;
+  private session: Session | null = null;
+
+  private async getSession() {
+    if (this.session == null) {
+      this.session = (await supabase.auth.getSession()).data.session;
+    }
+    return this.session;
+  }
 
   constructor() {
     this.local = new IonicStorage();
     this.local.create();
   }
 
-  private async getDocRef(uid: string) {
-    if (!this.docRefs[uid]) {
-      this.docRefs[uid] = doc(db, "users", uid);
-    }
-    return this.docRefs[uid];
-  }
-
   async get(key: string): Promise<any> {
-    const user = auth.currentUser;
+    const user = (await this.getSession())?.user;
     if (user) {
-      const docRef = await this.getDocRef(user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data() as { [key: string]: any };
-        if (typeof data === "object" && data !== null && key in data) {
-          return data[key];
-        } else {
-          // console.log("No such key in document: " + key);
-          return null;
-        }
-      } else {
-        console.log("No such document: " + user.uid);
+      const { data, error } = await supabase
+        .from("users")
+        .select(key)
+        .eq("uid", user.id)
+        .single();
+
+      if (error) {
+        console.log(error.message);
         return null;
       }
+
+      return (data as Data)[key];
     } else {
-      // console.log("No user is signed in");
+      console.log("No user is signed in");
       return null;
     }
   }
 
   async set(key: string, value: any): Promise<void> {
-    const user = auth.currentUser;
+    const user = (await this.getSession())?.user;
     if (user) {
-      const docRef = await this.getDocRef(user.uid);
-      try {
-        await setDoc(docRef, { [key]: value }, { merge: true });
-      } catch (e) {
-        console.log(e);
+      const { error } = await supabase
+        .from("users")
+        .update({ [key]: value })
+        .eq("uid", user.id);
+
+      if (error) {
+        console.log(error.message);
       }
     } else {
       console.log("No user is signed in");
@@ -65,38 +62,25 @@ class Storage {
   }
 
   async clear(): Promise<void> {
-    const user = auth.currentUser;
-    if (user) {
-      const docRef = await this.getDocRef(user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data() as { [key: string]: any };
-        if (typeof data === "object" && data !== null) {
-          const updates: { [key: string]: any } = {};
-          for (const key in data) {
-            if (
-              ![
-                "username",
-                "displayName",
-                "email",
-                "uid",
-                "authProvider",
-              ].includes(key)
-            ) {
-              updates[key] = deleteField();
-            }
-          }
-          await updateDoc(docRef, updates);
-        } else {
-          console.log("No such document!");
-        }
-      } else {
-        console.log("No such document!");
-      }
-    } else {
-      console.log("No user is signed in");
-    }
+    // const user = supabase.auth.user();
+    // if (user) {
+    //   const { error } = await supabase
+    //     .from("users")
+    //     .update({
+    //       // List all the fields you want to clear
+    //       field1: null,
+    //       field2: null,
+    //       // ...
+    //     })
+    //     .eq("id", user.id);
+    //   if (error) {
+    //     console.log(error.message);
+    //   }
+    // } else {
+    //   console.log("No user is signed in");
+    // }
   }
+
   async getLocal(key: string): Promise<any> {
     return await this.local.get(key);
   }
@@ -118,6 +102,7 @@ class Storage {
     await this.local.clear();
   }
 }
+
 const storage = new Storage();
 export default storage;
 

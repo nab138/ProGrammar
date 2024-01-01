@@ -31,7 +31,6 @@ const Projects: React.FC = () => {
       for (let language of languages) {
         let infoModule = await import(`../projects/${language}.json`);
         let info: ProjectLanguage = infoModule.default;
-        console.log(info);
         projectLanguages.push(info);
       }
       setLanguages(projectLanguages);

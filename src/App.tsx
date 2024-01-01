@@ -39,9 +39,6 @@ import { useEffect, useRef } from "react";
 import { Toaster, toast } from "sonner";
 import { triggerDailyStreak } from "./utils/achievements";
 import CodeEditor from "./pages/CodeEditor";
-import "./utils/firebase";
-import { auth } from "./utils/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
 import LoginModal from "./components/LoginModal";
 import { useState } from "react";
 import { useHistory } from "react-router";
@@ -50,6 +47,7 @@ import DevWidget from "./components/DevWidget";
 import storage from "./utils/storage";
 import { LessonContext } from "./LessonContext";
 import Projects from "./pages/Projects";
+import { useSupabaseAuth } from "./utils/supabaseClient";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -153,27 +151,27 @@ const TabRoutes: React.FC = () => {
 };
 
 const LoginStuff: React.FC = () => {
-  let historya = useHistory();
-  const [user, loading, error] = useAuthState(auth);
+  let history = useHistory();
+  const [session, loading, error] = useSupabaseAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     if (loading) return;
-    if (!user) {
-      setShowLoginModal(true);
-    } else {
+    if (session !== null) {
       setShowLoginModal(false);
+    } else {
+      setShowLoginModal(true);
     }
-  }, [user, loading]);
+  }, [session, loading, error]);
 
   return (
     <>
-      <TabRoutes key={user?.uid} />
+      <TabRoutes key={session?.user.id} />
       <LoginModal
         isOpen={showLoginModal}
         onClosed={() => {
-          if (user) {
-            historya.push("/courses");
+          if (session) {
+            history.push("/courses");
           }
         }}
       />
