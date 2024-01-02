@@ -49,6 +49,22 @@ export async function signup(
   }
 }
 
+export async function verifyEmail(otp: string, email: string) {
+  try {
+    let { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: "signup",
+    });
+    if (error) {
+      throw error;
+    }
+    return data;
+  } catch (err) {
+    logErrors(err);
+  }
+}
+
 export const useSupabaseAuth = (): [
   Session | null,
   boolean,

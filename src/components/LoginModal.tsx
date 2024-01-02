@@ -14,7 +14,12 @@ import {
 import "./LoginModal.css";
 import { toast } from "sonner";
 
-import { login, resetPassword, signup } from "../utils/supabaseClient";
+import {
+  login,
+  resetPassword,
+  signup,
+  verifyEmail,
+} from "../utils/supabaseClient";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -26,15 +31,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [otp, setOtp] = useState("");
 
   const [isSignup, setIsSignup] = useState(false);
   const [isResetPassword, setIsResetPassword] = useState(false);
+  const [isVerifyEmail, setIsVerifyEmail] = useState(false);
 
   const handleLogin = async () => {
     login(email, password);
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (username.length < 3) {
       toast.warning("Invalid Username", {
         description: "Username must be at least 3 characters long.",
@@ -47,7 +54,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       });
       return;
     }
-    signup(username, email, displayName, password);
+    await signup(username, email, displayName, password);
+    toast.success("Account Created!", {
+      description: "Please check your email for a verification code.",
+    });
+    setIsVerifyEmail(true);
+  };
+
+  const handleVerifyEmail = () => {
+    verifyEmail(otp, email);
   };
 
   const handleResetPassword = () => {
@@ -64,12 +79,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       <IonContent>
         <div className="login-modal-content">
           <h1 className="ion-text-center">
-            {isResetPassword
+            {isVerifyEmail
+              ? "Enter your one-time code"
+              : isResetPassword
               ? "Reset your password"
               : `Welcome ${isSignup ? "" : "back"} to ProGrammar!`}
           </h1>
           <IonList className="login-buttons">
-            {isSignup && (
+            {!isVerifyEmail && isSignup && (
               <>
                 <IonItem>
                   <IonLabel position="floating">Username</IonLabel>
@@ -93,15 +110,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 </IonItem>
               </>
             )}
-            <IonItem>
-              <IonLabel position="floating">Email</IonLabel>
-              <IonInput
-                value={email}
-                onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
-                type="email"
-              />
-            </IonItem>
-            {!isResetPassword && (
+            {!isVerifyEmail && (
+              <IonItem>
+                <IonLabel position="floating">Email</IonLabel>
+                <IonInput
+                  value={email}
+                  onInput={(e) =>
+                    setEmail((e.target as HTMLInputElement).value)
+                  }
+                  type="email"
+                />
+              </IonItem>
+            )}
+            {!isResetPassword && !isVerifyEmail && (
               <IonItem>
                 <IonLabel position="floating">Password</IonLabel>
                 <IonInput
@@ -113,17 +134,31 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 ></IonInput>
               </IonItem>
             )}
+            {isVerifyEmail && (
+              <IonItem>
+                <IonLabel position="floating">Verification Code</IonLabel>
+                <IonInput
+                  value={otp}
+                  onInput={(e) => setOtp((e.target as HTMLInputElement).value)}
+                  type="text"
+                ></IonInput>
+              </IonItem>
+            )}
             <IonButton
               expand="block"
               onClick={
-                isResetPassword
+                isVerifyEmail
+                  ? handleVerifyEmail
+                  : isResetPassword
                   ? handleResetPassword
                   : isSignup
                   ? handleSignup
                   : handleLogin
               }
             >
-              {isResetPassword
+              {isVerifyEmail
+                ? "Verify"
+                : isResetPassword
                 ? "Send Reset Email"
                 : isSignup
                 ? "Sign up"
@@ -150,7 +185,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                   Forgot Your Password?
                 </p>
               )}
-              {isSignup && (
+              {!isVerifyEmail && isSignup && (
                 <p
                   className="clickable-link"
                   onClick={() => {
@@ -160,7 +195,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                   Already have an account? Log in!
                 </p>
               )}
-              {isResetPassword && (
+              {!isVerifyEmail && isResetPassword && (
                 <p
                   className="clickable-link"
                   onClick={() => {
