@@ -42,6 +42,9 @@ export async function signup(
     });
 
     if (error) throw error;
+    toast.success("Account Created!", {
+      description: "Please check your email for a verification code.",
+    });
 
     return data;
   } catch (err) {

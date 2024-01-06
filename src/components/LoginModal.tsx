@@ -33,9 +33,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [displayName, setDisplayName] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [isSignup, setIsSignup] = useState(false);
-  const [isResetPassword, setIsResetPassword] = useState(false);
-  const [isVerifyEmail, setIsVerifyEmail] = useState(false);
+  const [displayState, setDisplayState] = useState("signup");
 
   const handleLogin = async () => {
     login(email, password);
@@ -55,10 +53,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       return;
     }
     await signup(username, email, displayName, password);
-    toast.success("Account Created!", {
-      description: "Please check your email for a verification code.",
-    });
-    setIsVerifyEmail(true);
+    setDisplayState("verifyEmail");
   };
 
   const handleVerifyEmail = () => {
@@ -78,15 +73,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       </IonHeader>
       <IonContent>
         <div className="login-modal-content">
-          <h1 className="ion-text-center">
-            {isVerifyEmail
-              ? "Enter your one-time code"
-              : isResetPassword
-              ? "Reset your password"
-              : `Welcome ${isSignup ? "" : "back"} to ProGrammar!`}
-          </h1>
+          {displayState === "verifyEmail" && (
+            <h1 className="ion-text-center">
+              Enter the one-time code sent to your email:
+            </h1>
+          )}
+          {(displayState === "signup" || displayState === "login") && (
+            <h1 className="ion-text-center">
+              Welcome {displayState === "login" ? "back" : ""} to ProGrammar!
+            </h1>
+          )}
           <IonList className="login-buttons">
-            {!isVerifyEmail && isSignup && (
+            {displayState === "signup" && (
               <>
                 <IonItem>
                   <IonLabel position="floating">Username</IonLabel>
@@ -110,7 +108,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 </IonItem>
               </>
             )}
-            {!isVerifyEmail && (
+            {(displayState === "signup" ||
+              displayState === "login" ||
+              displayState === "resetPassword") && (
               <IonItem>
                 <IonLabel position="floating">Email</IonLabel>
                 <IonInput
@@ -122,7 +122,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 />
               </IonItem>
             )}
-            {!isResetPassword && !isVerifyEmail && (
+            {(displayState === "signup" || displayState === "login") && (
               <IonItem>
                 <IonLabel position="floating">Password</IonLabel>
                 <IonInput
@@ -134,7 +134,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 ></IonInput>
               </IonItem>
             )}
-            {isVerifyEmail && (
+            {displayState === "verifyEmail" && (
               <IonItem>
                 <IonLabel position="floating">Verification Code</IonLabel>
                 <IonInput
@@ -144,62 +144,62 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 ></IonInput>
               </IonItem>
             )}
-            <IonButton
-              expand="block"
-              onClick={
-                isVerifyEmail
-                  ? handleVerifyEmail
-                  : isResetPassword
-                  ? handleResetPassword
-                  : isSignup
-                  ? handleSignup
-                  : handleLogin
-              }
-            >
-              {isVerifyEmail
-                ? "Verify"
-                : isResetPassword
-                ? "Send Reset Email"
-                : isSignup
-                ? "Sign up"
-                : "Log in"}
-            </IonButton>
+            {displayState === "resetPassword" && (
+              <IonButton expand="block" onClick={handleResetPassword}>
+                Send Reset Email
+              </IonButton>
+            )}
+            {displayState === "verifyEmail" && (
+              <IonButton expand="block" onClick={handleVerifyEmail}>
+                Verify
+              </IonButton>
+            )}
+            {displayState === "signup" && (
+              <IonButton expand="block" onClick={handleSignup}>
+                Create Account
+              </IonButton>
+            )}
+            {displayState === "login" && (
+              <IonButton expand="block" onClick={handleLogin}>
+                Log in
+              </IonButton>
+            )}
             <div className="login-links">
-              {!isSignup && !isResetPassword && (
-                <p
-                  className="clickable-link"
-                  onClick={() => {
-                    setIsSignup(true);
-                  }}
-                >
-                  Don't have an account? Sign up!
-                </p>
+              {displayState === "login" && (
+                <>
+                  <p
+                    className="clickable-link"
+                    onClick={() => {
+                      setDisplayState("signup");
+                    }}
+                  >
+                    Don't have an account? Sign up!
+                  </p>
+                  <p
+                    className="clickable-link"
+                    onClick={() => {
+                      setDisplayState("resetPassword");
+                    }}
+                  >
+                    Forgot Your Password?
+                  </p>
+                </>
               )}
-              {!isSignup && !isResetPassword && (
+              {displayState === "signup" && (
                 <p
                   className="clickable-link"
                   onClick={() => {
-                    setIsResetPassword(true);
-                  }}
-                >
-                  Forgot Your Password?
-                </p>
-              )}
-              {!isVerifyEmail && isSignup && (
-                <p
-                  className="clickable-link"
-                  onClick={() => {
-                    setIsSignup(false);
+                    setDisplayState("login");
                   }}
                 >
                   Already have an account? Log in!
                 </p>
               )}
-              {!isVerifyEmail && isResetPassword && (
+              {displayState === "resetPassword" && (
                 <p
                   className="clickable-link"
                   onClick={() => {
-                    setIsResetPassword(false);
+                    setDisplayState("login");
                   }}
                 >
                   Back to login
