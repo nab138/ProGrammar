@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonModal,
   IonHeader,
@@ -20,6 +20,7 @@ import {
   signup,
   verifyEmail,
 } from "../utils/supabaseClient";
+import OtpInput from "./OtpInput";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -136,12 +137,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
             )}
             {displayState === "verifyEmail" && (
               <IonItem>
-                <IonLabel position="floating">Verification Code</IonLabel>
-                <IonInput
-                  value={otp}
-                  onInput={(e) => setOtp((e.target as HTMLInputElement).value)}
-                  type="text"
-                ></IonInput>
+                <OtpInput value={otp} onChange={(value) => setOtp(value)} />
               </IonItem>
             )}
             {displayState === "resetPassword" && (

@@ -7,7 +7,6 @@ Currently a WIP. I hope to release this on the app store/play store at some poin
 ### Todo for supabase migration
 
 - [ ] password reset not working
-- [ ] Improve email verification screen
 - [ ] Change email templates
 - [ ] Offline caching
 
