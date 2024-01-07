@@ -34,7 +34,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [displayName, setDisplayName] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [displayState, setDisplayState] = useState("signup");
+  const [displayState, setDisplayState] = useState("verifyEmail");
 
   const handleLogin = async () => {
     login(email, password);
