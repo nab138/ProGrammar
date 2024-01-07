@@ -76,7 +76,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
         <div className="login-modal-content">
           {displayState === "verifyEmail" && (
             <h1 className="ion-text-center">
-              Enter the one-time code sent to your email:
+              Enter the code sent to your email:
             </h1>
           )}
           {(displayState === "signup" || displayState === "login") && (
