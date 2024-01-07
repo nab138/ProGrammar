@@ -14,3 +14,11 @@
   justify-content: center;
   align-items: center;
 }
+
+.reset-password-text {
+  margin-bottom: 0;
+}
+
+.login-header {
+  padding: 0 5px;
+}

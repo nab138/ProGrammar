@@ -15,6 +15,7 @@ import "./LoginModal.css";
 import { toast } from "sonner";
 
 import {
+  logInWithOTP,
   login,
   resetPassword,
   signup,
@@ -34,7 +35,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [displayName, setDisplayName] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [displayState, setDisplayState] = useState("verifyEmail");
+  const [displayState, setDisplayState] = useState("signup");
 
   const handleLogin = async () => {
     login(email, password);
@@ -53,16 +54,21 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       });
       return;
     }
-    await signup(username, email, displayName, password);
-    setDisplayState("verifyEmail");
+    let data = await signup(username, email, displayName, password);
+    if (data !== null) setDisplayState("verifyEmail");
   };
 
   const handleVerifyEmail = () => {
+    if (displayState === "verifyEmailLogin") {
+      logInWithOTP(otp, email);
+      return;
+    }
     verifyEmail(otp, email);
   };
 
-  const handleResetPassword = () => {
-    resetPassword(email);
+  const handleResetPassword = async () => {
+    let data = await resetPassword(email);
+    if (data !== null) setDisplayState("verifyEmailLogin");
   };
 
   return (
@@ -74,13 +80,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
       </IonHeader>
       <IonContent>
         <div className="login-modal-content">
-          {displayState === "verifyEmail" && (
-            <h1 className="ion-text-center">
+          {(displayState === "verifyEmail" ||
+            displayState === "verifyEmailLogin") && (
+            <h1 className="ion-text-center login-header">
               Enter the code sent to your email:
             </h1>
           )}
           {(displayState === "signup" || displayState === "login") && (
-            <h1 className="ion-text-center">
+            <h1 className="ion-text-center login-header">
               Welcome {displayState === "login" ? "back" : ""} to ProGrammar!
             </h1>
           )}
@@ -109,6 +116,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 </IonItem>
               </>
             )}
+            {displayState === "resetPassword" && (
+              <p className="ion-padding ion-text-center reset-password-text">
+                Enter your email below and we'll send you a code to log into the
+                app. After, you can change your password in settings.
+              </p>
+            )}
             {(displayState === "signup" ||
               displayState === "login" ||
               displayState === "resetPassword") && (
@@ -135,7 +148,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 ></IonInput>
               </IonItem>
             )}
-            {displayState === "verifyEmail" && (
+            {(displayState === "verifyEmail" ||
+              displayState === "verifyEmailLogin") && (
               <IonItem>
                 <OtpInput value={otp} onChange={(value) => setOtp(value)} />
               </IonItem>
@@ -145,7 +159,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                 Send Reset Email
               </IonButton>
             )}
-            {displayState === "verifyEmail" && (
+            {(displayState === "verifyEmail" ||
+              displayState === "verifyEmailLogin") && (
               <IonButton expand="block" onClick={handleVerifyEmail}>
                 Verify
               </IonButton>

@@ -49,6 +49,7 @@ export async function signup(
     return data;
   } catch (err) {
     logErrors(err);
+    return null;
   }
 }
 
@@ -58,6 +59,22 @@ export async function verifyEmail(otp: string, email: string) {
       email,
       token: otp,
       type: "signup",
+    });
+    if (error) {
+      throw error;
+    }
+    return data;
+  } catch (err) {
+    logErrors(err);
+  }
+}
+
+export async function logInWithOTP(otp: string, email: string) {
+  try {
+    let { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: "recovery",
     });
     if (error) {
       throw error;
@@ -130,8 +147,10 @@ export async function resetPassword(email: string) {
         "Please check your inbox for further instructions (including spam folder).",
       duration: 5000,
     });
+    return data;
   } catch (err) {
     logErrors(err);
+    return null;
   }
 }
 
@@ -155,7 +174,10 @@ export async function changePassword(password: string) {
 function logErrors(e: any) {
   let title = "An error occured:";
   let msg = e.error_description || e.message;
-  if (msg.includes("Password should be at least 6 characters.")) {
+  if (
+    msg.includes("Password should be at least 6 characters.") ||
+    msg.includes("Password should contain at least one character of each:")
+  ) {
     title = "Invalid Password";
     msg =
       "Password should be at least 6 characters and contain at least 1 lowercase letter, 1 uppercase letter, and 1 number.";
