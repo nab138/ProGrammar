@@ -46,8 +46,10 @@
     "react-router-dom": "^5.3.4",
     "react-shadow": "^20.4.0",
     "react-tooltip": "^5.25.1",
+    "sockjs-client": "^1.6.1",
     "sonner": "^1.2.4",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@capacitor/cli": "5.5.1",
@@ -57,6 +59,7 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "@types/sockjs-client": "^1.5.4",
     "@vitejs/plugin-legacy": "^4.0.2",
     "@vitejs/plugin-react": "^4.0.1",
     "cypress": "^12.7.0",

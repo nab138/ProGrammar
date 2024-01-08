@@ -54,22 +54,17 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  const { script, language, versionIndex } = await req.json();
-
-  const clientID = Deno.env.get("JDOODLE_CLIENT_ID") ?? "";
+  const clientId = Deno.env.get("JDOODLE_CLIENT_ID") ?? "";
   const clientSecret = Deno.env.get("JDOODLE_CLIENT_SECRET") ?? "";
 
   const program = {
-    script: script,
-    language: language,
-    versionIndex: versionIndex,
-    clientId: clientID,
-    clientSecret: clientSecret,
+    clientId,
+    clientSecret,
   };
 
   try {
     const response = await fetch(
-      "https://api.jdoodle.com/v1/execute",
+      "https://api.jdoodle.com/v1/auth-token",
       {
         method: "POST",
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -78,9 +73,10 @@ Deno.serve(async (req: Request) => {
     );
     if (!response.ok) {
       const errorData = await response.json();
+      console.log(errorData);
       return new Response(
         JSON.stringify({
-          error: "Error executing code",
+          error: "Error getting token",
           message: errorData.error,
         }),
         {
@@ -89,12 +85,13 @@ Deno.serve(async (req: Request) => {
         },
       );
     }
-    const data = await response.json();
+    const data = await response.text();
     return new Response(JSON.stringify(data), {
       headers: { "Content-Type": "application/json", ...corsHeaders },
       status: 200,
     });
   } catch (error) {
+    console.log(error);
     return new Response(
       JSON.stringify({ error: "Cannot Connect", message: error.message }),
       {

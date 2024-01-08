@@ -64,7 +64,7 @@ const Projects: React.FC = () => {
                       key={"sandbox-" + lang.id}
                       button
                       onClick={() => {
-                        history.push("/sandbox/" + lang.id);
+                        history.push("/sandbox/" + lang.id + "/Sandbox");
                       }}
                     >
                       <IonLabel>
