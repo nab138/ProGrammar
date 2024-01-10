@@ -11,6 +11,7 @@ interface Data {
 class Storage {
   private local: IonicStorage;
   private session: Session | null = null;
+  private noAccount = false;
 
   private async getSession() {
     if (this.session == null) {
@@ -27,7 +28,12 @@ class Storage {
     });
   }
 
+  enableNoAcccountMode(): void {
+    this.noAccount = true;
+  }
+
   async get(key: string): Promise<any> {
+    if(this.noAccount) return this.getLocal(key);
     const user = (await this.getSession())?.user;
     if (user) {
       const { data, error } = await supabase
@@ -49,6 +55,7 @@ class Storage {
   }
 
   async set(key: string, value: any): Promise<void> {
+    if(this.noAccount) return this.setLocal(key, value);
     const user = (await this.getSession())?.user;
     if (user) {
       const { error } = await supabase

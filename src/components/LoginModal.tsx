@@ -22,6 +22,7 @@ import {
   verifyEmail,
 } from "../utils/supabaseClient";
 import OtpInput from "./OtpInput";
+import storage from "../utils/storage";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [otp, setOtp] = useState("");
+  const [noAccount, setNoAccount] = useState(false);
 
   const [displayState, setDisplayState] = useState("signup");
 
@@ -72,7 +74,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onClosed}>
+    <IonModal isOpen={isOpen && !noAccount} onDidDismiss={onClosed}>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login to ProGrammar</IonTitle>
@@ -82,10 +84,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
         <div className="login-modal-content">
           {(displayState === "verifyEmail" ||
             displayState === "verifyEmailLogin") && (
-            <h1 className="ion-text-center login-header">
-              Enter the code sent to your email:
-            </h1>
-          )}
+              <h1 className="ion-text-center login-header">
+                Enter the code sent to your email:
+              </h1>
+            )}
           {(displayState === "signup" || displayState === "login") && (
             <h1 className="ion-text-center login-header">
               Welcome {displayState === "login" ? "back" : ""} to ProGrammar!
@@ -94,7 +96,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
           <IonList className="login-buttons">
             {displayState === "signup" && (
               <>
-                <IonItem>
+                <IonItem color={window.matchMedia('(prefers-color-scheme: dark)').matches ? "light" : ""}>
                   <IonLabel position="floating">Username</IonLabel>
                   <IonInput
                     value={username}
@@ -104,7 +106,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                     type="text"
                   />
                 </IonItem>
-                <IonItem>
+                <IonItem color={window.matchMedia('(prefers-color-scheme: dark)').matches ? "light" : ""}>
                   <IonLabel position="floating">Display Name</IonLabel>
                   <IonInput
                     value={displayName}
@@ -125,19 +127,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
             {(displayState === "signup" ||
               displayState === "login" ||
               displayState === "resetPassword") && (
-              <IonItem>
-                <IonLabel position="floating">Email</IonLabel>
-                <IonInput
-                  value={email}
-                  onInput={(e) =>
-                    setEmail((e.target as HTMLInputElement).value)
-                  }
-                  type="email"
-                />
-              </IonItem>
-            )}
+              <IonItem color={window.matchMedia('(prefers-color-scheme: dark)').matches ? "light" : ""}>
+                  <IonLabel position="floating">Email</IonLabel>
+                  <IonInput
+                    value={email}
+                    onInput={(e) =>
+                      setEmail((e.target as HTMLInputElement).value)
+                    }
+                    type="email"
+                  />
+                </IonItem>
+              )}
             {(displayState === "signup" || displayState === "login") && (
-              <IonItem>
+              <IonItem color={window.matchMedia('(prefers-color-scheme: dark)').matches ? "light" : ""}>
                 <IonLabel position="floating">Password</IonLabel>
                 <IonInput
                   value={password}
@@ -150,10 +152,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
             )}
             {(displayState === "verifyEmail" ||
               displayState === "verifyEmailLogin") && (
-              <IonItem>
-                <OtpInput value={otp} onChange={(value) => setOtp(value)} />
-              </IonItem>
-            )}
+                <IonItem>
+                  <OtpInput value={otp} onChange={(value) => setOtp(value)} />
+                </IonItem>
+              )}
             {displayState === "resetPassword" && (
               <IonButton expand="block" onClick={handleResetPassword}>
                 Send Reset Email
@@ -161,10 +163,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
             )}
             {(displayState === "verifyEmail" ||
               displayState === "verifyEmailLogin") && (
-              <IonButton expand="block" onClick={handleVerifyEmail}>
-                Verify
-              </IonButton>
-            )}
+                <IonButton expand="block" onClick={handleVerifyEmail}>
+                  Verify
+                </IonButton>
+              )}
             {displayState === "signup" && (
               <IonButton expand="block" onClick={handleSignup}>
                 Create Account
@@ -214,6 +216,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClosed }) => {
                   }}
                 >
                   Back to login
+                </p>
+              )}
+              {displayState !== "verifyEmail" && displayState !== "resetPassword" && (
+                <p
+                  className="clickable-link"
+                  onClick={() => {
+                    storage.enableNoAcccountMode();
+                    setNoAccount(true);
+                  }}
+                >
+                  Use without an account (one session)
                 </p>
               )}
             </div>

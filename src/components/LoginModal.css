@@ -22,3 +22,9 @@
 .login-header {
   padding: 0 5px;
 }
+
+@media (prefers-color-scheme: dark) {
+  .login-buttons, .login-buttons ion-item, ion-input {
+    background-color: transparent !important;
+  }
+}

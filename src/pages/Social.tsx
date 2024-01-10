@@ -1,5 +1,4 @@
 import {
-  IonCard,
   IonContent,
   IonHeader,
   IonIcon,
@@ -15,13 +14,11 @@ import {
 } from "@ionic/react";
 import "./Social.css";
 import {
-  Achievement,
   getAchievements,
   lookupAchievements,
 } from "../utils/achievements";
 import { useEffect, useState } from "react";
 import { OfflineWarning } from "../components/OfflineWarning";
-import storage from "../utils/storage";
 import { person } from "ionicons/icons";
 import { useSupabaseAuth } from "../utils/supabaseClient";
 interface UserProfile {

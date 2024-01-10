@@ -48,6 +48,7 @@ import storage from "./utils/storage";
 import { LessonContext } from "./LessonContext";
 import Projects from "./pages/Projects";
 import { useSupabaseAuth } from "./utils/supabaseClient";
+import { applySavedTheme, applyTheme, getCurrentTheme } from "./utils/themes";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -181,6 +182,10 @@ const LoginStuff: React.FC = () => {
 
 const AppC: React.FC = () => {
   const [skipToEnd, setSkipToEnd] = useState(() => () => {});
+
+  useEffect(() => {
+    applySavedTheme();
+  }, [])
   return (
     <LessonContext.Provider value={{ skipToEnd, setSkipToEnd }}>
       <IonApp>

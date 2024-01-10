@@ -18,7 +18,7 @@ import "./Settings.css";
 import storage from "../utils/storage";
 import { useEffect, useState } from "react";
 import { App, AppInfo } from "@capacitor/app";
-import { logOutOutline } from "ionicons/icons";
+import { checkmark, logOutOutline } from "ionicons/icons";
 import { OfflineWarning } from "../components/OfflineWarning";
 import {
   hapticsImpactHeavy,
@@ -34,6 +34,7 @@ import {
   signout,
   useSupabaseAuth,
 } from "../utils/supabaseClient";
+import themes, { applyTheme, getCurrentTheme } from "../utils/themes"
 
 export interface SettingsProps {
   setDevWidgetEnabled: (enabled: boolean) => void;
@@ -47,6 +48,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
   const [hapticsEnabled, setHapticsEnabled] = useState<boolean>();
   const [sfxEnabled, setSfxEnabled] = useState<boolean>();
   const [isPremium, setIsPremium] = useState<boolean>();
+  let [selectedTheme, setSelectedTheme] = useState<string>("");
 
   const [session, loading, error] = useSupabaseAuth();
 
@@ -56,6 +58,7 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
       setVersion(versionModule.default.version);
       const info = await App.getInfo();
       setAppInfo(info);
+      setSelectedTheme(await getCurrentTheme());
     };
     fetchInfo();
   }, []);
@@ -115,6 +118,26 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
               Haptics
             </IonToggle>
           </IonItem>
+        </IonList>
+        <IonList className="achievement-list" inset>
+          <IonItem color="light">
+            <IonLabel>
+              Theme:
+            </IonLabel>
+          </IonItem>
+          {themes.map((theme, index) => {
+            return (
+              <IonItem color="light" key={theme.name} button onClick={() => {
+                applyTheme(theme);
+                setSelectedTheme(theme.class)
+              }}>
+                {theme.class === selectedTheme && <IonIcon icon={checkmark} />}
+                <IonLabel>
+                  {theme.name}
+                </IonLabel>
+              </IonItem>
+            );
+          })}
         </IonList>
         <IonList inset>
           <IonItem color="light">
