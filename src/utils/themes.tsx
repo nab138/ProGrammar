@@ -20,7 +20,7 @@ export async function applyTheme(theme: Theme){
 }
 
 export async function applySavedTheme(){
-    let savedTheme = await storage.getLocal("curTheme");
+    let savedTheme = await getCurrentTheme();
     let theme = themes.filter((t) => t.class === savedTheme)[0]
     themes.forEach((thm) => {
         document.body.classList.remove(thm.class);
@@ -29,6 +29,6 @@ export async function applySavedTheme(){
     document.body.classList.add(theme.class);
 }
 export async function getCurrentTheme(){
-    return await storage.getLocal("curTheme")
+    return await storage.getLocalWithDefault("curTheme", "default")
 }
 export default themes
