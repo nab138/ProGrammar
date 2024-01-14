@@ -36,7 +36,7 @@ app.post("/api/getCourse", (req, res) => {
 app.post("/api/writeCourse", (req, res) => {
   try {
     const dirPath = path.resolve(req.body.course);
-    fs.writeFile(dirPath, JSON.stringify(req.body.data), function (err) {
+    fs.writeFile(dirPath, JSON.stringify(req.body.data, null, 2), function (err) {
       if (err) throw err;
     });
     res.status(200).send("Course Saved");
