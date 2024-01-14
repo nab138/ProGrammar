@@ -58,24 +58,25 @@ const Settings: React.FC<SettingsProps> = ({ setDevWidgetEnabled }) => {
       setVersion(versionModule.default.version);
       const info = await App.getInfo();
       setAppInfo(info);
-      setSelectedTheme(await getCurrentTheme());
     };
     fetchInfo();
   }, []);
 
   useEffect(() => {
     const loadUsername = async () => {
-      const [devWidgetEnabled, hapticsEnabled, sfxEnabled, isPremium] =
+      const [devWidgetEnabled, hapticsEnabled, sfxEnabled, isPremium, selectedTheme] =
         await Promise.all([
           storage.getLocal("devWidgetEnabled"),
           storage.getLocal("hapticsEnabled"),
           storage.getLocalWithDefault("sfxEnabled", true),
           storage.get("is_premium"),
+          getCurrentTheme()
         ]);
       setDevWidgetEnabledState(devWidgetEnabled);
       setHapticsEnabled(hapticsEnabled);
       setSfxEnabled(sfxEnabled);
       setIsPremium(isPremium);
+      setSelectedTheme(selectedTheme);
     };
     loadUsername();
   }, [session, loading]);

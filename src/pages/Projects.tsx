@@ -98,15 +98,15 @@ const Projects: React.FC = () => {
               - No ads <br />
               - Projects <br />
               - Code Sandboxes <br />
-              - A warm feeling that you supported an indie dev <br />- And more!
+              - And more!
             </p>
             <IonButton
               expand="block"
               onClick={() => {
                 toast.success("Coming soon!", {
                   description:
-                    "Thanks for your interest in premium! We're still working on it, but it should be available soon.",
-                  duration: 3000,
+                    "Thanks for your interest in premium! It's still being worked on, but it should be available soon (Note: for testing, enable Premium Account in settings and reload. Requires a cloud account).",
+                  duration: 5000,
                 });
               }}
             >

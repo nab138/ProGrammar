@@ -119,8 +119,8 @@ const Social: React.FC = () => {
               })}
               {achievements.length == 0 && (
                 <IonItem color="light">
-                  <IonLabel>
-                    <p>No achievements yet. Get out there and achieve!</p>
+                  <IonLabel class="ion-text-wrap">
+                    <p className="ion-text-wrap">No achievements yet. Get out there and achieve!</p>
                   </IonLabel>
                 </IonItem>
               )}
