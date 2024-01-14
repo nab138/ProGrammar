@@ -434,12 +434,21 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
               <label htmlFor="build-answer">Answer:</label>
               <textarea
                 id="build-answer"
-                value={selectedQuestion.answer}
+                value={(() => {
+                  if (Array.isArray(selectedQuestion.answer)) {
+                    return selectedQuestion.answer.join("\n");
+                  }
+                  return selectedQuestion.answer;
+                })()}
                 onChange={(e) => {
                   const newQuestion = {
                     ...selectedQuestion,
                   } as BuildQuestion;
-                  newQuestion.answer = e.target.value;
+                  let newAnswer: string | string[] = e.target.value;
+                  if(newAnswer.split("\n").length > 1){
+                    newAnswer = newAnswer.split("\n")
+                  }
+                  newQuestion.answer = newAnswer;
                   setSelectedQuestion(newQuestion);
                 }}
               />

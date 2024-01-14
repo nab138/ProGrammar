@@ -51,6 +51,19 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
     }
   }, [isRevisiting]);
 
+  const isCorrect = () => {
+    let ans = answer
+      .map((index) => (index === -1 ? " " : question.choices[index]))
+      .join("");
+    if (question.answer == ans) {
+      return true;
+    }
+    if (Array.isArray(question.answer)) {
+      return question.answer.includes(ans);
+    }
+    return false;
+  }
+
   return (
     <>
       <div className="lesson-content-container">
@@ -133,19 +146,9 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         isRevisiting={isRevisiting}
         skipToNext={skipToNext}
         disabled={answer.length == 0}
-        isCorrect={() => {
-          return (
-            answer
-              .map((index) => (index === -1 ? " " : question.choices[index]))
-              .join("") == question.answer
-          );
-        }}
+        isCorrect={isCorrect}
         getExplanation={() => {
-          let isCorrect =
-            answer
-              .map((index) => (index === -1 ? " " : question.choices[index]))
-              .join("") == question.answer;
-          return isCorrect ? "Correct!" : question.answer;
+          return isCorrect() ? "Correct!" : question.answer;
         }}
         onCorrect={onCorrect}
         onIncorrect={onIncorrect}

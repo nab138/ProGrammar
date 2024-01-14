@@ -27,7 +27,7 @@ export interface Question {
   content?: string;
   type: "mc" | "build" | "text";
   choices: string[];
-  answer: string;
+  answer: string | string[];
   id: string;
   explanations?: string[];
   hard?: boolean;
