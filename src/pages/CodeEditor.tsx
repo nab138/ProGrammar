@@ -21,6 +21,7 @@ import { useParams } from "react-router";
 import { toast } from "sonner";
 import ProjectsBackButton from "../components/ProjectsBackButton";
 import { ProjectLanguage } from "../utils/structures";
+import storage from "../utils/storage";
 
 const langToHighlight: { [key: string]: any } = {
   java,
@@ -34,18 +35,20 @@ const defaultCode: { [key: string]: string } = {
 }`,
 };
 
-const CodeEditor: React.FC = () => {
-  let { lang, filename, id } = useParams<{
-    lang: string;
-    filename: string;
-    id: string;
-  }>();
+export interface CodeEditorProps {
+  lang: string;
+  filename: string;
+  id: string;
+}
+const CodeEditor: React.FC<CodeEditorProps> = ({ lang, filename, id }) => {
   let isSandbox = filename === "Sandbox";
   if (isSandbox) lang = id;
   const [value, setValue] = useState(isSandbox ? defaultCode[lang] ?? "" : "");
 
   const onChange = useCallback((val: string) => {
     setValue(val);
+    if (isSandbox) storage.setLocal("sandbox", val);
+    else storage.setLocal(`${lang}-${id}-${filename}`, val);
   }, []);
 
   useEffect(() => {
@@ -62,6 +65,12 @@ const CodeEditor: React.FC = () => {
 
   useEffect(() => {
     const fetchTask = async () => {
+      if (isSandbox) {
+        setValue(
+          await storage.getLocalWithDefault("sandbox", defaultCode[lang] ?? "")
+        );
+        return;
+      }
       let languages = (await import("../projects/languages.json")).default;
       let projectLanguages = [];
       for (let language of languages) {
@@ -74,7 +83,12 @@ const CodeEditor: React.FC = () => {
         ?.projects.find((project) => project.id === id);
       let file = project?.files.find((file) => file.name === filename);
       setTask(file?.task ?? "");
-      setValue(file?.template ?? "");
+      setValue(
+        await storage.getLocalWithDefault(
+          `${lang}-${id}-${filename}`,
+          file?.template ?? ""
+        )
+      );
     };
     fetchTask();
   }, []);

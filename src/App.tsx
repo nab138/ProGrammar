@@ -49,6 +49,7 @@ import { LessonContext } from "./LessonContext";
 import Projects from "./pages/Projects";
 import { useSupabaseAuth } from "./utils/supabaseClient";
 import { applySavedTheme, applyTheme, getCurrentTheme } from "./utils/themes";
+import CodeEditorContainer from "./pages/CodeEditorContainer";
 setupIonicReact();
 
 const TabRoutes: React.FC = () => {
@@ -108,7 +109,7 @@ const TabRoutes: React.FC = () => {
           <Route
             exact
             path="/projects/:lang/:id/:filename"
-            component={CodeEditor}
+            component={CodeEditorContainer}
           />
           <Route path="/course/:id" component={Course} />
           <Route exact path="/">

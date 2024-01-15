@@ -141,7 +141,6 @@ const Projects: React.FC = () => {
       </IonPage>
     );
   } else {
-    console.log(project.files);
     return (
       <IonPage>
         <IonHeader>
