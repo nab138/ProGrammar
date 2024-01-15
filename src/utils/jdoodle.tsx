@@ -1,10 +1,11 @@
 import { supabase } from "./supabaseClient";
-import SockJS from "sockjs-client/dist/sockjs";
-import { Client, over } from "webstomp-client";
+import SockJS from "sockjs-client";
+import AbstractXHRObject from "sockjs-client/lib/transport/browser/abstract-xhr";
+import { Client, VERSIONS, over } from "webstomp-client";
 
-const _start = SockJS.prototype._start;
+const _start = AbstractXHRObject.prototype._start;
 
-SockJS.prototype._start = function (
+AbstractXHRObject.prototype._start = function (
   method: any,
   url: any,
   payload: any,
@@ -48,20 +49,20 @@ export default async function execute(
     throw new Error("No user is signed in");
   }
   try {
-    let res = await supabase.functions.invoke("jdoodle-api", {
-      body: program,
-    });
+    let res = await supabase.functions.invoke("jdoodle-api");
     if (res.error) throw new Error(res.error);
 
     // Get the WebSocket token
     const token = res.data;
 
     // Set up the WebSocket connection
-    await setupWebSocketConnection(program, token);
+    await setupWebSocketConnection();
 
     // Return a promise that resolves with the output from the WebSocket
     return new Promise((resolve, reject) => {
+      console.log(socketClient?.connected);
       socketClient?.subscribe("/user/queue/execute-i", (message: any) => {
+        console.log("received message", message);
         // Check the status code of the message
         let statusCode = parseInt(message.headers.statusCode);
         if (statusCode === 200) {
@@ -81,6 +82,10 @@ export default async function execute(
             cpuTime: "",
           });
         }
+      });
+      socketClient?.send("/app/execute-ws-api-token", JSON.stringify(program), {
+        message_type: "execute",
+        token,
       });
     });
   } catch (err) {
@@ -102,28 +107,19 @@ export default async function execute(
   }
 }
 
-function setupWebSocketConnection(program: any, token: any): Promise<void> {
+function setupWebSocketConnection(): Promise<void> {
   return new Promise((resolve, reject) => {
     // Create a WebSocket connection if it doesn't exist
-    if (!socketClient) {
-      let socketClient = over(new SockJS("https://api.jdoodle.com/v1/stomp"), {
+    if (socketClient === null || !socketClient.connected) {
+      socketClient = over(new SockJS("https://api.jdoodle.com/v1/stomp"), {
         heartbeat: false,
         debug: true,
+        protocols: VERSIONS.supportedProtocols(),
       });
       socketClient.connect(
         {},
         () => {
           console.log("connection succeeded");
-
-          // Send the execute request
-          socketClient?.send(
-            "/app/execute-ws-api-token",
-            JSON.stringify(program),
-            {
-              message_type: "execute",
-              token: token,
-            }
-          );
 
           resolve();
         },
