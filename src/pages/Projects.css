@@ -42,3 +42,9 @@
   padding-top: 0;
   height: 100%;
 }
+
+.stored-locally {
+  font-style: italic;
+  color: var(--ion-color-medium);
+  font-size: 0.9em;
+}

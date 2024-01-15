@@ -169,7 +169,10 @@ const Projects: React.FC = () => {
             <h1 className="">Files</h1>
             <p>
               These are all the files contained in this project. Click on one to
-              see what to do in it!
+              see what to do in it!{" "}
+              <span className="stored-locally">
+                Projects are stored locally, not synced to the cloud.
+              </span>
             </p>
           </div>
           <IonList className="ion-no-padding">
