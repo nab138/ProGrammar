@@ -104,7 +104,11 @@ const TabRoutes: React.FC = () => {
             <LessonContainer />
           </Route>
           <Route exact path="/projects" component={Projects} />
-          <Route exact path="/sandbox/:lang/:filename" component={CodeEditor} />
+          <Route
+            exact
+            path="/projects/sandbox/:lang/:filename"
+            component={CodeEditor}
+          />
           <Route path="/course/:id" component={Course} />
           <Route exact path="/">
             <Redirect to="/courses" />
@@ -185,7 +189,7 @@ const AppC: React.FC = () => {
 
   useEffect(() => {
     applySavedTheme();
-  }, [])
+  }, []);
   return (
     <LessonContext.Provider value={{ skipToEnd, setSkipToEnd }}>
       <IonApp>

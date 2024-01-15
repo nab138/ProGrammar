@@ -12,27 +12,31 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { play } from "ionicons/icons";
+import { key, play } from "ionicons/icons";
 import execute from "../utils/piston";
 import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { useParams } from "react-router";
 import { toast } from "sonner";
+import ProjectsBackButton from "../components/ProjectsBackButton";
 
-// Object of key sting, value CodeMirror LanguageSupport
 const langToHighlight: { [key: string]: any } = {
-  java: java,
+  java,
 };
-const CodeEditor: React.FC = () => {
-  const { lang, filename } = useParams<{ lang: string; filename: string }>();
-  const [value, setValue] = useState(
-    `public class MyClass {
+
+const defaultCode: { [key: string]: string } = {
+  java: `public class MyClass {
   public static void main(String args[]) {
     System.out.println("Hello World!");
   }
-}`
-  );
+}`,
+};
+const CodeEditor: React.FC = () => {
+  const { lang, filename } = useParams<{ lang: string; filename: string }>();
+  const [value, setValue] = useState(defaultCode[lang] ?? "");
+
+  const isRunnable = filename === "Sandbox";
   const onChange = useCallback((val: string) => {
     setValue(val);
   }, []);
@@ -49,6 +53,7 @@ const CodeEditor: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <ProjectsBackButton />
           <IonTitle>{filename}</IonTitle>
           <OfflineWarning />
         </IonToolbar>
@@ -71,32 +76,36 @@ const CodeEditor: React.FC = () => {
               }
             />
           </root.div>
-          <IonButton
-            onClick={async () => {
-              setLastOutput("Running...");
-              let output = await execute(
-                [
-                  {
-                    name: filename,
-                    content: value,
-                  },
-                ],
-                lang
-              );
-              setLastOutput(output.run.output);
-            }}
-          >
-            <IonIcon icon={play} />
-            <IonLabel>Run</IonLabel>
-          </IonButton>
-          <div className="sandbox-output">
-            <h3 className="ion-padding sandbox-output-header">
-              Output <span className="powered-by">- Powered by Piston API</span>
-            </h3>
-            <HighlightedMarkdown className="ion-padding sandbox-output-content">
-              {"```\n" + lastOutput + "\n```"}
-            </HighlightedMarkdown>
-          </div>
+          {isRunnable && (
+            <>
+              <IonButton
+                onClick={async () => {
+                  setLastOutput("Running...");
+                  let output = await execute(
+                    {
+                      name: filename,
+                      content: value,
+                    },
+                    [],
+                    lang
+                  );
+                  setLastOutput(output.run.output);
+                }}
+              >
+                <IonIcon icon={play} />
+                <IonLabel>Run</IonLabel>
+              </IonButton>
+              <div className="sandbox-output">
+                <h3 className="ion-padding sandbox-output-header">
+                  Output{" "}
+                  <span className="powered-by">- Powered by Piston API</span>
+                </h3>
+                <HighlightedMarkdown className="ion-padding sandbox-output-content">
+                  {"```\n" + lastOutput + "\n```"}
+                </HighlightedMarkdown>
+              </div>
+            </>
+          )}
         </div>
       </IonContent>
     </IonPage>

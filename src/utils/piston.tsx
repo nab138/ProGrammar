@@ -23,11 +23,22 @@ interface Script {
 }
 
 export default async function execute(
-  files: Script[],
+  mainFile: Script,
+  additionalFiles: Script[],
   language: string
 ): Promise<PistonResponse> {
+  if (language === "java") {
+    additionalFiles.forEach((file) => {
+      // Remove "public" from "public class ___" declaration
+      file.content = file.content.replace(/public class/, "class");
+
+      // Append the content of the additional file to the main file
+      mainFile.content += "\n" + file.content;
+    });
+  }
+
   let program = {
-    files,
+    files: [mainFile],
     language,
     version: languageVersions[language] ?? "0",
     args: [],

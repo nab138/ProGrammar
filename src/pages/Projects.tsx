@@ -64,7 +64,9 @@ const Projects: React.FC = () => {
                       key={"sandbox-" + lang.id}
                       button
                       onClick={() => {
-                        history.push("/sandbox/" + lang.id + "/Sandbox");
+                        history.push(
+                          "/projects/sandbox/" + lang.id + "/Sandbox"
+                        );
                       }}
                     >
                       <IonLabel>
@@ -97,8 +99,7 @@ const Projects: React.FC = () => {
               Premium includes: <br />
               - No ads <br />
               - Projects <br />
-              - Code Sandboxes <br />
-              - And more!
+              - Code Sandboxes <br />- And more!
             </p>
             <IonButton
               expand="block"

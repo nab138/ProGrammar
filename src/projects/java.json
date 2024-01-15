@@ -3,8 +3,19 @@
   "id": "java",
   "projects": [
     {
-      "name": "Guessing Game",
-      "difficulty": "Easy"
+      "name": "Fibonacci Numbers",
+      "difficulty": "Easy",
+      "files": [
+        {
+          "name": "Fibonacci.java",
+          "template": "public class Fibonacci {\n\n}",
+          "task": "Create a public method called getSequence that takes in a single parameter called n and returns an array of the first n Fibonacci numbers. The Fibonacci sequence is defined as follows: the first two numbers are 0 and 1, and each subsequent number is the sum of the previous two numbers. For example, if n is 5, the method should return the array [0, 1, 1, 2, 3]."
+        }
+      ],
+      "autograder": {
+        "name": "AutoGrader.java",
+        "content": ""
+      }
     }
   ]
 }
