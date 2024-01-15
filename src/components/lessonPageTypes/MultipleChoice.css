@@ -21,12 +21,19 @@
   background-color: #f8d7da !important;
 }
 
+.dark .correct-answer {
+  background-color: #335533 !important;
+}
+.dark .incorrect-answer {
+  background-color: #553333 !important;
+}
+
 /* if dark mode */
 @media (prefers-color-scheme: dark) {
-  .correct-answer {
+  .default .correct-answer {
     background-color: #335533 !important;
   }
-  .incorrect-answer {
+  .default .incorrect-answer {
     background-color: #553333 !important;
   }
 }

@@ -10,14 +10,17 @@
   margin-top: 10px;
   padding-left: 10px;
 }
-
 .disabled-btn {
   color: #0005 !important;
 }
 
+.dark .disabled-btn {
+  color: #fff5 !important;
+}
+
 /* If dark mode */
 @media (prefers-color-scheme: dark) {
-  .disabled-btn {
+  .default .disabled-btn {
     color: #fff5 !important;
   }
 }

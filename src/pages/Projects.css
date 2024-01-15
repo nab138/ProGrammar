@@ -15,9 +15,13 @@
   color: #555;
 }
 
+.dark .premium-header p {
+  color: #ccc;
+}
+
 /* if dark mode */
 @media (prefers-color-scheme: dark) {
-  .premium-header p {
+  .default .premium-header p {
     color: #ccc;
   }
 }
