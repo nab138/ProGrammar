@@ -13,7 +13,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { play } from "ionicons/icons";
-import execute from "../utils/jdoodle";
+import execute from "../utils/piston";
 import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import { OfflineWarning } from "../components/OfflineWarning";
@@ -27,7 +27,11 @@ const langToHighlight: { [key: string]: any } = {
 const CodeEditor: React.FC = () => {
   const { lang, filename } = useParams<{ lang: string; filename: string }>();
   const [value, setValue] = useState(
-    'public class MyClass {\n    public static void main(String args[]) {\n      int x=10;\n      int y=25;\n      int z=x+y;\n\n      System.out.println("Sum of x+y = " + z);\n    }\n}'
+    `public class MyClass {
+  public static void main(String args[]) {
+    System.out.println("Hello World!");
+  }
+}`
   );
   const onChange = useCallback((val: string) => {
     setValue(val);
@@ -70,14 +74,25 @@ const CodeEditor: React.FC = () => {
           <IonButton
             onClick={async () => {
               setLastOutput("Running...");
-              setLastOutput((await execute(value, lang)).output);
+              let output = await execute(
+                [
+                  {
+                    name: filename,
+                    content: value,
+                  },
+                ],
+                lang
+              );
+              setLastOutput(output.run.output);
             }}
           >
             <IonIcon icon={play} />
             <IonLabel>Run</IonLabel>
           </IonButton>
           <div className="sandbox-output">
-            <h3 className="ion-padding sandbox-output-header">Output</h3>
+            <h3 className="ion-padding sandbox-output-header">
+              Output <span className="powered-by">- Powered by Piston API</span>
+            </h3>
             <HighlightedMarkdown className="ion-padding sandbox-output-content">
               {"```\n" + lastOutput + "\n```"}
             </HighlightedMarkdown>
