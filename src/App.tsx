@@ -104,9 +104,10 @@ const TabRoutes: React.FC = () => {
             <LessonContainer />
           </Route>
           <Route exact path="/projects" component={Projects} />
+          <Route exact path="/projects/:lang/:id" component={Projects} />
           <Route
             exact
-            path="/projects/sandbox/:lang/:filename"
+            path="/projects/:lang/:id/:filename"
             component={CodeEditor}
           />
           <Route path="/course/:id" component={Course} />

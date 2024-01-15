@@ -20,6 +20,7 @@ import { OfflineWarning } from "../components/OfflineWarning";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import ProjectsBackButton from "../components/ProjectsBackButton";
+import { ProjectLanguage } from "../utils/structures";
 
 const langToHighlight: { [key: string]: any } = {
   java,
@@ -32,11 +33,17 @@ const defaultCode: { [key: string]: string } = {
   }
 }`,
 };
-const CodeEditor: React.FC = () => {
-  const { lang, filename } = useParams<{ lang: string; filename: string }>();
-  const [value, setValue] = useState(defaultCode[lang] ?? "");
 
-  const isRunnable = filename === "Sandbox";
+const CodeEditor: React.FC = () => {
+  let { lang, filename, id } = useParams<{
+    lang: string;
+    filename: string;
+    id: string;
+  }>();
+  let isSandbox = filename === "Sandbox";
+  if (isSandbox) lang = id;
+  const [value, setValue] = useState(isSandbox ? defaultCode[lang] ?? "" : "");
+
   const onChange = useCallback((val: string) => {
     setValue(val);
   }, []);
@@ -48,7 +55,30 @@ const CodeEditor: React.FC = () => {
       });
     }
   }, [lang]);
+
   const [lastOutput, setLastOutput] = useState("");
+
+  const [task, setTask] = useState("");
+
+  useEffect(() => {
+    const fetchTask = async () => {
+      let languages = (await import("../projects/languages.json")).default;
+      let projectLanguages = [];
+      for (let language of languages) {
+        let infoModule = await import(`../projects/${language}.json`);
+        let info: ProjectLanguage = infoModule.default;
+        projectLanguages.push(info);
+      }
+      const project = projectLanguages
+        .find((l) => l.id === lang)
+        ?.projects.find((project) => project.id === id);
+      let file = project?.files.find((file) => file.name === filename);
+      setTask(file?.task ?? "");
+      setValue(file?.template ?? "");
+    };
+    fetchTask();
+  }, []);
+
   return (
     <IonPage>
       <IonHeader>
@@ -76,7 +106,7 @@ const CodeEditor: React.FC = () => {
               }
             />
           </root.div>
-          {isRunnable && (
+          {isSandbox && (
             <>
               <IonButton
                 onClick={async () => {
@@ -105,6 +135,12 @@ const CodeEditor: React.FC = () => {
                 </HighlightedMarkdown>
               </div>
             </>
+          )}
+          {!isSandbox && (
+            <div className="task ion-padding">
+              <h3>Your task:</h3>
+              <p>{task}</p>
+            </div>
           )}
         </div>
       </IonContent>

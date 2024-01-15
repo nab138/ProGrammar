@@ -60,9 +60,35 @@ export interface ProjectLanguage {
   projects: Project[];
 }
 
+export interface PistonResponse {
+  language: string;
+  version: number;
+  run: {
+    output: string;
+    stderr: string;
+    stdout: string;
+    code: number;
+    signal: number | null;
+  };
+}
+
+export interface Script {
+  name: string;
+  content: string;
+}
+
+export interface ProjectFile {
+  name: string;
+  template: string;
+  task: string;
+  id: string;
+}
 export interface Project {
   name: string;
   difficulty: string;
+  id: string;
+  files: ProjectFile[];
+  autograder: Script;
 }
 export const difficultyLookup: { [key: number]: string } = {
   0: "Beginner",

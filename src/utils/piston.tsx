@@ -1,26 +1,11 @@
+import { PistonResponse, Script } from "./structures";
+
 interface LanguageVersionTable {
   [key: string]: string;
 }
 const languageVersions: LanguageVersionTable = {
   java: "15.0.2",
 };
-
-interface PistonResponse {
-  language: string;
-  version: number;
-  run: {
-    output: string;
-    stderr: string;
-    stdout: string;
-    code: number;
-    signal: number | null;
-  };
-}
-
-interface Script {
-  name: string;
-  content: string;
-}
 
 export default async function execute(
   mainFile: Script,
