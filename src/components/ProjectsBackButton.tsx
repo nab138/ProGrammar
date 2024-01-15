@@ -3,7 +3,10 @@ import "./ProjectsBackButton.css";
 import { chevronBack } from "ionicons/icons";
 import { useHistory } from "react-router";
 
-const ProjectsBackButton: React.FC = () => {
+export interface ProjectsBackButtonProps {
+  backTo?: string;
+}
+const ProjectsBackButton: React.FC<ProjectsBackButtonProps> = ({ backTo }) => {
   let history = useHistory();
   return (
     <>
@@ -12,7 +15,7 @@ const ProjectsBackButton: React.FC = () => {
         slot="start"
         className="projects-back-button"
         onClick={() => {
-          history.push("/projects");
+          history.push(backTo ?? "/projects");
         }}
       />
     </>

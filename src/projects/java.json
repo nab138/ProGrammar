@@ -15,7 +15,7 @@
         }
       ],
       "autograder": {
-        "name": "AutoGrader.java",
+        "name": "AutoGrader",
         "content": "import java.util.HashMap;\n\npublic class AutoGrader {\n  public static void main(String args[]) {\n    HashMap<Integer, Integer[]> toCheck = new HashMap<>();\n    toCheck.put(1, new Integer[] {0});\n    toCheck.put(5, new Integer[] {0, 1, 1, 2, 3});\n    toCheck.put(10, new Integer[] {0, 1, 1, 2, 3, 5, 8, 13, 21, 34});\n\n    Fibonacci fib = new Fibonacci();\n\n    for (Integer key : toCheck.keySet()) {\n      Integer[] expected = toCheck.get(key);\n      Integer[] actual = fib.getSequence(key);\n      if (java.util.Arrays.equals(expected, actual)) {\n        System.out.println(\"Test passed for \" + key);\n      } else {\n        System.out.println(\"Test failed for \" + key);\n        System.out.println(\"Expected: \" + java.util.Arrays.toString(expected));\n        System.out.println(\"Actual: \" + java.util.Arrays.toString(actual));\n      }\n    }\n  }\n}"
       }
     }

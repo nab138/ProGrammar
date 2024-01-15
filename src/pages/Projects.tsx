@@ -14,17 +14,21 @@ import {
 } from "@ionic/react";
 import "./Projects.css";
 import { OfflineWarning } from "../components/OfflineWarning";
-import { hammer } from "ionicons/icons";
+import { hammer, play } from "ionicons/icons";
 import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { ProjectLanguage } from "../utils/structures";
+import { ProjectLanguage, Script } from "../utils/structures";
 import storage from "../utils/storage";
 import { toast } from "sonner";
+import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
+import execute from "../utils/piston";
+import ProjectsBackButton from "../components/ProjectsBackButton";
 const Projects: React.FC = () => {
   const { lang, id } = useParams<{ lang: string; id: string }>();
   let history = useHistory();
   let [languages, setLanguages] = useState<ProjectLanguage[]>([]);
   let [isPremium, setIsPremium] = useState(false);
+  let [lastOutput, setLastOutput] = useState("");
   useEffect(() => {
     const fetchLanguages = async () => {
       let languages = (await import("../projects/languages.json")).default;
@@ -145,6 +149,7 @@ const Projects: React.FC = () => {
       <IonPage>
         <IonHeader>
           <IonToolbar>
+            <ProjectsBackButton />
             <IonTitle>{project.name}</IonTitle>
             <OfflineWarning />
           </IonToolbar>
@@ -178,6 +183,45 @@ const Projects: React.FC = () => {
               </IonItem>
             ))}
           </IonList>
+          <div className="project-files-header">
+            <h1 className="">Run</h1>
+            <p>
+              Ready to run your project? Click the button below and watch the
+              autograder test!
+            </p>
+          </div>
+          <IonButton
+            onClick={async () => {
+              setLastOutput("Running...");
+
+              let files = await Promise.all(
+                project.files.map(async (file) => {
+                  return {
+                    name: file.name,
+                    content: await storage.getLocalWithDefault(
+                      `${lang}-${id}-${file.name}`,
+                      file.template
+                    ),
+                  } as Script;
+                })
+              );
+
+              let output = await execute(project.autograder, files, lang);
+              setLastOutput(output.run.output);
+            }}
+            expand="block"
+          >
+            <IonIcon icon={play} />
+            <IonLabel>Run</IonLabel>
+          </IonButton>
+          <div className="project-output">
+            <h3 className="ion-padding project-output-header">
+              Output <span className="powered-by">- Powered by Piston API</span>
+            </h3>
+            <HighlightedMarkdown className="ion-padding project-output-content">
+              {"```\n" + lastOutput + "\n```"}
+            </HighlightedMarkdown>
+          </div>
         </IonContent>
       </IonPage>
     );

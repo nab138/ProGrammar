@@ -12,18 +12,20 @@ export default async function execute(
   additionalFiles: Script[],
   language: string
 ): Promise<PistonResponse> {
+  let myMainFile = { ...mainFile };
   if (language === "java") {
     additionalFiles.forEach((file) => {
+      let myFile = { ...file };
       // Remove "public" from "public class ___" declaration
-      file.content = file.content.replace(/public class/, "class");
+      myFile.content = file.content.replace(/public class/, "class");
 
       // Append the content of the additional file to the main file
-      mainFile.content += "\n" + file.content;
+      myMainFile.content += "\n" + file.content;
     });
   }
 
   let program = {
-    files: [mainFile],
+    files: [myMainFile],
     language,
     version: languageVersions[language] ?? "0",
     args: [],

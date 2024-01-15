@@ -97,7 +97,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ lang, filename, id }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <ProjectsBackButton />
+          <ProjectsBackButton
+            backTo={isSandbox ? "/projects" : `/projects/${lang}/${id}/`}
+          />
           <IonTitle>{filename}</IonTitle>
           <OfflineWarning />
         </IonToolbar>
