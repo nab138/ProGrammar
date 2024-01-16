@@ -1,3 +1,5 @@
+import { java } from "@codemirror/lang-java";
+
 export interface Course {
   name: string;
   description: string;
@@ -25,13 +27,15 @@ export interface Lesson {
 export interface Question {
   question: string;
   content?: string;
-  type: "mc" | "build" | "text";
-  choices: string[];
+  type: "mc" | "build" | "text" | "code";
+  choices?: string[];
   answer: string | string[];
   id: string;
   explanations?: string[];
   hard?: boolean;
   rich?: boolean;
+  template?: string;
+  language?: string;
 }
 export interface BuildQuestion {
   question: string;
@@ -41,6 +45,16 @@ export interface BuildQuestion {
   id: string;
   hard?: boolean;
   rich?: boolean;
+}
+export interface CodeQuestion {
+  question: string;
+  type: "code";
+  answer: string;
+  id: string;
+  hard?: boolean;
+  rich?: boolean;
+  template: string;
+  language: string;
 }
 export interface MultipleChoiceQuestion {
   question: string;
@@ -96,6 +110,10 @@ export const difficultyLookup: { [key: number]: string } = {
   2: "Intermediate",
   3: "Intermediate-Advanced",
   4: "Advanced",
+};
+
+export const langToHighlight: { [key: string]: any } = {
+  java,
 };
 
 export function randomizeLesson(lesson: Lesson): Lesson {

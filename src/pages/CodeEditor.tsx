@@ -12,20 +12,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { key, play } from "ionicons/icons";
+import { play } from "ionicons/icons";
 import execute from "../utils/piston";
 import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import { OfflineWarning } from "../components/OfflineWarning";
-import { useParams } from "react-router";
 import { toast } from "sonner";
 import ProjectsBackButton from "../components/ProjectsBackButton";
-import { ProjectLanguage } from "../utils/structures";
+import { ProjectLanguage, langToHighlight } from "../utils/structures";
 import storage from "../utils/storage";
-
-const langToHighlight: { [key: string]: any } = {
-  java,
-};
 
 const defaultCode: { [key: string]: string } = {
   java: `public class MyClass {

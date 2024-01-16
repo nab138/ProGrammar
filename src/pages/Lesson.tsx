@@ -14,6 +14,7 @@ import {
   Question,
   BuildQuestion,
   prepareLesson,
+  CodeQuestion,
 } from "../utils/structures";
 import MultipleChoice from "../components/lessonPageTypes/MultipleChoice";
 import CloseButton from "../components/CloseButton";
@@ -28,6 +29,7 @@ import triggerAchievement, {
 } from "../utils/achievements";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { LessonContext } from "../LessonContext";
+import CodeResponse from "../components/lessonPageTypes/CodeResponse";
 interface LessonPageParams {
   id: string;
 }
@@ -173,7 +175,12 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
             setWaitingToClick={setWaitingToClick}
             key={currentQuestion + (isReview ? "r" : "")}
             question={question as MultipleChoiceQuestion}
-            onCorrect={toNextQuestion}
+            onCorrect={() => {
+              if ((question.hard ?? false) && !isReview) {
+                triggerAchievement("hard-question", question.id);
+              }
+              toNextQuestion();
+            }}
             onIncorrect={function (): void {
               if (isReview) {
                 toNextQuestion();
@@ -220,6 +227,32 @@ const LessonPage: React.FC<LessonPageParams> = ({ id }) => {
               setTotalIncorrect(totalIncorrect + 1);
               setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
             }}
+          />
+        );
+      case "code":
+        return (
+          <CodeResponse
+            key={currentQuestion + (isReview ? "r" : "")}
+            question={question as CodeQuestion}
+            onCorrect={() => {
+              if ((question.hard ?? false) && !isReview) {
+                triggerAchievement("hard-question", question.id);
+              }
+              toNextQuestion();
+            }}
+            onIncorrect={function (): void {
+              if (isReview) {
+                toNextQuestion();
+                return;
+              }
+              setTotalIncorrect(totalIncorrect + 1);
+              setIncorrectQuestions([...incorrectQuestions, currentQuestion]);
+            }}
+            skipToNext={() => {
+              setCurrentQuestion(currentQuestion + 1);
+            }}
+            setWaitingToClick={setWaitingToClick}
+            isRevisiting={!isReview && actualLessonProgress > currentQuestion}
           />
         );
     }

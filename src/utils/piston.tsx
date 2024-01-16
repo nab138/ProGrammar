@@ -33,15 +33,36 @@ export default async function execute(
   };
 
   // Send a request to https://emkc.org/api/v2/piston/execute
-  let res = await fetch("https://emkc.org/api/v2/piston/execute", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(program),
-  });
-
-  // Parse the response
-  let data = (await res.json()) as PistonResponse;
-  return data;
+  try {
+    let res = await fetch("https://emkc.org/api/v2/piston/execute", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(program),
+    });
+    if (res.status == 429) {
+      throw new Error(
+        "You are sending too many requests. Please wait a few seconds and try again."
+      );
+    }
+    if (!res.ok)
+      throw new Error(
+        "Failed to execute code: " + res.status + " " + res.statusText
+      );
+    let data = (await res.json()) as PistonResponse;
+    return data;
+  } catch (e: any) {
+    return {
+      language,
+      version: 0,
+      run: {
+        output: e.message,
+        stderr: "",
+        stdout: "",
+        code: 0,
+        signal: null,
+      },
+    };
+  }
 }
