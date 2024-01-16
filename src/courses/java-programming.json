@@ -190,6 +190,16 @@
               ],
               "answer": "String challengeVar = \"Hello, Java!\";",
               "rich": true
+            },
+            {
+              "type": "code",
+              "question": "# Declare a variable called `extraChallenge` that holds the value 7:\n### *It will be displayed automatically*",
+              "choices": [],
+              "answer": "7",
+              "rich": true,
+              "hard": true,
+              "template": "public class CodeQuestion {\n  public static void main(String args[]) {\n    {{code}}\n    System.out.println(extraChallenge);\n    if(((Object)extraChallenge).getClass().getName() != \"java.lang.Integer\"){\n      System.out.println(\"Hmm, you're using the wrong type.\");\n    }\n  }\n}",
+              "language": "java"
             }
           ]
         },
