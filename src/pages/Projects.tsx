@@ -23,12 +23,14 @@ import { toast } from "sonner";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import execute from "../utils/piston";
 import ProjectsBackButton from "../components/ProjectsBackButton";
+import triggerAchievement from "../utils/achievements";
 const Projects: React.FC = () => {
   const { lang, id } = useParams<{ lang: string; id: string }>();
   let history = useHistory();
   let [languages, setLanguages] = useState<ProjectLanguage[]>([]);
   let [isPremium, setIsPremium] = useState(false);
   let [lastOutput, setLastOutput] = useState("");
+  let [displayState, setDisplayState] = useState("");
   useEffect(() => {
     const fetchLanguages = async () => {
       let languages = (await import("../projects/languages.json")).default;
@@ -204,6 +206,7 @@ const Projects: React.FC = () => {
             </p>
           </div>
           <IonButton
+            color={displayState === "" ? "primary" : (displayState === "success" ? "success" : "danger")}
             onClick={async () => {
               setLastOutput("Running...");
 
@@ -221,11 +224,18 @@ const Projects: React.FC = () => {
 
               let output = await execute(project.autograder, files, lang);
               setLastOutput(output.run.output);
+              let lines = output.run.output.trim().split("\n");
+              if(lines[lines.length - 1] === "Project Test Successful!"){
+                await triggerAchievement("project-success", project.id);
+                setDisplayState("success");
+              } else {
+                setDisplayState("failure")
+              }
             }}
             expand="block"
           >
             <IonIcon icon={play} />
-            <IonLabel>Run</IonLabel>
+            <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
           </IonButton>
           <div className="project-output">
             <h3 className="ion-padding project-output-header">

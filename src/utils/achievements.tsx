@@ -23,7 +23,8 @@ export type AchievementCategory =
   | "hard-question"
   | "no-mistakes-lesson"
   | "no-mistakes-lesson-streak"
-  | "daily-streak";
+  | "daily-streak"
+  | "project-success"
 
 export interface Achievement {
   name: string;
@@ -107,6 +108,10 @@ const achievements: AchievementTable = {
     name: "Do you really need this app?",
     description: "Complete 10 lessons in a row without making any mistakes",
   },
+  "project-success.1": {
+    name: "A real accomplishment",
+    description: "Complete your first project"
+  }
 };
 
 /**
