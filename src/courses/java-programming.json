@@ -190,16 +190,6 @@
               ],
               "answer": "String challengeVar = \"Hello, Java!\";",
               "rich": true
-            },
-            {
-              "type": "code",
-              "question": "# Declare a variable called `extraChallenge` that holds the value 7:\n### *It will be displayed automatically*",
-              "choices": [],
-              "answer": "7",
-              "rich": true,
-              "hard": true,
-              "template": "public class CodeQuestion {\n  public static void main(String args[]) {\n    {{code}}\n    System.out.println(extraChallenge);\n    if(((Object)extraChallenge).getClass().getName() != \"java.lang.Integer\"){\n      System.out.println(\"Hmm, you're using the wrong type.\");\n    }\n  }\n}",
-              "language": "java"
             }
           ]
         },
@@ -234,6 +224,16 @@
               "type": "text",
               "question": "If you don't assign a value to an integer variable, it is given a default value of 0.\n\n```java\nint myInt; // myInt now holds 0.\n```\n\n> Comments, denoted by `//`, are a way to help document code. They do not have any impact on what the code does.\n",
               "rich": true
+            },
+            {
+              "type": "code",
+              "question": "# Declare a variable called `extraChallenge` that holds the value 7:\n### *It will be displayed automatically*",
+              "choices": [],
+              "answer": "7",
+              "rich": true,
+              "hard": true,
+              "template": "public class CodeQuestion {\n  public static void main(String args[]) {\n    {{code}}\n    System.out.println(extraChallenge);\n    if(((Object)extraChallenge).getClass().getName() != \"java.lang.Integer\"){\n      System.out.println(\"Hmm, you're using the wrong type.\");\n    }\n  }\n}",
+              "language": "java"
             }
           ]
         },
