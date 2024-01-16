@@ -142,7 +142,7 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
           </IonCardHeader>
           <IonCardContent>
             {isCorrect
-              ? "Good Job!"
+              ? "Correct!"
               : "Try again, you'll get it! The expected output was \"" +
                 question.answer +
                 '".'}
