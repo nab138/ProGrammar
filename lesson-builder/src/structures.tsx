@@ -22,12 +22,14 @@ export interface Lesson {
 export interface Question {
   question: string;
   content?: string;
-  type: "mc" | "build" | "text";
+  type: "mc" | "build" | "text" | "code";
   choices?: string[];
   answer?: string | string[];
   explanations?: string[];
   hard?: boolean;
   rich?: boolean;
+  template?: string;
+  language?: string;
 }
 export interface BuildQuestion {
   question: string;
@@ -35,6 +37,16 @@ export interface BuildQuestion {
   choices: string[];
   answer: string | string[];
   hard?: boolean;
+  rich?: boolean;
+}
+export interface CodeQuestion {
+  question: string;
+  type: "code";
+  answer: string;
+  hard?: boolean;
+  rich?: boolean;
+  template: string;
+  language: string;
 }
 export interface MultipleChoiceQuestion {
   question: string;

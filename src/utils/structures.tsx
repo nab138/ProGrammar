@@ -41,7 +41,7 @@ export interface BuildQuestion {
   question: string;
   type: "build";
   choices: string[];
-  answer: string;
+  answer: string | string[];
   id: string;
   hard?: boolean;
   rich?: boolean;

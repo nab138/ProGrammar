@@ -62,7 +62,7 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
       return question.answer.includes(ans);
     }
     return false;
-  }
+  };
 
   return (
     <>
@@ -148,7 +148,9 @@ const BuildResponse: React.FC<BuildResponseProps> = ({
         disabled={answer.length == 0}
         isCorrect={isCorrect}
         getExplanation={() => {
-          return isCorrect() ? "Correct!" : question.answer;
+          let isArray = Array.isArray(question.answer);
+          let ans = isArray ? question.answer[0] : (question.answer as string);
+          return isCorrect() ? "Correct!" : ans;
         }}
         onCorrect={onCorrect}
         onIncorrect={onIncorrect}

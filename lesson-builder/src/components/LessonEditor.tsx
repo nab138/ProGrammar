@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   BuildQuestion,
+  CodeQuestion,
   Course,
   Lesson,
   MultipleChoiceQuestion,
@@ -297,13 +298,24 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                     newQuestion.choices = [];
                     newQuestion.answer = "";
                   }
-                  newQuestion.type = e.target.value as "mc" | "build" | "text";
+                  if (e.target.value === "code") {
+                    newQuestion.answer = "";
+                    newQuestion.template =
+                      "public class CodeQuestion {\n  public static void main(String args[]) {\n    {{code}}\n  }\n}";
+                    newQuestion.language = "java";
+                  }
+                  newQuestion.type = e.target.value as
+                    | "mc"
+                    | "build"
+                    | "text"
+                    | "code";
                   setSelectedQuestion(newQuestion);
                 }}
               >
                 <option value="text">Text</option>
                 <option value="mc">Multiple Choice</option>
                 <option value="build">Build</option>
+                <option value="code">Code Response</option>
               </select>
             </div>
           </div>
@@ -445,8 +457,8 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                     ...selectedQuestion,
                   } as BuildQuestion;
                   let newAnswer: string | string[] = e.target.value;
-                  if(newAnswer.split("\n").length > 1){
-                    newAnswer = newAnswer.split("\n")
+                  if (newAnswer.split("\n").length > 1) {
+                    newAnswer = newAnswer.split("\n");
                   }
                   newQuestion.answer = newAnswer;
                   setSelectedQuestion(newQuestion);
@@ -496,6 +508,63 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
               >
                 Add
               </button>
+            </div>
+          )}
+          {selectedQuestion.type === "code" && (
+            <div className="code-editor">
+              <div>
+                <div>
+                  <label htmlFor="code-answer">Answer:</label>
+                  <textarea
+                    id="code-answer"
+                    value={(() => {
+                      return selectedQuestion.answer;
+                    })()}
+                    onChange={(e) => {
+                      const newQuestion = {
+                        ...selectedQuestion,
+                      } as CodeQuestion;
+                      let newAnswer: string = e.target.value;
+                      newQuestion.answer = newAnswer;
+                      setSelectedQuestion(newQuestion);
+                    }}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="code-language">Language:</label>
+                  <input
+                    id="code-language"
+                    value={(() => {
+                      return selectedQuestion.language;
+                    })()}
+                    onChange={(e) => {
+                      const newQuestion = {
+                        ...selectedQuestion,
+                      } as CodeQuestion;
+                      let newLanguage: string = e.target.value;
+                      newQuestion.language = newLanguage;
+                      setSelectedQuestion(newQuestion);
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="code-template">
+                <label htmlFor="code-answer">Template:</label>
+                <textarea
+                  id="code-template"
+                  value={(() => {
+                    return selectedQuestion.template;
+                  })()}
+                  onChange={(e) => {
+                    const newQuestion = {
+                      ...selectedQuestion,
+                    } as CodeQuestion;
+                    let newTemplate: string = e.target.value;
+                    newQuestion.template = newTemplate;
+                    setSelectedQuestion(newQuestion);
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>

@@ -201,7 +201,10 @@ p {
   padding: 35px 105px;
 }
 
-#build-answer {
+#build-answer,
+#code-answer,
+#code-template,
+#code-language {
   /* Style this textarea */
   font-size: 1rem;
   border: none;
@@ -210,6 +213,12 @@ p {
   width: 100%;
   margin: 15px 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#code-answer,
+#code-template,
+#code-language {
+  font-family: monospace;
 }
 
 .next-question-button {
@@ -228,4 +237,18 @@ p {
   text-align: center;
   background-color: #0002;
   border-radius: 10px;
+}
+
+.code-editor {
+  display: flex;
+  justify-content: space-evenly;
+  height: 35%;
+}
+
+.code-template {
+  flex-grow: 0.9;
+}
+
+#code-template {
+  height: 100%;
 }
