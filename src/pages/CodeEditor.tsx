@@ -45,7 +45,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ lang, filename, id }) => {
 
   const onChange = useCallback((val: string) => {
     setValue(val);
-    if (isSandbox) storage.setLocal("sandbox", val);
+    if (isSandbox) storage.setLocal("sandbox-" + lang, val);
     else storage.setLocal(`${lang}-${id}-${filename}`, val);
   }, []);
 
@@ -65,7 +65,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ lang, filename, id }) => {
     const fetchTask = async () => {
       if (isSandbox) {
         setValue(
-          await storage.getLocalWithDefault("sandbox", defaultCode[lang] ?? "")
+          await storage.getLocalWithDefault("sandbox-" + lang, defaultCode[lang] ?? "")
         );
         return;
       }
