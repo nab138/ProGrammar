@@ -5,6 +5,7 @@ interface LanguageVersionTable {
 }
 const languageVersions: LanguageVersionTable = {
   java: "15.0.2",
+  rust: "1.68.2"
 };
 
 export default async function execute(

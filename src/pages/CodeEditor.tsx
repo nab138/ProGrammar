@@ -28,6 +28,9 @@ const defaultCode: { [key: string]: string } = {
     System.out.println("Hello World!");
   }
 }`,
+  rust: `fn main() {
+  println!("Hello World!");
+}`
 };
 
 export interface CodeEditorProps {
