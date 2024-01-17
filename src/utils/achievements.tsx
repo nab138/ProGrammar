@@ -111,6 +111,10 @@ const achievements: AchievementTable = {
   "project-success.1": {
     name: "A real accomplishment",
     description: "Complete your first project"
+  },
+  "project-success.3": {
+    name: "Master Coder",
+    description: "Complete three projects"
   }
 };
 

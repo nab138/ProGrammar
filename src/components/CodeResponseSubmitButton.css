@@ -1,0 +1,38 @@
+.code-response-card {
+    animation: slideInFromBottom 0.3s forwards ease-out;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: 999;
+}
+
+.code-response-card-out {
+    animation: slideOutToBottom 0.3s forwards ease-out;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: 999;
+}
+
+@keyframes slideInFromBottom {
+    0% {
+      bottom: 0;
+      opacity: 0;
+    }
+    100% {
+      bottom: 80px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOutToBottom {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      bottom: 0;
+      opacity: 0;
+    }
+  }

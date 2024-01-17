@@ -6,7 +6,8 @@ import {
   IonCardTitle,
 } from "@ionic/react";
 import "./SubmitQuestionButton.css";
-import { useEffect, useState } from "react";
+import "./CodeResponseSubmitButton.css";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 
 import correctSfx from "../sfx/correct.mp3";
@@ -15,6 +16,7 @@ import storage from "../utils/storage";
 import { hapticsImpactHeavy } from "../utils/haptics";
 import { CodeQuestion } from "../utils/structures";
 import execute from "../utils/piston";
+import Draggable, { ControlPosition } from "react-draggable";
 
 interface CodeResponseSubmitButtonProps {
   code: string;
@@ -47,6 +49,14 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
 
   let [sfxEnabled, setSfxEnabled] = useState<boolean>(true);
   let [hapticsEnabled, setHapticsEnabled] = useState<boolean>(false);
+
+  let card = useRef<HTMLIonCardElement>(null);
+  let draggableRef = useRef<Draggable>(null);
+  useEffect(() => {
+    if (showExplanation) {
+      card.current!.className = "code-response-card";
+    }
+  }, [showExplanation]);
 
   useEffect(() => {
     (async () => {
@@ -92,14 +102,23 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
     return output;
   };
 
-  //   useEffect(() => {
-  //     if (isRevisiting === true) {
-  //       setCurText("Next");
-  //       setColor("primary");
-  //       setShowExplanation(true);
-  //       setFirstClick(false);
-  //     }
-  //   }, [isRevisiting]);
+  const handleDragStop = (draggedY: number) => {
+    const dismissThreshold = 100; // Adjust this value based on your preference
+  
+    if (draggedY > dismissThreshold) {
+      card.current!.className = "code-response-card-out";
+      setTimeout(() => {
+        setShowExplanation(false);
+      }, 300);
+    } else {
+      // If not meeting the threshold, reset the position immediately
+      if (draggableRef.current) {
+        draggableRef.current.setState({ x: 0, y: 0 });
+      }
+    }
+  };
+  
+
   return (
     <div className="submit-button-container">
       <IonButton
@@ -136,30 +155,39 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
         {numClicks > 0 ? (isCorrect ? "Next" : "Run Again") : "Run"}
       </IonButton>
       {showExplanation && (
-        <IonCard className="animate-in">
-          <IonCardHeader>
-            <IonCardTitle>{isCorrect ? "Good Job!" : "So Close!"}</IonCardTitle>
-          </IonCardHeader>
-          <IonCardContent>
-            {isCorrect
-              ? "Correct!"
-              : "Try again, you'll get it! The expected output was \"" +
-                question.answer +
-                '".'}
-            {numClicks > 1 && !isCorrect && (
-              <IonButton
-                expand="block"
-                color="light"
-                onClick={() => {
-                  if (!isRevisiting) onIncorrect();
-                  else skipToNext();
-                }}
-              >
-                Skip
-              </IonButton>
-            )}
-          </IonCardContent>
-        </IonCard>
+        <Draggable
+        ref={draggableRef}
+          bounds={{top: 0}}
+          axis="y"
+          onStop={(e, data) => handleDragStop(data.y)}
+        >
+          <IonCard className="code-response-card" ref={card}>
+            <IonCardHeader>
+              <IonCardTitle>
+                {isCorrect ? "Good Job!" : "So Close!"}
+              </IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              {isCorrect
+                ? "Correct!"
+                : "Try again, you'll get it! The expected output was \"" +
+                  question.answer +
+                  '".'}
+              {numClicks > 1 && !isCorrect && (
+                <IonButton
+                  expand="block"
+                  color="light"
+                  onClick={() => {
+                    if (!isRevisiting) onIncorrect();
+                    else skipToNext();
+                  }}
+                >
+                  Skip
+                </IonButton>
+              )}
+            </IonCardContent>
+          </IonCard>
+        </Draggable>
       )}
     </div>
   );
