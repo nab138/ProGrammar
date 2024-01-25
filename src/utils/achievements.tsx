@@ -24,7 +24,7 @@ export type AchievementCategory =
   | "no-mistakes-lesson"
   | "no-mistakes-lesson-streak"
   | "daily-streak"
-  | "project-success"
+  | "project-success";
 
 export interface Achievement {
   name: string;
@@ -35,11 +35,8 @@ interface RecievedAchievement {
   gotDate: string;
   achievementKey: string;
 }
-interface AchievementTable {
-  [key: string]: Achievement;
-}
 
-const achievements: AchievementTable = {
+const achievements: { [key: string]: Achievement } = {
   "daily-streak.2": {
     name: "Returning Visitor",
     description: "Open the app 2 days in a row",
@@ -110,12 +107,12 @@ const achievements: AchievementTable = {
   },
   "project-success.1": {
     name: "A real accomplishment",
-    description: "Complete your first project"
+    description: "Complete your first project",
   },
   "project-success.3": {
     name: "Master Coder",
-    description: "Complete three projects"
-  }
+    description: "Complete three projects",
+  },
 };
 
 /**
