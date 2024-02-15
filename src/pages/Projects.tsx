@@ -50,7 +50,7 @@ const Projects: React.FC = () => {
     };
     const load = async () => {
       setLoading(true);
-      await Promise.all([fetchPremium, fetchLanguages]);
+      await Promise.all([fetchPremium(), fetchLanguages()]);
       setLoading(false);
     }
     load();
