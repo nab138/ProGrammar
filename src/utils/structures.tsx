@@ -1,5 +1,7 @@
 import { java } from "@codemirror/lang-java";
 import { rust } from "@codemirror/lang-rust";
+import { python } from "@codemirror/lang-python"
+import { javascript } from "@codemirror/lang-javascript";
 
 export interface Course {
   name: string;
@@ -116,6 +118,8 @@ export const difficultyLookup: { [key: number]: string } = {
 export const langToHighlight: { [key: string]: any } = {
   java,
   rust,
+  python,
+  javascript
 };
 
 export function randomizeLesson(lesson: Lesson): Lesson {

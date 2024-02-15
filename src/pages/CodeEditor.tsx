@@ -30,7 +30,9 @@ const defaultCode: { [key: string]: string } = {
 }`,
   rust: `fn main() {
   println!("Hello World!");
-}`
+}`,
+  python: `print("Hello World!")`,
+  javascript: `console.log("Hello World!")`
 };
 
 export interface CodeEditorProps {
