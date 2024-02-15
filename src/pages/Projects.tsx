@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonList,
   IonPage,
+  IonSkeletonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -31,6 +32,7 @@ const Projects: React.FC = () => {
   let [isPremium, setIsPremium] = useState(false);
   let [lastOutput, setLastOutput] = useState("");
   let [displayState, setDisplayState] = useState("");
+  let [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchLanguages = async () => {
       let languages = (await import("../projects/languages.json")).default;
@@ -46,14 +48,44 @@ const Projects: React.FC = () => {
       let isPremium = await storage.get("is_premium");
       setIsPremium(isPremium);
     };
-    fetchLanguages();
-    fetchPremium();
+    const load = async () => {
+      setLoading(true);
+      await Promise.all([fetchPremium, fetchLanguages]);
+      setLoading(false);
+    }
+    load();
   }, []);
 
   const project = languages
     .find((l) => l.id === lang)
     ?.projects.find((project) => project.id === id);
 
+  if(loading){
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Projects</IonTitle>
+            <OfflineWarning />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonAccordionGroup multiple disabled>
+            {[0, 1, 2, 3].map((i) => {
+              return  (<IonAccordion key={`loading-lang-${i}`}>
+              <IonItem slot="header" color="light">
+                <IonLabel>
+                  <IonSkeletonText animated style={{ width: '100px' }}>
+                  </IonSkeletonText>
+                  </IonLabel>
+              </IonItem> 
+            </IonAccordion>)
+            })}
+          </IonAccordionGroup>
+        </IonContent>
+      </IonPage>
+    );
+  }
   if (!isPremium) {
     return (
       <IonPage>
