@@ -48,7 +48,6 @@ export default async function jdoodleExecute(
       0,
       myMainFile.content.lastIndexOf("}")
     );
-    myMainFile.content = "import java.io.*;\n" + myMainFile.content;
     additionalFiles.forEach((file) => {
       let myFile = { ...file };
       // Remove "public" from "public class ___" declaration

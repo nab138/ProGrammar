@@ -48,12 +48,13 @@ const Terminal: React.FC<TerminalProps> = ({
           })}
         </div>
       ))}
-      <input
-        value={"> " + input}
-        disabled={disabled}
-        onChange={(e) => setInput(e.target.value.substring(2))}
-        onKeyDown={handleKeyDown}
-      />
+      {!disabled && (
+        <input
+          value={"> " + input}
+          onChange={(e) => setInput(e.target.value.substring(2))}
+          onKeyDown={handleKeyDown}
+        />
+      )}
     </div>
   );
 };

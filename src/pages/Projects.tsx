@@ -15,7 +15,7 @@ import {
 } from "@ionic/react";
 import "./Projects.css";
 import { OfflineWarning } from "../components/OfflineWarning";
-import { hammer, play } from "ionicons/icons";
+import { hammer, play, playCircle } from "ionicons/icons";
 import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { PistonResponse, ProjectLanguage, Script } from "../utils/structures";
@@ -26,7 +26,10 @@ import ProjectsBackButton from "../components/ProjectsBackButton";
 import triggerAchievement from "../utils/achievements";
 import PremiumBarrier from "../components/PremiumBarrier";
 import Terminal from "../components/Terminal";
-import jdoodleExecute, { jdoodleLanguageVersions, submitInput } from "../utils/jdoodle";
+import jdoodleExecute, {
+  jdoodleLanguageVersions,
+  submitInput,
+} from "../utils/jdoodle";
 
 const Projects: React.FC = () => {
   const { lang, id } = useParams<{ lang: string; id: string }>();
@@ -36,6 +39,7 @@ const Projects: React.FC = () => {
   let [lastOutput, setLastOutput] = useState("");
   let [displayState, setDisplayState] = useState("");
   let [loading, setLoading] = useState(true);
+  let [interactive, setInteractive] = useState(false);
   useEffect(() => {
     const fetchLanguages = async () => {
       let languages = (await import("../projects/languages.json")).default;
@@ -63,10 +67,11 @@ const Projects: React.FC = () => {
     .find((l) => l.id === lang)
     ?.projects.find((project) => project.id === id);
 
-  const runProject = async () => {
+  const runProject = async (interactive: boolean) => {
     if (project === undefined) {
       return;
     }
+    setInteractive(interactive);
     setLastOutput("Running...");
 
     let files = await Promise.all(
@@ -82,8 +87,12 @@ const Projects: React.FC = () => {
     );
 
     let output: PistonResponse;
-    if (project.interactive) {
-      let jdoodleOutput = await jdoodleExecute(project.autograder, files, lang);
+    if (interactive) {
+      let jdoodleOutput = await jdoodleExecute(
+        project.interactive,
+        files,
+        lang
+      );
       output = {
         language: lang,
         version: jdoodleLanguageVersions[lang] ?? 0,
@@ -94,7 +103,7 @@ const Projects: React.FC = () => {
           code: jdoodleOutput.statusCode,
           signal: null,
         },
-      }
+      };
     } else {
       output = await execute(project.autograder, files, lang);
     }
@@ -248,32 +257,45 @@ const Projects: React.FC = () => {
             <div className="project-files-header">
               <h1 className="">Run</h1>
               <p>
-                Ready to run your project? Click the button below and watch the
-                autograder test!
+                Ready to run your project? Click the run button to try it, and
+                when you're happy, click test to see if you've completed the
+                project!
               </p>
             </div>
-            <IonButton
-              color={
-                displayState === ""
-                  ? "primary"
-                  : displayState === "success"
-                  ? "success"
-                  : "danger"
-              }
-              onClick={runProject}
-              expand="block"
-            >
-              <IonIcon icon={play} />
-              <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
-            </IonButton>
+            <div className="run-buttons">
+              <IonButton
+                className="runBtn"
+                color={"primary"}
+                onClick={() => runProject(true)}
+                expand="block"
+              >
+                <IonIcon icon={play} />
+                <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
+              </IonButton>
+              <IonButton
+                className="runBtn"
+                color={
+                  displayState === ""
+                    ? "primary"
+                    : displayState === "success"
+                    ? "success"
+                    : "danger"
+                }
+                onClick={() => runProject(false)}
+                expand="block"
+              >
+                <IonIcon icon={playCircle} />
+                <IonLabel>Test</IonLabel>
+              </IonButton>
+            </div>
             <div className="project-output">
               <h3 className="ion-padding project-output-header">
                 Output{" "}
-                {!project.interactive && (
+                {!interactive && (
                   <span className="powered-by">- Powered by Piston API</span>
                 )}
               </h3>
-              {project.interactive ? (
+              {interactive ? (
                 <Terminal
                   lastOutput={lastOutput}
                   className="ion-padding project-output-content"

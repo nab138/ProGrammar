@@ -18,7 +18,10 @@
         "name": "AutoGrader",
         "content": "import java.util.HashMap;\n\npublic class AutoGrader {\n  public static void main(String args[]) {\n    HashMap<Integer, Integer[]> toCheck = new HashMap<>();\n    toCheck.put(1, new Integer[] {0});\n    toCheck.put(5, new Integer[] {0, 1, 1, 2, 3});\n    toCheck.put(10, new Integer[] {0, 1, 1, 2, 3, 5, 8, 13, 21, 34});\n\n    Fibonacci fib = new Fibonacci();\n\n    boolean passed = true;\n    for (Integer key : toCheck.keySet()) {\n      Integer[] expected = toCheck.get(key);\n      Integer[] actual = fib.getSequence(key);\n      if (java.util.Arrays.equals(expected, actual)) {\n        System.out.println(\"Test passed for \" + key);\n      } else {\n        passed = false;\n        System.out.println(\"Test failed for \" + key);\n        System.out.println(\"Expected: \" + java.util.Arrays.toString(expected));\n        System.out.println(\"Actual: \" + java.util.Arrays.toString(actual));\n      }\n    }\n    if(passed){\n        System.out.println(\"Project Test Successful!\");\n    } else {\n        System.out.println(\"Project Test Failed.\");\n    }\n  }\n}\n"
       },
-      "interactive": true
+      "interactive": {
+        "name": "Interactive",
+        "content": "import java.io.BufferedReader;\r\nimport java.io.IOException;\r\nimport java.util.Arrays;\r\nimport java.io.InputStreamReader;\r\n\r\npublic class Interactive {\r\n    public static void main(String[] args) {\r\n                Fibonacci fib = new Fibonacci();\r\n                while (true) {\r\n                    try {\r\n                        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));\r\n                        System.out.print(\"Enter a number: \");\r\n                        String input = br.readLine();\r\n                        int n = Integer.parseInt(input);\r\n                        System.out.println(\"Result: \" + Arrays.toString(fib.getSequence(n)));\r\n                    } catch (IOException e) {\r\n                        e.printStackTrace();\r\n                    } catch (NumberFormatException e) {\r\n                        System.out.println(\"Invalid input, must be a number.\");\r\n                    }\r\n                }\r\n    }\r\n}"
+      }
     }
   ]
 }
