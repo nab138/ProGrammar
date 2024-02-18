@@ -1,0 +1,19 @@
+.terminal {
+    background-color: var(--ion-color-light);
+    color: lime;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    font-family: 'Roboto Mono', monospace;
+    /* Disable wrapping */
+    white-space: pre;
+    
+}
+
+.terminal input {
+    color: lime; 
+    background-color: var(--ion-color-light);
+    outline: none; 
+    border: none;
+}

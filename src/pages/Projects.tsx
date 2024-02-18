@@ -18,13 +18,16 @@ import { OfflineWarning } from "../components/OfflineWarning";
 import { hammer, play } from "ionicons/icons";
 import { useHistory, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { ProjectLanguage, Script } from "../utils/structures";
+import { PistonResponse, ProjectLanguage, Script } from "../utils/structures";
 import storage from "../utils/storage";
-import { toast } from "sonner";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import execute from "../utils/piston";
 import ProjectsBackButton from "../components/ProjectsBackButton";
 import triggerAchievement from "../utils/achievements";
+import PremiumBarrier from "../components/PremiumBarrier";
+import Terminal from "../components/Terminal";
+import jdoodleExecute, { jdoodleLanguageVersions, submitInput } from "../utils/jdoodle";
+
 const Projects: React.FC = () => {
   const { lang, id } = useParams<{ lang: string; id: string }>();
   let history = useHistory();
@@ -52,7 +55,7 @@ const Projects: React.FC = () => {
       setLoading(true);
       await Promise.all([fetchPremium(), fetchLanguages()]);
       setLoading(false);
-    }
+    };
     load();
   }, []);
 
@@ -60,7 +63,52 @@ const Projects: React.FC = () => {
     .find((l) => l.id === lang)
     ?.projects.find((project) => project.id === id);
 
-  if(loading){
+  const runProject = async () => {
+    if (project === undefined) {
+      return;
+    }
+    setLastOutput("Running...");
+
+    let files = await Promise.all(
+      project.files.map(async (file) => {
+        return {
+          name: file.name,
+          content: await storage.getLocalWithDefault(
+            `${lang}-${id}-${file.name}`,
+            file.template
+          ),
+        } as Script;
+      })
+    );
+
+    let output: PistonResponse;
+    if (project.interactive) {
+      let jdoodleOutput = await jdoodleExecute(project.autograder, files, lang);
+      output = {
+        language: lang,
+        version: jdoodleLanguageVersions[lang] ?? 0,
+        run: {
+          output: jdoodleOutput.output,
+          stderr: "",
+          stdout: jdoodleOutput.output,
+          code: jdoodleOutput.statusCode,
+          signal: null,
+        },
+      }
+    } else {
+      output = await execute(project.autograder, files, lang);
+    }
+    setLastOutput(output.run.output);
+    let lines = output.run.output.trim().split("\n");
+    if (lines[lines.length - 1] === "Project Test Successful!") {
+      await triggerAchievement("project-success", project.id);
+      setDisplayState("success");
+    } else {
+      setDisplayState("failure");
+    }
+  };
+
+  if (loading) {
     return (
       <IonPage>
         <IonHeader>
@@ -72,14 +120,18 @@ const Projects: React.FC = () => {
         <IonContent>
           <IonAccordionGroup multiple disabled>
             {[0, 1, 2, 3].map((i) => {
-              return  (<IonAccordion key={`loading-lang-${i}`}>
-              <IonItem slot="header" color="light">
-                <IonLabel>
-                  <IonSkeletonText animated style={{ width: '100px' }}>
-                  </IonSkeletonText>
-                  </IonLabel>
-              </IonItem> 
-            </IonAccordion>)
+              return (
+                <IonAccordion key={`loading-lang-${i}`}>
+                  <IonItem slot="header" color="light">
+                    <IonLabel>
+                      <IonSkeletonText
+                        animated
+                        style={{ width: "100px" }}
+                      ></IonSkeletonText>
+                    </IonLabel>
+                  </IonItem>
+                </IonAccordion>
+              );
             })}
           </IonAccordionGroup>
         </IonContent>
@@ -87,45 +139,7 @@ const Projects: React.FC = () => {
     );
   }
   if (!isPremium) {
-    return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Premium Required</IonTitle>
-            <OfflineWarning />
-          </IonToolbar>
-        </IonHeader>
-        <IonContent>
-          <div className="ion-padding premium-barrier">
-            <div className="premium-header">
-              <h1>Projects are a premium feature!</h1>
-              <p>
-                Pojects are a great way to grow your programming skill, allowing
-                you to write real code and see it work in real time.
-              </p>
-            </div>
-            <p>
-              Premium includes: <br />
-              - No ads <br />
-              - Projects <br />
-              - Code Sandboxes <br />- And more!
-            </p>
-            <IonButton
-              expand="block"
-              onClick={() => {
-                toast.success("Coming soon!", {
-                  description:
-                    "Thanks for your interest in premium! It's still being worked on, but it should be available soon (Note: for testing, enable Premium Account in settings and reload. Requires a cloud account).",
-                  duration: 5000,
-                });
-              }}
-            >
-              <IonLabel>Get Premium</IonLabel>
-            </IonButton>
-          </div>
-        </IonContent>
-      </IonPage>
-    );
+    return <PremiumBarrier />;
   } else if (
     id === null ||
     id === undefined ||
@@ -199,83 +213,80 @@ const Projects: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonContent>
-          <div className="project-files-header">
-            <h1 className="">Files</h1>
-            <p>
-              These are all the files contained in this project. Click on one to
-              see what to do in it!{" "}
-              <span className="stored-locally">
-                Projects are stored locally, not synced to the cloud.
-              </span>
-            </p>
-          </div>
-          <IonList className="ion-no-padding">
-            {project.files.map((file) => (
-              <IonItem
-                key={file.id}
-                button
-                onClick={() => {
-                  history.push(
-                    "/projects/" +
-                      lang +
-                      "/" +
-                      project.id +
-                      "/" +
-                      file.name +
-                      "/"
-                  );
-                }}
-              >
-                <IonLabel>{file.name}</IonLabel>
-              </IonItem>
-            ))}
-          </IonList>
-          <div className="project-files-header">
-            <h1 className="">Run</h1>
-            <p>
-              Ready to run your project? Click the button below and watch the
-              autograder test!
-            </p>
-          </div>
-          <IonButton
-            color={displayState === "" ? "primary" : (displayState === "success" ? "success" : "danger")}
-            onClick={async () => {
-              setLastOutput("Running...");
-
-              let files = await Promise.all(
-                project.files.map(async (file) => {
-                  return {
-                    name: file.name,
-                    content: await storage.getLocalWithDefault(
-                      `${lang}-${id}-${file.name}`,
-                      file.template
-                    ),
-                  } as Script;
-                })
-              );
-
-              let output = await execute(project.autograder, files, lang);
-              setLastOutput(output.run.output);
-              let lines = output.run.output.trim().split("\n");
-              if(lines[lines.length - 1] === "Project Test Successful!"){
-                await triggerAchievement("project-success", project.id);
-                setDisplayState("success");
-              } else {
-                setDisplayState("failure")
+          <div className="projects-tab">
+            <div className="project-files-header">
+              <h1 className="">Files</h1>
+              <p>
+                These are all the files contained in this project. Click on one
+                to see what to do in it!{" "}
+                <span className="stored-locally">
+                  Projects are stored locally, not synced to the cloud.
+                </span>
+              </p>
+            </div>
+            <IonList className="ion-no-padding">
+              {project.files.map((file) => (
+                <IonItem
+                  key={file.id}
+                  button
+                  onClick={() => {
+                    history.push(
+                      "/projects/" +
+                        lang +
+                        "/" +
+                        project.id +
+                        "/" +
+                        file.name +
+                        "/"
+                    );
+                  }}
+                >
+                  <IonLabel>{file.name}</IonLabel>
+                </IonItem>
+              ))}
+            </IonList>
+            <div className="project-files-header">
+              <h1 className="">Run</h1>
+              <p>
+                Ready to run your project? Click the button below and watch the
+                autograder test!
+              </p>
+            </div>
+            <IonButton
+              color={
+                displayState === ""
+                  ? "primary"
+                  : displayState === "success"
+                  ? "success"
+                  : "danger"
               }
-            }}
-            expand="block"
-          >
-            <IonIcon icon={play} />
-            <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
-          </IonButton>
-          <div className="project-output">
-            <h3 className="ion-padding project-output-header">
-              Output <span className="powered-by">- Powered by Piston API</span>
-            </h3>
-            <HighlightedMarkdown className="ion-padding project-output-content">
-              {"```\n" + lastOutput + "\n```"}
-            </HighlightedMarkdown>
+              onClick={runProject}
+              expand="block"
+            >
+              <IonIcon icon={play} />
+              <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
+            </IonButton>
+            <div className="project-output">
+              <h3 className="ion-padding project-output-header">
+                Output{" "}
+                {!project.interactive && (
+                  <span className="powered-by">- Powered by Piston API</span>
+                )}
+              </h3>
+              {project.interactive ? (
+                <Terminal
+                  lastOutput={lastOutput}
+                  className="ion-padding project-output-content"
+                  onEnter={async (input) => {
+                    return (await submitInput(input)).output;
+                  }}
+                />
+              ) : (
+                <HighlightedMarkdown className="ion-padding project-output-content">
+                  {"```\n" + lastOutput + "\n```"}
+                </HighlightedMarkdown>
+              )}
+            </div>
           </div>
         </IonContent>
       </IonPage>

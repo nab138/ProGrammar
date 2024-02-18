@@ -106,6 +106,7 @@ export interface Project {
   id: string;
   files: ProjectFile[];
   autograder: Script;
+  interactive?: boolean;
 }
 export const difficultyLookup: { [key: number]: string } = {
   0: "Beginner",
