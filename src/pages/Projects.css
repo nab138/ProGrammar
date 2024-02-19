@@ -5,7 +5,8 @@
   }
 }
 
-.project-files-header {
+.project-files-header,
+.project-run-header {
   margin: 0 10px;
 }
 
@@ -49,8 +50,17 @@
 .run-buttons {
   display: flex;
   width: 100%;
+  padding: 0 5px;
 }
 
-.runBtn {
+.run-button {
   width: 50%;
+}
+
+.run-button-icon {
+  margin-right: 5px;
+}
+
+.project-files-list {
+  transform: translateX(-5px);
 }

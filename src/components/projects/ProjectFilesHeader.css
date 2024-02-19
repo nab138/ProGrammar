@@ -1,0 +1,19 @@
+.project-files-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.15s ease-out, opacity 0.1s ease-out;
+}
+
+.project-files-content p {
+  margin: 0;
+}
+
+.project-files-content.open {
+  max-height: 80px; /* This should be larger than the content's height */
+  opacity: 1;
+}
+
+.project-files-h1 {
+  margin-bottom: 0;
+}

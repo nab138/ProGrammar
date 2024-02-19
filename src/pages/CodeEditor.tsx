@@ -18,7 +18,7 @@ import "./CodeEditor.css";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import { OfflineWarning } from "../components/OfflineWarning";
 import { toast } from "sonner";
-import ProjectsBackButton from "../components/ProjectsBackButton";
+import ProjectsBackButton from "../components/projects/ProjectsBackButton";
 import { ProjectLanguage, langToHighlight } from "../utils/structures";
 import storage from "../utils/storage";
 
@@ -32,7 +32,7 @@ const defaultCode: { [key: string]: string } = {
   println!("Hello World!");
 }`,
   python: `print("Hello World!")`,
-  javascript: `console.log("Hello World!")`
+  javascript: `console.log("Hello World!")`,
 };
 
 export interface CodeEditorProps {
@@ -67,7 +67,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ lang, filename, id }) => {
     const fetchTask = async () => {
       if (isSandbox) {
         setValue(
-          await storage.getLocalWithDefault("sandbox-" + lang, defaultCode[lang] ?? "")
+          await storage.getLocalWithDefault(
+            "sandbox-" + lang,
+            defaultCode[lang] ?? ""
+          )
         );
         return;
       }

@@ -12,6 +12,7 @@ import {
   IonSkeletonText,
   IonTitle,
   IonToolbar,
+  useIonModal,
 } from "@ionic/react";
 import "./Projects.css";
 import { OfflineWarning } from "../components/OfflineWarning";
@@ -22,14 +23,16 @@ import { PistonResponse, ProjectLanguage, Script } from "../utils/structures";
 import storage from "../utils/storage";
 import { HighlightedMarkdown } from "../components/HighlightedMarkdown";
 import execute from "../utils/piston";
-import ProjectsBackButton from "../components/ProjectsBackButton";
+import ProjectsBackButton from "../components/projects/ProjectsBackButton";
 import triggerAchievement from "../utils/achievements";
-import PremiumBarrier from "../components/PremiumBarrier";
-import Terminal from "../components/Terminal";
+import PremiumBarrier from "../components/projects/PremiumBarrier";
+import Terminal from "../components/projects/Terminal";
 import jdoodleExecute, {
   jdoodleLanguageVersions,
   submitInput,
 } from "../utils/jdoodle";
+import ProjectFilesHeader from "../components/projects/ProjectFilesHeader";
+import ProjectRunHeader from "../components/projects/ProjectRunHeader";
 
 const Projects: React.FC = () => {
   const { lang, id } = useParams<{ lang: string; id: string }>();
@@ -40,6 +43,15 @@ const Projects: React.FC = () => {
   let [displayState, setDisplayState] = useState("");
   let [loading, setLoading] = useState(true);
   let [interactive, setInteractive] = useState(false);
+  let [presentPremiumBarrier, dismissPremiumBarrier] = useIonModal(
+    PremiumBarrier,
+    {
+      onDismiss: (data: string, role: string) =>
+        dismissPremiumBarrier(data, role),
+    }
+  );
+  let [hasRunInteractive, setHasRunInteractive] = useState(false);
+
   useEffect(() => {
     const fetchLanguages = async () => {
       let languages = (await import("../projects/languages.json")).default;
@@ -71,6 +83,9 @@ const Projects: React.FC = () => {
     if (project === undefined) {
       return;
     }
+    if (interactive && !isPremium) {
+      return presentPremiumBarrier();
+    }
     setInteractive(interactive);
     setLastOutput("Running...");
 
@@ -88,6 +103,7 @@ const Projects: React.FC = () => {
 
     let output: PistonResponse;
     if (interactive) {
+      setHasRunInteractive(true);
       let jdoodleOutput = await jdoodleExecute(
         project.interactive,
         files,
@@ -109,6 +125,7 @@ const Projects: React.FC = () => {
     }
     setLastOutput(output.run.output);
     let lines = output.run.output.trim().split("\n");
+    if (interactive) return;
     if (lines[lines.length - 1] === "Project Test Successful!") {
       await triggerAchievement("project-success", project.id);
       setDisplayState("success");
@@ -147,9 +164,7 @@ const Projects: React.FC = () => {
       </IonPage>
     );
   }
-  if (!isPremium) {
-    return <PremiumBarrier />;
-  } else if (
+  if (
     id === null ||
     id === undefined ||
     lang === null ||
@@ -223,17 +238,8 @@ const Projects: React.FC = () => {
         </IonHeader>
         <IonContent>
           <div className="projects-tab">
-            <div className="project-files-header">
-              <h1 className="">Files</h1>
-              <p>
-                These are all the files contained in this project. Click on one
-                to see what to do in it!{" "}
-                <span className="stored-locally">
-                  Projects are stored locally, not synced to the cloud.
-                </span>
-              </p>
-            </div>
-            <IonList className="ion-no-padding">
+            <ProjectFilesHeader />
+            <IonList className="ion-no-padding project-files-list">
               {project.files.map((file) => (
                 <IonItem
                   key={file.id}
@@ -254,26 +260,19 @@ const Projects: React.FC = () => {
                 </IonItem>
               ))}
             </IonList>
-            <div className="project-files-header">
-              <h1 className="">Run</h1>
-              <p>
-                Ready to run your project? Click the run button to try it, and
-                when you're happy, click test to see if you've completed the
-                project!
-              </p>
-            </div>
+            <ProjectRunHeader />
             <div className="run-buttons">
               <IonButton
-                className="runBtn"
+                className="run-button"
                 color={"primary"}
                 onClick={() => runProject(true)}
                 expand="block"
               >
-                <IonIcon icon={play} />
-                <IonLabel>Run{displayState != "" ? " Again" : ""}</IonLabel>
+                <IonIcon className="run-button-icon" icon={play} />
+                <IonLabel> Run{hasRunInteractive && " Again"}</IonLabel>
               </IonButton>
               <IonButton
-                className="runBtn"
+                className="run-button"
                 color={
                   displayState === ""
                     ? "primary"
@@ -284,8 +283,8 @@ const Projects: React.FC = () => {
                 onClick={() => runProject(false)}
                 expand="block"
               >
-                <IonIcon icon={playCircle} />
-                <IonLabel>Test</IonLabel>
+                <IonIcon className="run-button-icon" icon={playCircle} />
+                <IonLabel>Test{displayState !== "" && " again"}</IonLabel>
               </IonButton>
             </div>
             <div className="project-output">
