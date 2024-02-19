@@ -12,6 +12,7 @@
 .project-run-content:not(.open) {
   height: 0;
   opacity: 0;
+  transition: height 0.15s ease-out, opacity 0.1s ease-out;
 }
 
 .project-run-h1 {
