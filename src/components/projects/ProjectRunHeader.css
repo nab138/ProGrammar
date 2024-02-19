@@ -1,8 +1,7 @@
 .project-run-content {
-  max-height: 0;
-  opacity: 0;
   overflow: hidden;
-  transition: max-height 0.15s ease-out, opacity 0.1s ease-out;
+  opacity: 1;
+  transition: height 0.15s ease-out, opacity 0.1s ease-out;
 }
 
 .project-run-content p {
@@ -10,11 +9,13 @@
   margin-bottom: 10px;
 }
 
-.project-run-content.open {
-  max-height: 80px; /* This should be larger than the content's height */
-  opacity: 1;
+.project-run-content:not(.open) {
+  height: 0;
+  opacity: 0;
 }
 
 .project-run-h1 {
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
 }

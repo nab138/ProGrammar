@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IonIcon, IonButton } from "@ionic/react";
 import { chevronDownOutline, chevronForwardOutline } from "ionicons/icons";
 import "./ProjectFilesHeader.css";
 const ProjectFilesHeader = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const container = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (container.current) {
+      container.current.style.height = isOpen
+        ? `${container.current.scrollHeight}px`
+        : "0px";
+    }
+  }, [isOpen]);
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -17,7 +25,10 @@ const ProjectFilesHeader = () => {
           <IonIcon icon={isOpen ? chevronDownOutline : chevronForwardOutline} />
         </IonButton>
       </h1>
-      <div className={`project-files-content ${isOpen ? "open" : ""}`}>
+      <div
+        ref={container}
+        className={`project-files-content ${isOpen ? "open" : ""}`}
+      >
         <p>
           These are all the files contained in this project. Click on one to see
           what to do in it!{" "}
