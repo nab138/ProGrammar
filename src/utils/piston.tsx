@@ -7,7 +7,11 @@ const languageVersions: LanguageVersionTable = {
   java: "15.0.2",
   rust: "1.68.2",
   javascript: "18.15.0",
-  python: "3.10.0"
+  python: "3.10.0",
+  swift: "5.3.3",
+  go: "1.16.2",
+  csharp: "6.12.0",
+  cpp: "10.2.0",
 };
 
 export default async function execute(

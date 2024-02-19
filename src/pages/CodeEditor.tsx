@@ -33,6 +33,25 @@ const defaultCode: { [key: string]: string } = {
 }`,
   python: `print("Hello World!")`,
   javascript: `console.log("Hello World!")`,
+  go: `package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello World!")
+}`,
+  csharp: `using System;
+  
+class Program {
+  static void Main() {
+    Console.WriteLine("Hello World!");
+  }
+}`,
+  cpp: `#include <iostream>
+int main() {
+  std::cout << "Hello World!" << std::endl;
+}`,
+  swift: `print("Hello World!")`,
 };
 
 export interface CodeEditorProps {

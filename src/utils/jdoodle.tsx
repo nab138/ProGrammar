@@ -25,6 +25,24 @@ interface JdoodleLanguageVersionTable {
 }
 export const jdoodleLanguageVersions: JdoodleLanguageVersionTable = {
   java: 4,
+  cpp: 5,
+  csharp: 4,
+  python3: 0,
+  go: 4,
+  nodejs: 4,
+  swift: 4,
+  rust: 4,
+};
+
+export const jdoodleLookup: { [key: string]: string } = {
+  java: "java",
+  cpp: "cpp",
+  csharp: "csharp",
+  python: "python3",
+  go: "go",
+  javascript: "nodejs",
+  swift: "swift",
+  rust: "rust",
 };
 
 interface JdoodleResponse {
@@ -40,8 +58,9 @@ let currentCallback: ((res: JdoodleResponse) => void) | null = null;
 export default async function jdoodleExecute(
   mainFile: Script,
   additionalFiles: Script[],
-  language: string
+  lang: string
 ): Promise<JdoodleResponse> {
+  let language = jdoodleLookup[lang];
   let myMainFile = { ...mainFile };
   if (language === "java") {
     myMainFile.content = myMainFile.content.substring(

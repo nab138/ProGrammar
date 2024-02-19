@@ -2,6 +2,11 @@ import { java } from "@codemirror/lang-java";
 import { rust } from "@codemirror/lang-rust";
 import { python } from "@codemirror/lang-python";
 import { javascript } from "@codemirror/lang-javascript";
+import { cpp } from "@codemirror/lang-cpp";
+import { csharp } from "@replit/codemirror-lang-csharp";
+import { go } from "@codemirror/lang-go";
+import { StreamLanguage } from "@codemirror/language";
+import { swift } from "@codemirror/legacy-modes/mode/swift";
 
 export interface Course {
   name: string;
@@ -121,6 +126,10 @@ export const langToHighlight: { [key: string]: any } = {
   rust,
   python,
   javascript,
+  cpp,
+  csharp,
+  go,
+  swift: () => StreamLanguage.define(swift),
 };
 
 export function randomizeLesson(lesson: Lesson): Lesson {
