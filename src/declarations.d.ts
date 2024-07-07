@@ -1,6 +1,7 @@
-declare module "sockjs-client/lib/transport/browser/abstract-xhr";
-declare module 'sockjs-client/dist/sockjs.min.js' {
-    import Client from 'sockjs-client';
-    export default Client;
-}
+declare module 'sockjs-client/dist/sockjs' {
+    import SockJS from '@types/sockjs-client';
+  
+    export = SockJS;
+    export as namespace SockJS;
+  }
 declare module 'react-console-emulator'

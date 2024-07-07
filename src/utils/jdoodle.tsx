@@ -1,24 +1,23 @@
 import { supabase } from "./supabaseClient";
-import SockJS from "sockjs-client";
-import AbstractXHRObject from "sockjs-client/lib/transport/browser/abstract-xhr";
+import SockJS from "sockjs-client/dist/sockjs";
 import { Client, over } from "webstomp-client";
 import { Script } from "./structures";
 
 // Jdoodle is expensive and this code is extremely jank, so we're going to try the Piston API
 
-const _start = AbstractXHRObject.prototype._start;
+//const _start = SockJS.AbstractXHRObject.prototype._start;
 
-AbstractXHRObject.prototype._start = function (
-  method: any,
-  url: any,
-  payload: any,
-  opts: any
-) {
-  if (!opts) {
-    opts = { noCredentials: true };
-  }
-  return _start.call(this, method, url, payload, opts);
-};
+// AbstractXHRObject.prototype._start = function (
+//   method: any,
+//   url: any,
+//   payload: any,
+//   opts: any
+// ) {
+//   if (!opts) {
+//     opts = { noCredentials: true };
+//   }
+//   return _start.call(this, method, url, payload, opts);
+// };
 
 interface JdoodleLanguageVersionTable {
   [key: string]: number;
