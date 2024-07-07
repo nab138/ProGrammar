@@ -14,13 +14,13 @@
     "nv": "npm version patch --no-git-tag-version && node -e \"let fs = require('fs'); let buildNumber = parseInt(fs.readFileSync('./build-number.txt', 'utf8')) + 1; fs.writeFileSync('./build-number.txt', buildNumber.toString());\" && npx capacitor-set-version set:ios -v $(node -p \"require('./package.json').version\") -b $(node -p \"require('fs').readFileSync('./build-number.txt', 'utf8')\") ."
   },
   "dependencies": {
-    "@capacitor/app": "5.0.6",
-    "@capacitor/core": "5.5.1",
-    "@capacitor/haptics": "^5.0.6",
-    "@capacitor/ios": "5.5.1",
-    "@capacitor/keyboard": "5.0.6",
-    "@capacitor/live-updates": "^0.1.1-beta.4",
-    "@capacitor/status-bar": "5.0.6",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/keyboard": "^6.0.0",
+    "@capacitor/live-updates": "0.2.1",
+    "@capacitor/status-bar": "^6.0.0",
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-go": "^6.0.0",
     "@codemirror/lang-java": "^6.0.1",
@@ -56,7 +56,7 @@
     "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
-    "@capacitor/cli": "5.5.1",
+    "@capacitor/cli": "^6.0.0",
     "@testing-library/dom": ">=7.21.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
