@@ -1,5 +1,6 @@
 {
   "name": "programmar",
+  "description": "A mobile app to teach new programmers the basics.",
   "private": true,
   "version": "1.0.2",
   "type": "module",
@@ -74,6 +75,5 @@
     "typescript": "^5.1.6",
     "vite": "^5.3.3",
     "vitest": "^2.0.2"
-  },
-  "description": "An Ionic project"
+  }
 }
