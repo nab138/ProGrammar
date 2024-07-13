@@ -32,7 +32,7 @@
     "@ionic/react-router": "^8.2.5",
     "@ionic/storage": "^4.0.0",
     "@replit/codemirror-lang-csharp": "^6.2.0",
-    "@supabase/supabase-js": "^2.44.2",
+    "@supabase/supabase-js": "^2.44.3",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "@uiw/codemirror-theme-okaidia": "^4.23.0",
@@ -70,10 +70,10 @@
     "eslint": "^8.35.0",
     "eslint-plugin-react": "^7.32.2",
     "jsdom": "^24.1.0",
-    "terser": "^5.31.1",
+    "terser": "^5.31.2",
     "typescript": "^5.1.6",
     "vite": "^5.3.3",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.2"
   },
   "description": "An Ionic project"
 }
