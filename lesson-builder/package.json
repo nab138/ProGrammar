@@ -4,22 +4,22 @@
   "private": true,
   "proxy": "http://192.168.1.130:8081",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.68",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@uiw/react-md-editor": "^4.0.2",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@uiw/react-md-editor": "^4.0.4",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "express": "^4.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^4.2.1"
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"nodemon server/server.js\"",
@@ -48,6 +48,14 @@
     ]
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "nodemon": "^3.1.4"
+  },
+  "overrides": {
+    "react-scripts": {
+      "@svgr/webpack": "8.1.0",
+      "typescript": "4.9.5",
+      "postcss": "8.4.38"
+    }
   }
 }
