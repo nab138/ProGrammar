@@ -518,13 +518,19 @@ const LessonEditor: React.FC<LessonEditorProps> = ({
                   <textarea
                     id="code-answer"
                     value={(() => {
+                      if (Array.isArray(selectedQuestion.answer)) {
+                        return selectedQuestion.answer.join("\n");
+                      }
                       return selectedQuestion.answer;
                     })()}
                     onChange={(e) => {
                       const newQuestion = {
                         ...selectedQuestion,
                       } as CodeQuestion;
-                      let newAnswer: string = e.target.value;
+                      let newAnswer: string | string[] = e.target.value;
+                      if (newAnswer.split("\n").length > 1) {
+                        newAnswer = newAnswer.split("\n");
+                      }
                       newQuestion.answer = newAnswer;
                       setSelectedQuestion(newQuestion);
                     }}

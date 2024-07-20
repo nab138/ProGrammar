@@ -57,7 +57,7 @@ export interface BuildQuestion {
 export interface CodeQuestion {
   question: string;
   type: "code";
-  answer: string;
+  answer: string | string[];
   id: string;
   hard?: boolean;
   rich?: boolean;

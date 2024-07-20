@@ -76,13 +76,17 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
       setNumClicks(2);
       setShowExplanation(true);
       setIsDisabled(true);
-      if (output.trim() === question.answer.trim()) {
-        setIsCorrect(true);
-        setColor("success");
-      } else {
-        setIsCorrect(false);
-        setColor("danger");
+      let correct = false;
+      if (Array.isArray(question.answer)) {
+        let trimmed = question.answer.map((a) => a.trim());
+        if (trimmed.includes(output.trim())) {
+          correct = true;
+        }
+      } else if (output.trim() === question.answer.trim()) {
+        correct = true;
       }
+      setIsCorrect(correct);
+      setColor(correct ? "success" : "danger");
     }
   }, [isRevisiting]);
 
@@ -104,7 +108,7 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
 
   const handleDragStop = (draggedY: number) => {
     const dismissThreshold = 100; // Adjust this value based on your preference
-  
+
     if (draggedY > dismissThreshold) {
       card.current!.className = "code-response-card-out";
       setTimeout(() => {
@@ -117,7 +121,6 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
       }
     }
   };
-  
 
   return (
     <div className="submit-button-container">
@@ -131,7 +134,17 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
           if (numClicks === 0 || (numClicks > 0 && !isCorrect)) {
             setShowExplanation(false);
             let output = await runCode();
-            if (output.run.output.trim() === question.answer.trim()) {
+            let correct = false;
+            if (Array.isArray(question.answer)) {
+              let trimmed = question.answer.map((a) => a.trim());
+              if (trimmed.includes(output.run.output.trim())) {
+                correct = true;
+              }
+            } else if (output.run.output.trim() === question.answer.trim()) {
+              correct = true;
+            }
+
+            if (correct) {
               setColor("success");
               if (sfxEnabled) playCorrect();
               if (hapticsEnabled) hapticsImpactHeavy();
@@ -156,8 +169,8 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
       </IonButton>
       {showExplanation && (
         <Draggable
-        ref={draggableRef}
-          bounds={{top: 0}}
+          ref={draggableRef}
+          bounds={{ top: 0 }}
           axis="y"
           onStop={(e, data) => handleDragStop(data.y)}
         >
@@ -171,8 +184,10 @@ const CodeResponseSubmitButton: React.FC<CodeResponseSubmitButtonProps> = ({
               {isCorrect
                 ? "Correct!"
                 : "Try again, you'll get it! The expected output was \"" +
-                  question.answer +
-                  '".'}
+                  (Array.isArray(question.answer)
+                    ? question.answer.join('" or "')
+                    : question.answer) +
+                  '"'}
               {numClicks > 1 && !isCorrect && (
                 <IonButton
                   expand="block"

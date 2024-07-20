@@ -593,7 +593,21 @@
                 "False",
                 "true"
               ],
-              "answer": "boolean myBool = false;",
+              "answer": [
+                "boolean myBool = false;",
+                "boolean myBool;"
+              ],
+              "rich": true
+            },
+            {
+              "type": "code",
+              "question": "# Create a boolean called `likeDogs` that holds whether or not you like dogs.",
+              "answer": [
+                "Dogs are great!",
+                "Dogs aren't for you."
+              ],
+              "template": "public class CodeQuestion {\n  public static void main(String args[]) {\n    {{code}}\n    System.out.println(likeDogs ? \"Dogs are great!\" : \"Dogs aren't for you.\");\n  }\n}",
+              "language": "java",
               "rich": true
             }
           ],
